@@ -1,0 +1,30 @@
+.main-navbar {
+  margin: 0;
+
+  display: flex;
+  justify-content: space-between;
+
+  font-size: large;
+
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(7px);
+
+  div {
+    padding: 0.8em;
+
+    a,
+    a:hover,
+    a:active,
+    a:visited {
+      margin: 0 0.5em;
+    }
+  }
+}
+
+.main-navbar-left {
+}
+
+.main-navbar-right {
+  display: flex;
+  justify-content: center;
+}

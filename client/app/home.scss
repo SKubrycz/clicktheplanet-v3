@@ -1,0 +1,35 @@
+.main-home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  a,
+  a:hover,
+  a:active,
+  a:visited {
+    color: rgb(
+      156,
+      128,
+      255
+    ); // could be the main theme color for the app (maybe? - or some similar color to this one)
+  }
+}
+
+.home-register-button {
+  padding: 1em;
+  border: none;
+  border-radius: 5px;
+
+  font-size: 16px;
+
+  background-color: rgb(100, 57, 255);
+
+  a,
+  a:hover,
+  a:active,
+  a:visited {
+    color: white;
+  }
+}
