@@ -1,6 +1,20 @@
+"use client";
+
+import { useState } from "react";
+
+import Tabs from "./Tabs/Tabs";
+
 import "./GameSidebar.scss";
 
 export default function GameSidebar() {
+  const tabs: Array<string> = ["Store", "Ship", "Stats"];
+
+  const [tabTitle, setTabTitle] = useState<string>(tabs[0]);
+
+  const handleTabTitle = (el: string) => {
+    setTabTitle(el);
+  };
+
   return (
     <aside className="game-sidebar">
       <div className="game-sidebar-currency">
@@ -13,35 +27,20 @@ export default function GameSidebar() {
       </div>
       <div className="game-sidebar-options">
         <div className="game-sidebar-tabs">
-          <div className="game-sidebar-tab-el">One</div>
-          <div className="game-sidebar-tab-el">Two</div>
-          <div className="game-sidebar-tab-el">Three</div>
-          <div className="game-sidebar-tab-el">Four</div>
+          {tabs.map((el) => {
+            return (
+              <div
+                className="game-sidebar-tab-el"
+                onClick={() => handleTabTitle(el)}
+              >
+                {el}
+              </div>
+            );
+          })}
         </div>
         <div className="game-sidebar-options-content">
-          {" "}
-          {/*Wrapper */}
-          <div className="game-sidebar-options-content-title">Tab title</div>
-          <div className="game-sidebar-options-content-scroll">
-            <div className="scroll-element">
-              <div className="scroll-element-info-wrapper">
-                <div className="scroll-element-title">Element 1 title</div>
-                <div className="scroll-element-description">
-                  Brief element description
-                </div>
-              </div>
-              <div>Action buttons?</div>
-            </div>
-            <div className="scroll-element">
-              <div className="scroll-element-info-wrapper">
-                <div className="scroll-element-title">Element 2 title</div>
-                <div className="scroll-element-description">
-                  Brief element description
-                </div>
-              </div>
-              <div>Action buttons?</div>
-            </div>
-          </div>
+          <div className="game-sidebar-options-content-title">{tabTitle}</div>
+          <Tabs tabTitle={tabTitle}></Tabs>
         </div>
       </div>
     </aside>
