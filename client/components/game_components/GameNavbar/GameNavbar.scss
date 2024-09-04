@@ -1,0 +1,33 @@
+@import "../../../utilities/variables";
+
+.game-navbar {
+  padding: 0.8em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  border-bottom: 1px solid rgb(50, 50, 50);
+
+  background-color: rgba(0, 0, 0, 0.3); // maybe remove if doesn't fit
+}
+
+.game-navbar-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  div {
+    margin: 0 0.5em;
+  }
+}
+
+.game-navbar-title {
+  font: {
+    size: 20px;
+    weight: bold;
+  }
+
+  background: linear-gradient(white, rgb(216, 205, 255));
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

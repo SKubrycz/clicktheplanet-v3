@@ -1,0 +1,10 @@
+@import "../../../utilities/variables";
+
+.game-sidebar {
+}
+
+@media (min-width: 768px) {
+  .game-sidebar {
+    border-right: 1px solid rgb(50, 50, 50);
+  }
+}
