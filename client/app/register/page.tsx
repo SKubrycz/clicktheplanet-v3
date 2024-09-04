@@ -14,9 +14,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-import { defaultTheme } from "../assets/defaultTheme";
-
-import "./register.scss";
+import { defaultTheme } from "../../assets/defaultTheme";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -24,6 +22,10 @@ export default function Register() {
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleClickShowAgainPassword = () => {
+    setShowAgainPassword(!showAgainPassword);
   };
 
   return (
@@ -68,7 +70,7 @@ export default function Register() {
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
+                      onClick={handleClickShowAgainPassword}
                     >
                       {showAgainPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -81,7 +83,7 @@ export default function Register() {
               <Link href="Login">Login here</Link>
             </p>
             <button type="submit" className="submit-button">
-              Login
+              Register
             </button>
           </div>
         </article>

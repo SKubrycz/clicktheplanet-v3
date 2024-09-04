@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 
 import Navbar from "@/components/Navbar/Navbar";
 
-import "./home.scss";
 import Link from "next/link";
 
 export default function Home() {

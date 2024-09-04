@@ -1,0 +1,17 @@
+@import "../../utilities/variables";
+
+.game-navbar {
+  padding: 0.5em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.game-navbar-content {
+  display: flex;
+  justify-content: center;
+
+  div {
+    margin: 0 0.5em;
+  }
+}

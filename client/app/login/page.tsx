@@ -14,9 +14,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import { ThemeProvider } from "@emotion/react";
-import { defaultTheme } from "../assets/defaultTheme";
-
-import "./login.scss";
+import { defaultTheme } from "../../assets/defaultTheme";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
