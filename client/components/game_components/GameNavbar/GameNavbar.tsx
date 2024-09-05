@@ -7,6 +7,7 @@ export default function GameNavbar() {
         <div className="game-navbar-title">Click the planet</div>
       </div>
       <div className="game-navbar-content">
+        <div>Settings</div>
         <div>Profile</div>
       </div>
     </nav>

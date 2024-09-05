@@ -80,7 +80,7 @@ export default function Register() {
             </FormControl>
             <p className="form-prompt">
               Already have an existing account?{" "}
-              <Link href="Login">Login here</Link>
+              <Link href="/login">Login here</Link>
             </p>
             <button type="submit" className="submit-button">
               Register

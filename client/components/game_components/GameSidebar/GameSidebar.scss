@@ -79,48 +79,6 @@
   }
 }
 
-.game-sidebar-options-content-scroll {
-  border: 1px solid rgb(50, 50, 50);
-  border-radius: 5px;
-}
-
-.scroll-element {
-  margin: 0.3em;
-  padding: 0.7em;
-
-  border: 1px solid rgb(100, 100, 100);
-  border-radius: 5px;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-.scroll-element-info-wrapper {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.scroll-element-title {
-  margin: 0.3em 0;
-  font: {
-    size: 20px;
-    weight: 600;
-  }
-}
-
-.scroll-element-description {
-  margin: 0.3em 0;
-  font: {
-    size: 16px;
-    weight: 300;
-  }
-}
-
 @media (min-width: 768px) {
   .game-sidebar {
     border-right: 1px solid rgb(50, 50, 50);
