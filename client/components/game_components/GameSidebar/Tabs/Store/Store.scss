@@ -1,3 +1,5 @@
+@import "../../../../../utilities/variables";
+
 .store-content-scroll {
   height: 70vh;
 
@@ -34,6 +36,31 @@
   align-items: center;
 
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.store-element-left-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.store-element-image {
+  margin: 0 0.7em;
+
+  width: 100px;
+  height: 100px;
+}
+
+.store-element-image-div {
+  width: 100px;
+  height: 100px;
+
+  margin: 0.7em;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid rgb(100, 100, 100);
 }
 
 .store-element-info-wrapper {
