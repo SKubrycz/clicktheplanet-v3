@@ -34,6 +34,12 @@
   border-radius: 5px;
 
   background-color: change-color($color: $buttonColor, $alpha: 0.15);
+
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: change-color($color: $buttonColor, $alpha: 0.25);
+  }
 }
 
 .ship-element-info-wrapper {
