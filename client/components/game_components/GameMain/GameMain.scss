@@ -1,5 +1,75 @@
 @import "../../../utilities/variables";
 
+$levelBorderDist: 0.2em;
+
 .game-main {
   padding: 1em;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-current-level {
+  width: fit-content;
+  margin-top: 1.5em;
+  margin-bottom: $levelBorderDist;
+  padding-bottom: $levelBorderDist;
+
+  font: {
+    size: 24px;
+    weight: 400;
+  }
+
+  border-bottom: 1px solid;
+  border-image-slice: 1;
+  border-image-source: radial-gradient(
+    ellipse at bottom,
+    $fontColor,
+    transparent
+  );
+}
+
+.main-current-stage {
+  font: {
+    size: 18px;
+    weight: 300;
+  }
+}
+
+.main-planet-name {
+  margin: 2em 1em 1em 1em;
+
+  font: {
+    size: 22px;
+    weight: 400;
+  }
+}
+
+.main-planet-image {
+  width: 250px;
+  height: 250px;
+
+  border-radius: 100%;
+  background-color: gray;
+
+  animation: breathe 4s infinite, levitate 5.5s infinite;
+}
+
+@keyframes breathe {
+  0% {
+    filter: drop-shadow(0px 0px 2px gray);
+  }
+  50% {
+    filter: drop-shadow(0px 0px 15px gray);
+  }
+  100% {
+    filter: drop-shadow(0px 0px 2px gray);
+  }
+}
+
+@keyframes levitate {
+  50% {
+    transform: translateY(3%);
+  }
 }

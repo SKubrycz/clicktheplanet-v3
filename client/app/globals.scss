@@ -7,7 +7,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Space Grotesk", "Arial", sans-serif;
-  color: rgb(247, 245, 255);
+  color: $fontColor;
   background: {
     image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
       url("/background.png");
