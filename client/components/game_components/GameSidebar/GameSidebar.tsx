@@ -27,9 +27,10 @@ export default function GameSidebar() {
       </div>
       <div className="game-sidebar-options">
         <div className="game-sidebar-tabs">
-          {tabs.map((el) => {
+          {tabs.map((el, i) => {
             return (
               <div
+                key={i}
                 className="game-sidebar-tab-el"
                 onClick={() => handleTabTitle(el)}
               >
