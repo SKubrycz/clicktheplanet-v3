@@ -10,9 +10,12 @@ export default function Home() {
   const fetchHome = async () => {
     try {
       const res = await fetch("http://localhost:8000/", {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
+        mode: "cors",
+        credentials: "include",
       });
       const data = await res.json();
       console.log(data);
