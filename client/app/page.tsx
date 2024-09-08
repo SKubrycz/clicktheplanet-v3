@@ -1,10 +1,30 @@
-import { ReactNode } from "react";
+"use client";
+
+import { useEffect } from "react";
 
 import Navbar from "@/components/Navbar/Navbar";
 
 import Link from "next/link";
 
 export default function Home() {
+  const fetchHome = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchHome();
+  }, []);
+
   return (
     <>
       {/* <Navbar></Navbar> */}
