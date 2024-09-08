@@ -30,13 +30,13 @@ export default function Login() {
           <h3 className="form-title">Login</h3>
           <div className="center-flex-col">
             <FormControl sx={{ width: "16em" }} variant="standard">
-              <InputLabel htmlFor="standard-login">Login</InputLabel>
-              <Input id="standard-login"></Input>
+              <InputLabel htmlFor="login-login">Login</InputLabel>
+              <Input id="login-login"></Input>
             </FormControl>
             <FormControl sx={{ width: "16em" }} variant="standard">
-              <InputLabel htmlFor="standard-password">Password</InputLabel>
+              <InputLabel htmlFor="login-password">Password</InputLabel>
               <Input
-                id="standard-password"
+                id="login-password"
                 type={showPassword ? "text" : "password"}
                 endAdornment={
                   <InputAdornment position="end">

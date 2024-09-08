@@ -35,17 +35,17 @@ export default function Register() {
           <h3 className="form-title">Register</h3>
           <div className="center-flex-col">
             <FormControl sx={{ width: "20em" }} variant="standard">
-              <InputLabel htmlFor="standard-register">Login</InputLabel>
-              <Input id="standard-register"></Input>
+              <InputLabel htmlFor="register-login">Login</InputLabel>
+              <Input id="register-login"></Input>
             </FormControl>
             <FormControl sx={{ width: "20em" }} variant="standard">
-              <InputLabel htmlFor="standard-register">Email</InputLabel>
-              <Input id="standard-register"></Input>
+              <InputLabel htmlFor="register-email">Email</InputLabel>
+              <Input id="register-email"></Input>
             </FormControl>
             <FormControl sx={{ width: "20em" }} variant="standard">
-              <InputLabel htmlFor="standard-password">Password</InputLabel>
+              <InputLabel htmlFor="register-password">Password</InputLabel>
               <Input
-                id="standard-password"
+                id="register-password"
                 type={showPassword ? "text" : "password"}
                 endAdornment={
                   <InputAdornment position="end">
@@ -60,11 +60,11 @@ export default function Register() {
               />
             </FormControl>
             <FormControl sx={{ width: "20em" }} variant="standard">
-              <InputLabel htmlFor="standard-again-password">
+              <InputLabel htmlFor="register-again-password">
                 Password again
               </InputLabel>
               <Input
-                id="standard-again-password"
+                id="register-again-password"
                 type={showAgainPassword ? "text" : "password"}
                 endAdornment={
                   <InputAdornment position="end">
