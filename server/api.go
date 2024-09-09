@@ -1,12 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
+	"log"
 	"net/http"
-	"os"
 )
 
 type Server struct {
@@ -24,6 +25,7 @@ func (s *Server) Start() {
 	router.Use(setCors)
 
 	router.HandleFunc("/", s.handleGetHome)
+	router.HandleFunc("/ws_game", s.handleWsGame)
 
 	http.ListenAndServe(s.addr, router)
 }
@@ -43,54 +45,6 @@ func setCors(next http.Handler) http.Handler {
 
 			next.ServeHTTP(w, r)
 		})
-}
-
-func assignJWT(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Assigning JWT...")
-	REFRESH_MAX_AGE := 1000 * 60 * 60 * 24 * 31
-	ACCESS_MAX_AGE := 1000 * 60 * 15
-	refreshSecret := os.Getenv("REFRESH_TOKEN_SECRET")
-	accessSecret := os.Getenv("ACCESS_TOKEN_SECRET")
-	refreshClaims := &jwt.MapClaims{
-		"expiresAt": REFRESH_MAX_AGE,
-		//"id": user.id,
-	}
-	accessClaims := &jwt.MapClaims{
-		"expiresAt": ACCESS_MAX_AGE,
-		//"id": user.id,
-	}
-	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(refreshSecret))
-	if err != nil {
-		http.Error(w, "Could not login", http.StatusInternalServerError)
-		return
-	}
-	refreshTokenCookie := http.Cookie{
-		Name:     "refresh_token",
-		Value:    refreshToken,
-		MaxAge:   REFRESH_MAX_AGE,
-		HttpOnly: true,
-		SameSite: http.SameSiteStrictMode,
-	}
-
-	accessToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims).SignedString([]byte(accessSecret))
-	if err != nil {
-		http.Error(w, "Could not login", http.StatusInternalServerError)
-		return
-	}
-	accessTokenCookie := http.Cookie{
-		Name:     "access_token",
-		Value:    accessToken,
-		MaxAge:   ACCESS_MAX_AGE,
-		HttpOnly: true,
-		SameSite: http.SameSiteStrictMode,
-	}
-
-	http.SetCookie(w, &refreshTokenCookie)
-	http.SetCookie(w, &accessTokenCookie)
-
-	fmt.Println("JWT has been assigned")
-
-	//w.WriteHeader(200)
 }
 
 type Welcome struct {
@@ -113,12 +67,47 @@ func (s *Server) handleGetHome(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		assignJWT(w, r)
+		assignJWT(w, r) //later to be moved to /login POST
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonWelcome)
 	} else {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
+	}
+}
+
+func (s *Server) handleWsGame(w http.ResponseWriter, r *http.Request) {
+	var upgrader = websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+		CheckOrigin: func(r *http.Request) bool {
+			// origin := r.Header.Get("Origin")
+			// return origin == "http://localhost:3000"
+			return true
+		},
+	}
+
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer conn.Close()
+
+	for {
+		messageType, p, err := conn.ReadMessage()
+		fmt.Println(string(p))
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		if bytes.Equal(p, []byte("Message to server")) {
+			p = []byte("Message to client")
+		}
+		if err := conn.WriteMessage(messageType, p); err != nil {
+			log.Println(err)
+			return
+		}
 	}
 }
