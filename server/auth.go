@@ -5,20 +5,22 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"net/http"
 	"os"
+	"time"
 )
 
 func assignJWT(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Assigning JWT...")
-	REFRESH_MAX_AGE := 1000 * 60 * 60 * 24 * 31
-	ACCESS_MAX_AGE := 1000 * 60 * 15
+	REFRESH_MAX_AGE := 60 * 60 * 24 * 31
+	ACCESS_MAX_AGE := 60 * 15
 	refreshSecret := os.Getenv("REFRESH_TOKEN_SECRET")
 	accessSecret := os.Getenv("ACCESS_TOKEN_SECRET")
+
 	refreshClaims := &jwt.MapClaims{
-		"expiresAt": REFRESH_MAX_AGE,
+		"expiresAt": time.Now().Add(time.Duration(REFRESH_MAX_AGE) * time.Second),
 		//"id": user.id,
 	}
 	accessClaims := &jwt.MapClaims{
-		"expiresAt": ACCESS_MAX_AGE,
+		"expiresAt": time.Now().Add(time.Duration(ACCESS_MAX_AGE) * time.Second),
 		//"id": user.id,
 	}
 	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(refreshSecret))
@@ -53,4 +55,21 @@ func assignJWT(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("JWT has been assigned")
 
 	//w.WriteHeader(200)
+}
+
+func checkAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("checkAuth start...")
+
+		cookie, err := r.Cookie("access_token")
+		if err != nil {
+			fmt.Println("Couldn't find a cookie")
+			http.Error(w, "Not authorized", http.StatusUnauthorized)
+			return
+		}
+
+		fmt.Printf("%s: %s\n", cookie.Name, cookie.Value)
+
+		handlerFunc(w, r)
+	}
 }
