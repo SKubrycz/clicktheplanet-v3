@@ -25,7 +25,7 @@ func assignJWT(w http.ResponseWriter, r *http.Request) {
 	}
 	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(refreshSecret))
 	if err != nil {
-		http.Error(w, "Could not login", http.StatusInternalServerError)
+		writeJSON(w, http.StatusInternalServerError, "Could not login")
 		return
 	}
 	refreshTokenCookie := http.Cookie{
@@ -38,7 +38,7 @@ func assignJWT(w http.ResponseWriter, r *http.Request) {
 
 	accessToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims).SignedString([]byte(accessSecret))
 	if err != nil {
-		http.Error(w, "Could not login", http.StatusInternalServerError)
+		writeJSON(w, http.StatusInternalServerError, "Could not login")
 		return
 	}
 	accessTokenCookie := http.Cookie{
@@ -57,6 +57,10 @@ func assignJWT(w http.ResponseWriter, r *http.Request) {
 	//w.WriteHeader(200)
 }
 
+type Message struct {
+	Message string `json:"message"`
+}
+
 func checkAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("checkAuth start...")
@@ -64,7 +68,10 @@ func checkAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 		cookie, err := r.Cookie("access_token")
 		if err != nil {
 			fmt.Println("Couldn't find a cookie")
-			http.Error(w, "Not authorized", http.StatusUnauthorized)
+			error := Message{
+				Message: "Not authorized",
+			}
+			writeJSON(w, http.StatusUnauthorized, error)
 			return
 		}
 

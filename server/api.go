@@ -63,7 +63,7 @@ func (s *Server) handleGetHome(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		jsonWelcome, err := json.Marshal(welcome)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeJSON(w, http.StatusInternalServerError, "Internal server error")
 			return
 		}
 
@@ -71,13 +71,20 @@ func (s *Server) handleGetHome(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonWelcome)
 	} else {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		writeJSON(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 }
 
 func (s *Server) handleGetGame(w http.ResponseWriter, r *http.Request) {
+	// Here the user game state data is going to be fetched from the database
 
+	welcome_game := Welcome{
+		Title: "Hello to /game!",
+		Desc:  "Here you can play since you're logged in!",
+	}
+
+	writeJSON(w, http.StatusOK, welcome_game)
 }
 
 func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
@@ -139,4 +146,11 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 			assignJWT(w, r)
 		}
 	}
+}
+
+func writeJSON(w http.ResponseWriter, status int, payload any) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	return json.NewEncoder(w).Encode(payload)
 }

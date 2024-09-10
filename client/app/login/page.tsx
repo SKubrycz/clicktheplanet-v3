@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 import Link from "next/link";
 
@@ -15,30 +15,38 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import { ThemeProvider } from "@emotion/react";
 import { defaultTheme } from "../../assets/defaultTheme";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [login, setLogin] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
+  const router = useRouter();
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleLogin = async () => {
-    try {
-      await fetch("http://localhost:8000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ login: login, password: password }),
-        mode: "cors",
-        credentials: "include",
+  const handleLogin = async (e: FormEvent) => {
+    e.preventDefault();
+
+    await fetch("http://localhost:8000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ login: login, password: password }),
+      mode: "cors",
+      credentials: "include",
+    })
+      .then((req) => {
+        console.log(req);
+        router.push("/game");
+      })
+      .catch((err) => {
+        console.error(err);
       });
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   return (
@@ -79,7 +87,7 @@ export default function Login() {
               </p>
               <button
                 type="submit"
-                onClick={() => handleLogin()}
+                onClick={(e) => handleLogin(e)}
                 className="submit-button"
               >
                 Login

@@ -37,8 +37,8 @@ export default function GameMain() {
         currentHealth: health.maxHealth,
       });
     }
-    console.log(width);
-    console.log(health.currentHealth);
+    //console.log(width);
+    //console.log(health.currentHealth);
   };
 
   const healthbarStyle = {
