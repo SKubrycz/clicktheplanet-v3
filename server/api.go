@@ -8,15 +8,18 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"unicode"
 )
 
 type Server struct {
 	addr string
+	db   Database
 }
 
-func NewServer(addr string) *Server {
+func NewServer(addr string, db Database) *Server {
 	return &Server{
 		addr: addr,
+		db:   db,
 	}
 }
 
@@ -173,6 +176,27 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, http.StatusBadRequest, "Passwords are not the same")
 			return
 		}
+		if len([]rune(req.Password)) < 8 {
+			writeJSON(w, http.StatusBadRequest, "Password has to be at least 8 characters long")
+			return
+		}
+		isValidPassword := [3]bool{false, false, false}
+		for _, ch := range req.Password {
+			switch {
+			case unicode.IsNumber(ch):
+				isValidPassword[0] = true
+			case unicode.IsUpper(ch):
+				isValidPassword[1] = true
+			case unicode.IsPunct(ch) || unicode.IsSymbol(ch):
+				isValidPassword[2] = true
+			default:
+
+			}
+		}
+		if !isValidPassword[0] || !isValidPassword[1] || !isValidPassword[2] {
+			writeJSON(w, http.StatusBadRequest, "Invalid password")
+			return
+		}
 
 		user, err := NewUser(req.Login, req.Email, req.Password)
 		if err != nil {
@@ -183,7 +207,14 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("...Validation process finished")
 
 		u, err := NewUser(req.Login, req.Email, req.Password)
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, "Internal server error")
+		}
 		fmt.Println(u)
+
+		if err := s.db.CreateAccount(u); err != nil {
+			writeJSON(w, http.StatusInternalServerError, "Internal server error")
+		}
 
 		writeJSON(w, http.StatusOK, user)
 		return

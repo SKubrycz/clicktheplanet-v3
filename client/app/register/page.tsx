@@ -53,11 +53,13 @@ export default function Register() {
       mode: "cors",
       credentials: "include",
     })
-      .then((req) => {
+      .then(async (req) => {
         if (!req.ok) {
-          console.log(req);
+          const res = await req.json();
+          console.error("Error: ", res);
         } else {
-          console.log(req);
+          const res = await req.json();
+          console.log(res);
           router.push("/");
         }
       })
