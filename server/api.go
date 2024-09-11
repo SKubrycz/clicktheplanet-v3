@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 	"regexp"
@@ -135,10 +136,21 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		//check verify the input
 		//if ok then give jwt:
 
-		fmt.Println(req)
-		if req.Login == "frank" {
-			assignJWT(w, r)
+		user, err := s.db.GetAccountByLogin(req.Login)
+		fmt.Println(user.Login)
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, "Log in error")
+			return
 		}
+
+		compare := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+		if compare != nil {
+			writeJSON(w, http.StatusBadRequest, "Invalid credentials")
+			return
+		}
+
+		assignJWT(w, r)
+		return
 	}
 }
 

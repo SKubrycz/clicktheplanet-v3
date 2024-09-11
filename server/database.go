@@ -8,6 +8,7 @@ import (
 
 type Database interface {
 	CreateAccount(*User) error
+	GetAccountByLogin(string) (*User, error)
 }
 
 type Postgres struct {
@@ -44,4 +45,27 @@ func (p *Postgres) CreateAccount(u *User) error {
 	fmt.Printf("%+v", res)
 
 	return nil
+}
+
+func (p *Postgres) GetAccountByLogin(login string) (*User, error) {
+	query := `SELECT * FROM users WHERE login = $1`
+
+	rows, err := p.db.Query(query, login)
+	if err != nil {
+		return nil, err
+	}
+
+	var user *User
+	for rows.Next() {
+		user = new(User)
+		err = rows.Scan(
+			&user.Id,
+			&user.Login,
+			&user.Email,
+			&user.Password,
+			&user.CreatedAt,
+		)
+	}
+	fmt.Println(user)
+	return user, err
 }
