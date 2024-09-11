@@ -1,13 +1,13 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"regexp"
 )
 
 type Server struct {
@@ -112,9 +112,6 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-		if bytes.Equal(p, []byte("Message to server")) {
-			p = []byte("Message to client")
-		}
 		if err := conn.WriteMessage(messageType, p); err != nil {
 			log.Println(err)
 			return
@@ -122,16 +119,11 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type Credentials struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
-}
-
 func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	if r.Method == "POST" {
-		var credentials Credentials
-		if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
+		var req LoginCredentials
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			fmt.Println(err)
 			return
 		}
@@ -140,25 +132,18 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		//check verify the input
 		//if ok then give jwt:
 
-		fmt.Println(credentials)
-		if credentials.Login == "frank" {
+		fmt.Println(req)
+		if req.Login == "frank" {
 			assignJWT(w, r)
 		}
 	}
 }
 
-type RegisterCredentials struct {
-	Login         string `json:"login"`
-	Email         string `json:"email"`
-	Password      string `json:"password"`
-	AgainPassword string `json:"againPassword"`
-}
-
 func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	if r.Method == "POST" {
-		var registerCredentials RegisterCredentials
-		if err := json.NewDecoder(r.Body).Decode(&registerCredentials); err != nil {
+		var req RegisterCredentials
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			fmt.Println(err)
 			return
 		}
@@ -168,6 +153,40 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 		// if ok:
 		// hash the password
 		// save to the database
+
+		fmt.Println("Beginning the validation process...")
+
+		if req.Login == "" || len([]rune(req.Login)) < 3 {
+			writeJSON(w, http.StatusBadRequest, "Login is incorrect")
+			return
+		}
+		isValidEmail, err := regexp.MatchString(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`, req.Email)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		if req.Email == "" || !isValidEmail {
+			writeJSON(w, http.StatusBadRequest, "Email is incorrect")
+			return
+		}
+		if req.Password != req.AgainPassword {
+			writeJSON(w, http.StatusBadRequest, "Passwords are not the same")
+			return
+		}
+
+		user, err := NewUser(req.Login, req.Email, req.Password)
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, "Something went wrong")
+			return
+		}
+
+		fmt.Println("...Validation process finished")
+
+		u, err := NewUser(req.Login, req.Email, req.Password)
+		fmt.Println(u)
+
+		writeJSON(w, http.StatusOK, user)
+		return
 
 	} else {
 		writeJSON(w, http.StatusMethodNotAllowed, "Method not allowed")
