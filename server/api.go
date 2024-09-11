@@ -24,9 +24,10 @@ func (s *Server) Start() {
 	router := mux.NewRouter()
 	router.Use(setCors)
 
-	router.HandleFunc("/", s.handleGetHome)
+	router.HandleFunc("/", s.handleHome)
 	router.HandleFunc("/login", s.handleLogin)
-	router.HandleFunc("/game", checkAuth(s.handleGetGame))
+	router.HandleFunc("/register", s.handleRegister)
+	router.HandleFunc("/game", checkAuth(s.handleGame))
 	router.HandleFunc("/ws_game", s.handleGetWsGame)
 
 	http.ListenAndServe(s.addr, router)
@@ -54,37 +55,36 @@ type Welcome struct {
 	Desc  string `json:"desc"`
 }
 
-func (s *Server) handleGetHome(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 	welcome := Welcome{
 		Title: "Home page",
 		Desc:  "Welcome to the home page",
 	}
 
 	if r.Method == "GET" {
-		jsonWelcome, err := json.Marshal(welcome)
-		if err != nil {
-			writeJSON(w, http.StatusInternalServerError, "Internal server error")
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonWelcome)
+		writeJSON(w, http.StatusOK, welcome)
+		return
 	} else {
 		writeJSON(w, http.StatusMethodNotAllowed, "Method not allowed")
 		return
 	}
 }
 
-func (s *Server) handleGetGame(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 	// Here the user game state data is going to be fetched from the database
 
-	welcome_game := Welcome{
-		Title: "Hello to /game!",
-		Desc:  "Here you can play since you're logged in!",
-	}
+	if r.Method == "GET" {
+		welcome_game := Welcome{
+			Title: "Hello to /game!",
+			Desc:  "Here you can play since you're logged in!",
+		}
 
-	writeJSON(w, http.StatusOK, welcome_game)
+		writeJSON(w, http.StatusOK, welcome_game)
+		return
+	} else {
+		writeJSON(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
 }
 
 func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
@@ -122,16 +122,15 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type credentials struct {
+type Credentials struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
 }
 
 func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("New from /login")
+	defer r.Body.Close()
 	if r.Method == "POST" {
-		defer r.Body.Close()
-		var credentials credentials
+		var credentials Credentials
 		if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
 			fmt.Println(err)
 			return
@@ -145,6 +144,34 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		if credentials.Login == "frank" {
 			assignJWT(w, r)
 		}
+	}
+}
+
+type RegisterCredentials struct {
+	Login         string `json:"login"`
+	Email         string `json:"email"`
+	Password      string `json:"password"`
+	AgainPassword string `json:"againPassword"`
+}
+
+func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	if r.Method == "POST" {
+		var registerCredentials RegisterCredentials
+		if err := json.NewDecoder(r.Body).Decode(&registerCredentials); err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		// verify users input
+		// check if the user already exists in the database
+		// if ok:
+		// hash the password
+		// save to the database
+
+	} else {
+		writeJSON(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
 	}
 }
 

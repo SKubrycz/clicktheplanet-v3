@@ -52,6 +52,11 @@ export default function Game() {
     console.log("Disconnected");
   });
 
+  const handlePlanetClickData = (data: string) => {
+    socket.send(JSON.stringify(data));
+    console.log("click");
+  };
+
   useEffect(() => {
     handleGetGame();
   }, []);
@@ -61,7 +66,7 @@ export default function Game() {
       <GameNavbar></GameNavbar>
       <div className="game-content-wrapper">
         <GameSidebar></GameSidebar>
-        <GameMain></GameMain>
+        <GameMain planetClick={handlePlanetClickData}></GameMain>
       </div>
     </div>
   );

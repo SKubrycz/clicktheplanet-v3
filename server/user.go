@@ -7,13 +7,6 @@ type User struct {
 	Password string `json:"password"`
 }
 
-func returnUser() User {
-	user1 := User{
-		Id:       1,
-		Login:    "Someone",
-		Email:    "someone@mail.com",
-		Password: "itwillbehashedlater",
-	}
+func (u *User) createUser() {
 
-	return user1
 }

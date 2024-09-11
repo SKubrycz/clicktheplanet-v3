@@ -12,6 +12,9 @@ import "./game/game.scss";
 export const metadata: Metadata = {
   title: "Click the planet",
   description: "Click the planet v3 - Simple clicker game",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

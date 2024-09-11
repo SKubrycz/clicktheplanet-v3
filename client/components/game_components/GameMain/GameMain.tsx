@@ -4,12 +4,16 @@ import { useState, useEffect } from "react";
 
 import "./GameMain.scss";
 
-interface Health {
+export interface Health {
   currentHealth: number;
   maxHealth: number;
 }
 
-export default function GameMain() {
+interface GameMainProps {
+  planetClick(data: string): void;
+}
+
+export default function GameMain({ planetClick }: GameMainProps) {
   const [health, setHealth] = useState<Health>({
     currentHealth: 10,
     maxHealth: 10,
@@ -17,11 +21,11 @@ export default function GameMain() {
   const [width, setWidth] = useState<number>(100);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
+    /*     const timeout = setTimeout(() => {
       handlePlanetClick();
     }, 1000);
+    return () => clearTimeout(timeout); */
     setWidth((health.currentHealth * 100) / health.maxHealth);
-    return () => clearTimeout(timeout);
   }, [health.currentHealth]);
 
   const handlePlanetClick = () => {
@@ -31,6 +35,7 @@ export default function GameMain() {
       ...health,
       currentHealth: health.currentHealth - 1,
     });
+    planetClick("click");
     if (health.currentHealth <= 0) {
       setHealth({
         ...health,
