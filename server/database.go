@@ -34,15 +34,48 @@ func NewDatabase() (*Postgres, error) {
 // Function for /register route
 // Inserts into every table for game initialization
 func (p *Postgres) CreateAccount(u *User) error {
-	query := `INSERT INTO users (login, email, password, created_at) VALUES ($1, $2, $3, $4)`
+	queryUser := `INSERT INTO users (login, email, password, created_at) VALUES ($1, $2, $3, $4)`
+	queryGame := `
+	INSERT INTO games (gold, diamonds, max_damage, current_level, max_level, current_stage, max_stage, planets_destroyed, user_id)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id;
+	`
+	queryGameShip := `
+	INSERT INTO game_ship (level, game_id, ship_id) VALUES ($1, $2, $3);
+	`
 
-	res, err := p.db.Query(query, u.Login, u.Email, u.Password, u.CreatedAt)
+	queryGameStore := `
+	INSERT INTO game_store (level, game_id, store_id) VALUES ($1, $2, $3);
+	`
 
+	_, err := p.db.Exec(queryUser, u.Login, u.Email, u.Password, u.CreatedAt)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("%+v", res)
+	user, err := p.GetAccountByLogin(u.Login)
+	if err != nil {
+		return err
+	}
+
+	var gameId int
+	err = p.db.QueryRow(queryGame, 100, 0, 1, 1, 1, 1, 1, 0, user.Id).Scan(&gameId)
+	if err != nil {
+		return err
+	}
+
+	for i := 1; i < 4; i++ {
+		_, err = p.db.Exec(queryGameShip, 0, gameId, i)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+
+		_, err = p.db.Exec(queryGameStore, 0, gameId, i)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+	}
 
 	return nil
 }

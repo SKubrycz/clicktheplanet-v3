@@ -63,12 +63,12 @@ func createGamesTable(p *Postgres) error {
 // "Dictionary" table for a singular user account
 // and whether he bought a upgrade in the Ship Tab
 // essentially, a table containing information of each
-// / upgrade and it's availability for the player (Lock/Unlocked)
+// upgrade and it's availability for the player (Lock/Unlocked)
+// --- the multiplier will be calculated using a formula dependent on a level during runtime
 func createGameShipTable(p *Postgres) error {
 	createGameShip := `CREATE TABLE IF NOT EXISTS game_ship (
 		id SERIAL PRIMARY KEY,
 		level INT,
-		multiplier FLOAT(4),
 		game_id INT NOT NULL,
 		ship_id INT NOT NULL,
 		FOREIGN KEY (game_id)
@@ -103,6 +103,7 @@ func insertShipTable(p *Postgres) error {
 	INSERT INTO ship (id, title, description) VALUES (1, 'Upgrade 1', 'Upgrade 1 desc') ON CONFLICT (title) DO NOTHING;
 	INSERT INTO ship (id, title, description) VALUES (2, 'Upgrade 2', 'Upgrade 2 desc') ON CONFLICT (title) DO NOTHING;
 	INSERT INTO ship (id, title, description) VALUES (3, 'Upgrade 3', 'Upgrade 3 desc') ON CONFLICT (title) DO NOTHING;
+	INSERT INTO ship (id, title, description) VALUES (4, 'Upgrade 4', 'Upgrade 4 desc') ON CONFLICT (title) DO NOTHING;
 	`
 
 	_, err := p.db.Exec(insertShip)
@@ -114,6 +115,7 @@ func insertStoreTable(p *Postgres) error {
 	INSERT INTO store (id, title, description) VALUES (1, 'Store 1', 'Store 1 desc') ON CONFLICT (title) DO NOTHING;
 	INSERT INTO store (id, title, description) VALUES (2, 'Store 2', 'Store 2 desc') ON CONFLICT (title) DO NOTHING;
 	INSERT INTO store (id, title, description) VALUES (3, 'Store 3', 'Store 3 desc') ON CONFLICT (title) DO NOTHING;
+	INSERT INTO store (id, title, description) VALUES (4, 'Store 4', 'Store 4 desc') ON CONFLICT (title) DO NOTHING;
 	`
 
 	_, err := p.db.Exec(insertStore)

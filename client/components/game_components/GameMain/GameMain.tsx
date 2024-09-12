@@ -25,6 +25,12 @@ export default function GameMain({ planetClick }: GameMainProps) {
       handlePlanetClick();
     }, 1000);
     return () => clearTimeout(timeout); */
+    if (health.currentHealth <= 0) {
+      setHealth({
+        ...health,
+        currentHealth: health.maxHealth,
+      });
+    }
     setWidth((health.currentHealth * 100) / health.maxHealth);
   }, [health.currentHealth]);
 
@@ -36,12 +42,6 @@ export default function GameMain({ planetClick }: GameMainProps) {
       currentHealth: health.currentHealth - 1,
     });
     planetClick("click");
-    if (health.currentHealth <= 0) {
-      setHealth({
-        ...health,
-        currentHealth: health.maxHealth,
-      });
-    }
     //console.log(width);
     //console.log(health.currentHealth);
   };

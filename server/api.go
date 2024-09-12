@@ -221,11 +221,14 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 		u, err := NewUser(req.Login, req.Email, req.Password)
 		if err != nil {
 			writeJSON(w, http.StatusInternalServerError, "Internal server error")
+			return
 		}
 		fmt.Println(u)
 
 		if err := s.db.CreateAccount(u); err != nil {
+			fmt.Println("Here error2")
 			writeJSON(w, http.StatusInternalServerError, "Internal server error")
+			return
 		}
 
 		writeJSON(w, http.StatusOK, user)
