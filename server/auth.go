@@ -82,11 +82,9 @@ func checkAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 
 		fmt.Printf("%s: %s\n", cookie.Name, cookie.Value)
 
-		type UserId string
+		const userId UserId = "userid"
 
-		id := "1"
-
-		ctx := context.WithValue(r.Context(), UserId("id"), id)
+		ctx := context.WithValue(r.Context(), userId, 1)
 		handlerFunc(w, r.WithContext(ctx))
 	}
 }
