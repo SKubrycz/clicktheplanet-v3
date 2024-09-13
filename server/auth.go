@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"github.com/golang-jwt/jwt/v4"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/golang-jwt/jwt/v4"
 )
 
 func assignJWT(w http.ResponseWriter, r *http.Request) {
@@ -66,6 +68,7 @@ func checkAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 		fmt.Println("checkAuth start...")
 
 		cookie, err := r.Cookie("access_token")
+
 		if err != nil {
 			fmt.Println("Couldn't find a cookie")
 			error := Message{
@@ -75,8 +78,15 @@ func checkAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
+		// ---> verify if the access_token is valid
+
 		fmt.Printf("%s: %s\n", cookie.Name, cookie.Value)
 
-		handlerFunc(w, r)
+		type UserId string
+
+		id := "1"
+
+		ctx := context.WithValue(r.Context(), UserId("id"), id)
+		handlerFunc(w, r.WithContext(ctx))
 	}
 }

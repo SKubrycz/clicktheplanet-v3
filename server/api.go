@@ -83,6 +83,12 @@ func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 			Desc:  "Here you can play since you're logged in!",
 		}
 
+		testId, ok := r.Context().Value("id").(int)
+		if !ok {
+			writeJSON(w, http.StatusForbidden, "Not authorized")
+		}
+		fmt.Println(testId)
+
 		writeJSON(w, http.StatusOK, welcome_game)
 		return
 	} else {
