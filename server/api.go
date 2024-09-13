@@ -132,10 +132,6 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		//... something something
-		//check verify the input
-		//if ok then give jwt:
-
 		user, err := s.db.GetAccountByLogin(req.Login)
 		fmt.Println(user.Login)
 		if err != nil {
@@ -162,12 +158,6 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			return
 		}
-
-		// verify users input
-		// check if the user already exists in the database
-		// if ok:
-		// hash the password
-		// save to the database
 
 		fmt.Println("Beginning the validation process...")
 
