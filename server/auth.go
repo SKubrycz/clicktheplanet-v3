@@ -98,11 +98,43 @@ func checkAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 
 		accessToken, err := r.Cookie("access_token")
 		if err != nil {
+			if refreshVerify.Valid {
+				fmt.Println("Refreshing access_token")
+				ACCESS_MAX_AGE := 60 * 15
+				accessClaims := &jwt.MapClaims{
+					"expiresAt": time.Now().Add(time.Duration(ACCESS_MAX_AGE) * time.Second),
+					"userId":    int(refreshVerify.Claims.(jwt.MapClaims)["userId"].(float64)),
+				}
+				accessToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims).SignedString([]byte(accessSecret))
+				if err != nil {
+					writeJSON(w, http.StatusInternalServerError, "Could not login")
+					return
+				}
+				accessTokenCookie := http.Cookie{
+					Name:     "access_token",
+					Value:    accessToken,
+					MaxAge:   ACCESS_MAX_AGE,
+					HttpOnly: true,
+					SameSite: http.SameSiteStrictMode,
+				}
+
+				http.SetCookie(w, &accessTokenCookie)
+			} else {
+				fmt.Println("Couldn't find a cookie")
+				errMessage := Message{
+					Message: "Not authorized",
+				}
+				writeJSON(w, http.StatusUnauthorized, errMessage)
+				return
+			}
+		}
+		accessToken, err = r.Cookie("access_token")
+		if err != nil {
 			fmt.Println("Couldn't find a cookie")
-			error := Message{
+			errMessage := Message{
 				Message: "Not authorized",
 			}
-			writeJSON(w, http.StatusUnauthorized, error)
+			writeJSON(w, http.StatusUnauthorized, errMessage)
 			return
 		}
 		accessVerify, err := verifyJWT(accessToken.Value, accessSecret)
