@@ -80,17 +80,22 @@ func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		const userId UserId = "userid" // key of type UserId - it has to stay here
 
-		testId, ok := r.Context().Value(userId).(int)
+		id, ok := r.Context().Value(userId).(int)
 		if !ok {
-			fmt.Println(testId)
+			fmt.Println(id)
 			fmt.Println(ok)
 			writeJSON(w, http.StatusForbidden, "Not authorized")
 			return
 		}
-		fmt.Println(testId)
+		fmt.Println(id)
 
-		game := NewGame()
-		writeJSON(w, http.StatusOK, game)
+		gameData, err := s.db.GetGameByUserId(id)
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, "Internal server error")
+		}
+		fmt.Println(gameData)
+		//game := NewGame(gameData)
+		writeJSON(w, http.StatusOK, gameData)
 		return
 	} else {
 		writeJSON(w, http.StatusMethodNotAllowed, "Method not allowed")

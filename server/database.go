@@ -9,6 +9,7 @@ import (
 type Database interface {
 	CreateAccount(*User) error
 	GetAccountByLogin(string) (*User, error)
+	GetGameByUserId(id int) ([8]interface{} /*for now*/, error)
 }
 
 type Postgres struct {
@@ -101,4 +102,40 @@ func (p *Postgres) GetAccountByLogin(login string) (*User, error) {
 	}
 	fmt.Println(user)
 	return user, err
+}
+
+func (p *Postgres) GetGameByUserId(id int) ([8]interface{} /*for now*/, error) {
+	query := `
+	SELECT gold, diamonds, max_damage, current_level, max_level, current_stage, max_stage, planets_destroyed
+	FROM games WHERE user_id = $1
+	`
+
+	fromDb := [8]interface{}{}
+	/* var game = &Game{
+		Store: map[string]StoreUpgrade{},
+		Ship:  map[string]ShipUpgrade{},
+	} */
+	row := p.db.QueryRow(query, id).Scan(
+		&fromDb[0],
+		&fromDb[1],
+		&fromDb[2],
+		&fromDb[3],
+		&fromDb[4],
+		&fromDb[5],
+		&fromDb[6],
+		&fromDb[7],
+		// &game.Gold,
+		// &game.Diamonds,
+		// &game.MaxDamage,
+		// &game.CurrentLevel,
+		// &game.MaxLevel,
+		// &game.CurrentStage,
+		// &game.MaxStage,
+		// &game.PlanetsDestroyed,
+		//&game.Store,
+		//&game.Ship
+	)
+	fmt.Println(row)
+
+	return fromDb, nil
 }
