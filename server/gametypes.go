@@ -34,7 +34,7 @@ type Game struct {
 	Ship             map[string]ShipUpgrade
 }
 
-func NewGame(p *Postgres) *Game {
+func NewGame() *Game {
 	// ... here data from database
 
 	// big numbers initialization and db data assignment to variables

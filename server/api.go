@@ -78,11 +78,6 @@ func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 	// Here the user game state data is going to be fetched from the database
 
 	if r.Method == "GET" {
-		welcome_game := Welcome{
-			Title: "Hello to /game!",
-			Desc:  "Here you can play since you're logged in!",
-		}
-
 		const userId UserId = "userid" // key of type UserId - it has to stay here
 
 		testId, ok := r.Context().Value(userId).(int)
@@ -94,7 +89,8 @@ func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println(testId)
 
-		writeJSON(w, http.StatusOK, welcome_game)
+		game := NewGame()
+		writeJSON(w, http.StatusOK, game)
 		return
 	} else {
 		writeJSON(w, http.StatusMethodNotAllowed, "Method not allowed")
