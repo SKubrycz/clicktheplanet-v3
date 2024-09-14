@@ -95,8 +95,9 @@ func checkAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 			fmt.Println(err)
 		}
 		fmt.Println("refreshToken verified", refreshVerify.Claims)
-
 		accessToken, err := r.Cookie("access_token")
+		fmt.Println(accessToken)
+		var accessTokenValue string
 		if err != nil {
 			if refreshVerify.Valid {
 				fmt.Println("Refreshing access_token")
@@ -105,20 +106,22 @@ func checkAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 					"expiresAt": time.Now().Add(time.Duration(ACCESS_MAX_AGE) * time.Second),
 					"userId":    int(refreshVerify.Claims.(jwt.MapClaims)["userId"].(float64)),
 				}
-				accessToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims).SignedString([]byte(accessSecret))
+				accessTokenSigned, err := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims).SignedString([]byte(accessSecret))
 				if err != nil {
 					writeJSON(w, http.StatusInternalServerError, "Could not login")
 					return
 				}
+				accessTokenValue = accessTokenSigned
 				accessTokenCookie := http.Cookie{
 					Name:     "access_token",
-					Value:    accessToken,
+					Value:    accessTokenValue,
 					MaxAge:   ACCESS_MAX_AGE,
 					HttpOnly: true,
 					SameSite: http.SameSiteStrictMode,
 				}
 
 				http.SetCookie(w, &accessTokenCookie)
+				fmt.Println("accessTokenCookie set")
 			} else {
 				fmt.Println("Couldn't find a cookie")
 				errMessage := Message{
@@ -128,28 +131,27 @@ func checkAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 		}
-		accessToken, err = r.Cookie("access_token")
-		if err != nil {
-			fmt.Println("Couldn't find a cookie")
-			errMessage := Message{
-				Message: "Not authorized",
+		if refreshVerify.Valid {
+			var accessVerify *jwt.Token
+			if accessToken == nil {
+				accessVerify, err = verifyJWT(accessTokenValue, accessSecret)
+			} else {
+				accessVerify, err = verifyJWT(accessToken.Value, accessSecret)
 			}
-			writeJSON(w, http.StatusUnauthorized, errMessage)
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Println("accessToken verified", accessVerify.Claims)
+
+			claims := accessVerify.Claims.(jwt.MapClaims)
+			const userId UserId = "userid" // key of type UserId - it has to stay here
+
+			ctx := context.WithValue(r.Context(), userId, int(claims["userId"].(float64)))
+			fmt.Println("Context for userId has been created")
+			handlerFunc(w, r.WithContext(ctx))
+		} else {
+			writeJSON(w, http.StatusUnauthorized, "Not authorized")
 			return
 		}
-		accessVerify, err := verifyJWT(accessToken.Value, accessSecret)
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println("accessToken verified", accessVerify.Claims)
-
-		fmt.Printf("%s: %s\n", accessToken.Name, accessToken.Value)
-
-		claims := accessVerify.Claims.(jwt.MapClaims)
-		const userId UserId = "userid" // key of type UserId - it has to stay here
-
-		ctx := context.WithValue(r.Context(), userId, int(claims["userId"].(float64)))
-		fmt.Println("Context for userId has been created")
-		handlerFunc(w, r.WithContext(ctx))
 	}
 }
