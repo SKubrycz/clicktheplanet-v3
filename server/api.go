@@ -83,10 +83,11 @@ func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 			Desc:  "Here you can play since you're logged in!",
 		}
 
-		const userId UserId = "userid"
+		const userId UserId = "userid" // key of type UserId - it has to stay here
 
-		testId, ok := r.Context().Value(userId).(int) // later to be replaced by db user id
+		testId, ok := r.Context().Value(userId).(int)
 		if !ok {
+			fmt.Println(testId)
 			fmt.Println(ok)
 			writeJSON(w, http.StatusForbidden, "Not authorized")
 			return
@@ -155,7 +156,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		assignJWT(w, r)
+		assignJWT(w, user.Id)
 		return
 	}
 }
@@ -246,3 +247,10 @@ func writeJSON(w http.ResponseWriter, status int, payload any) error {
 
 	return json.NewEncoder(w).Encode(payload)
 }
+
+// type WithDbFunc func(http.ResponseWriter, *http.Request)
+
+// func returnHandlerFunc(f WithDbFunc, p *Postgres) http.HandlerFunc {
+// 	return func (w http.ResponseWriter, r *http.Request) {
+// 	}
+// }
