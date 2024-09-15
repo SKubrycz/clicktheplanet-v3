@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
+	"strconv"
 )
 
 type Database interface {
 	CreateAccount(*User) error
 	GetAccountByLogin(string) (*User, error)
-	GetGameByUserId(id int) ([8]interface{} /*for now*/, error)
+	GetGameByUserId(id int) (*GameData, error)
 }
 
 type Postgres struct {
@@ -104,38 +105,76 @@ func (p *Postgres) GetAccountByLogin(login string) (*User, error) {
 	return user, err
 }
 
-func (p *Postgres) GetGameByUserId(id int) ([8]interface{} /*for now*/, error) {
-	query := `
-	SELECT gold, diamonds, max_damage, current_level, max_level, current_stage, max_stage, planets_destroyed
+func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
+	gameQuery := `
+	SELECT id, gold, diamonds, max_damage, current_level, max_level, current_stage, max_stage, planets_destroyed
 	FROM games WHERE user_id = $1
 	`
 
-	fromDb := [8]interface{}{}
-	/* var game = &Game{
-		Store: map[string]StoreUpgrade{},
-		Ship:  map[string]ShipUpgrade{},
-	} */
-	row := p.db.QueryRow(query, id).Scan(
-		&fromDb[0],
-		&fromDb[1],
-		&fromDb[2],
-		&fromDb[3],
-		&fromDb[4],
-		&fromDb[5],
-		&fromDb[6],
-		&fromDb[7],
-		// &game.Gold,
-		// &game.Diamonds,
-		// &game.MaxDamage,
-		// &game.CurrentLevel,
-		// &game.MaxLevel,
-		// &game.CurrentStage,
-		// &game.MaxStage,
-		// &game.PlanetsDestroyed,
-		//&game.Store,
-		//&game.Ship
-	)
-	fmt.Println(row)
+	gameShipQuery := `
+	SELECT level FROM game_ship WHERE game_id = $1
+	`
 
-	return fromDb, nil
+	gameStoreQuery := `
+	SELECT level FROM game_store WHERE game_id = $1
+	`
+
+	var game = &GameData{
+		Store: map[string]StoreUpgradeData{},
+		Ship:  map[string]ShipUpgradeData{},
+	}
+	var gameId int
+	err := p.db.QueryRow(gameQuery, id).Scan(
+		&gameId,
+		&game.Gold,
+		&game.Diamonds,
+		&game.MaxDamage,
+		&game.CurrentLevel,
+		&game.MaxLevel,
+		&game.CurrentStage,
+		&game.MaxStage,
+		&game.PlanetsDestroyed,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	i := 1
+	rows, err := p.db.Query(gameShipQuery, gameId)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		ship := new(ShipUpgradeData)
+		err := rows.Scan(
+			&ship.Level,
+		)
+		if err != nil {
+			return nil, err
+		}
+		iStr := strconv.Itoa(i)
+		game.Ship[iStr] = *ship
+		i++
+	}
+
+	i = 1
+	rows, err = p.db.Query(gameStoreQuery, gameId)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		store := new(StoreUpgradeData)
+		err := rows.Scan(
+			&store.Level,
+		)
+		if err != nil {
+			return nil, err
+		}
+		iStr := strconv.Itoa(i)
+		fmt.Println(iStr)
+		game.Store[iStr] = *store
+		i++
+	}
+
+	return game, nil
 }

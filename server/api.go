@@ -93,9 +93,10 @@ func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			writeJSON(w, http.StatusInternalServerError, "Internal server error")
 		}
-		fmt.Println(gameData)
-		//game := NewGame(gameData)
-		writeJSON(w, http.StatusOK, gameData)
+		fmt.Println(gameData.Store)
+		fmt.Println()
+		game := NewGame(gameData)
+		writeJSON(w, http.StatusOK, game)
 		return
 	} else {
 		writeJSON(w, http.StatusMethodNotAllowed, "Method not allowed")
