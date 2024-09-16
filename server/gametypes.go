@@ -20,8 +20,9 @@ type StoreUpgrade struct {
 }
 
 type Planet struct {
-	Name   string
-	Health *big.Float
+	Name          string
+	CurrentHealth *big.Float
+	MaxHealth     *big.Float
 }
 
 type Game struct {
@@ -94,8 +95,9 @@ func NewGame(gameData *GameData) *Game {
 	planetsDestroyed.SetString(gameData.PlanetsDestroyed)
 
 	planet := Planet{
-		Name:   "Planet_name",
-		Health: new(big.Float),
+		Name:          "Planet_name",
+		CurrentHealth: new(big.Float),
+		MaxHealth:     new(big.Float),
 	}
 
 	store := map[string]StoreUpgrade{
@@ -167,13 +169,13 @@ func (g *Game) ClickThePlanet() {
 
 }
 
-func (g *Game) CalculatePlanetHealth() {
+func (g *Game) CalculatePlanetHealth() string {
 	fmt.Println("from CalculatePlanetHealth")
 
 	// Formula
-	f := 1.55
+	f := 1.3
 
-	exp := float64( /* g.CurrentLevel */ 56 - 1)
+	exp := float64(g.CurrentLevel - 1)
 	pow := math.Pow(f, exp)
 
 	result := new(big.Float).SetFloat64(pow)
@@ -183,7 +185,26 @@ func (g *Game) CalculatePlanetHealth() {
 
 	if len(intResult.String()) > 6 {
 		fmt.Println(result.Text('e', 3))
+		return result.Text('e', 3)
 	} else {
 		fmt.Println(result.Text('f', 0))
+		return result.Text('f', 0)
 	}
+}
+
+func (g *Game) AdvanceLevel() {
+	// return new Planet.Health; new Planet.Name
+	// set g.CurrentStage to 1; if g.CurrentLevel > MaxLevel then g.MaxStage = g.CurrentStage
+}
+
+func (g *Game) PreviousLevel() {
+
+}
+
+func (g *Game) NextLevel() {
+
+}
+
+func (g *Game) Upgrade( /* store/ship */ ) {
+
 }

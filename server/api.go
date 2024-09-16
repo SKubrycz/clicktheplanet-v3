@@ -125,6 +125,11 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	for {
 		messageType, p, err := conn.ReadMessage()
 		fmt.Println(string(p))
+		// IDEA: Add an action handler for each user action
+		// for example: user send "click" message
+		// message string gets sent to the ActionHandler
+		// handler decides on what to do within the game logic
+		// according to the received message
 		if err != nil {
 			log.Println(err)
 			return
