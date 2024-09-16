@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/big"
+	"strconv"
 )
 
 type ShipUpgrade struct {
@@ -175,6 +176,19 @@ func (g *Game) ClickThePlanet() {
 	}
 }
 
+func (g *Game) GetHealthPercent() int {
+	hundred := big.NewFloat(100)
+	healthMultiplied := new(big.Float)
+	healthMultiplied.SetString(g.Planet.CurrentHealth.Text('f', 3))
+	healthMultiplied.Mul(healthMultiplied, hundred)
+	healthMultiplied.Quo(healthMultiplied, g.Planet.MaxHealth)
+	intHealth, _ := healthMultiplied.Int(nil)
+	intText := intHealth.Text(10)
+	percentage, _ := strconv.Atoi(intText)
+	fmt.Println(percentage)
+	return percentage
+}
+
 func (g *Game) CalculatePlanetHealth() {
 	fmt.Println("CalculatePlanetHealth")
 
@@ -206,7 +220,7 @@ func (g *Game) Advance() {
 	// calculate max health and current health equal to max health
 	g.CurrentStage++
 	if g.CurrentStage > 10 {
-		g.CurrentLevel++
+		g.CurrentLevel++ // for each level up / stage up, save progress to database
 		g.CurrentStage = 1
 	}
 	if g.CurrentLevel > g.MaxLevel {

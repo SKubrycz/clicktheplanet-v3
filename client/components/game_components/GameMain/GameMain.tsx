@@ -3,44 +3,39 @@
 import { useState, useEffect } from "react";
 
 import "./GameMain.scss";
+import { Data } from "@/app/game/page";
 
 export interface Health {
-  currentHealth: number;
-  maxHealth: number;
+  currentHealth: string;
+  maxHealth: string;
 }
 
 interface GameMainProps {
+  data: Data | undefined;
   planetClick(data: string): void;
 }
 
-export default function GameMain({ planetClick }: GameMainProps) {
+export default function GameMain({ data, planetClick }: GameMainProps) {
   const [health, setHealth] = useState<Health>({
-    currentHealth: 10,
-    maxHealth: 10,
+    currentHealth: "10",
+    maxHealth: "10",
   });
   const [width, setWidth] = useState<number>(100);
 
   useEffect(() => {
-    /*     const timeout = setTimeout(() => {
-      handlePlanetClick();
-    }, 1000);
-    return () => clearTimeout(timeout); */
-    if (health.currentHealth <= 0) {
+    if (data) {
       setHealth({
         ...health,
-        currentHealth: health.maxHealth,
+        currentHealth: data.currentHealth,
+        maxHealth: data.maxHealth,
       });
+      setWidth(data.healthPercent);
     }
-    setWidth((health.currentHealth * 100) / health.maxHealth);
-  }, [health.currentHealth]);
+  }, [data]);
 
   const handlePlanetClick = () => {
     // after WebSocket connection -> send click message to the server
     // for now the click mechanic is as below:
-    setHealth({
-      ...health,
-      currentHealth: health.currentHealth - 1,
-    });
     planetClick("click");
     //console.log(width);
     //console.log(health.currentHealth);
@@ -53,9 +48,9 @@ export default function GameMain({ planetClick }: GameMainProps) {
   return (
     <main className="game-main">
       <div className="main-spacing"></div>
-      <div className="main-current-level">Level 14</div>
-      <div className="main-current-stage">3/10</div>
-      <div className="main-planet-name">Planet name</div>
+      <div className="main-current-level">Level {data?.currentLevel}</div>
+      <div className="main-current-stage">{data?.currentStage}/10</div>
+      <div className="main-planet-name">{data?.name}</div>
       <div
         className="main-planet-image"
         onClick={() => handlePlanetClick()}

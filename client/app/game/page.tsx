@@ -1,13 +1,31 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 import GameNavbar from "@/components/game_components/GameNavbar/GameNavbar";
 import GameSidebar from "@/components/game_components/GameSidebar/GameSidebar";
 import GameMain from "@/components/game_components/GameMain/GameMain";
 
+export interface Data {
+  name: string;
+  currentHealth: string;
+  healthPercent: number;
+  maxHealth: string;
+  currentLevel: number;
+  currentStage: number;
+}
+
 export default function Game() {
+  const [data, setData] = useState<Data | undefined>({
+    name: "Planet_name",
+    currentHealth: "10",
+    healthPercent: 100,
+    maxHealth: "10",
+    currentLevel: 1,
+    currentStage: 1,
+  });
+  const socket = useRef<WebSocket | null>(null);
   const router = useRouter();
 
   const handleGetGame = async () => {
@@ -37,28 +55,32 @@ export default function Game() {
     console.log(res);
   };
 
-  const socket = new WebSocket("ws://localhost:8000/ws_game");
-
-  socket.addEventListener("open", (e) => {
-    console.log("WebSocket connection established");
-    socket.send("Message to server");
-  });
-
-  socket.addEventListener("message", (e) => {
-    console.log("From the server: ", e.data);
-  });
-
-  socket.addEventListener("close", (e) => {
-    console.log("Disconnected");
-  });
-
   const handlePlanetClickData = (data: string) => {
-    socket.send(data);
+    if (socket.current) socket.current.send(data);
     console.log("click");
   };
 
   useEffect(() => {
     handleGetGame();
+
+    socket.current = new WebSocket("ws://localhost:8000/ws_game");
+
+    socket.current.onopen = (e: Event) => {
+      console.log("WebSocket connection established");
+      if (socket.current) {
+        socket.current.send("click");
+      }
+    };
+
+    socket.current.onmessage = (e: MessageEvent) => {
+      let data = JSON.parse(e.data);
+      console.log("From the server: ", data);
+      setData(JSON.parse(e.data));
+    };
+
+    socket.current.onclose = () => {
+      console.log("Disconnected");
+    };
   }, []);
 
   return (
@@ -66,7 +88,7 @@ export default function Game() {
       <GameNavbar></GameNavbar>
       <div className="game-content-wrapper">
         <GameSidebar></GameSidebar>
-        <GameMain planetClick={handlePlanetClickData}></GameMain>
+        <GameMain data={data} planetClick={handlePlanetClickData}></GameMain>
       </div>
     </div>
   );
