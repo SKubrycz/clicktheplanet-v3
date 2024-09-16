@@ -65,7 +65,7 @@ func (p *Postgres) CreateAccount(u *User) error {
 		return err
 	}
 
-	for i := 1; i < 4; i++ {
+	for i := 1; i <= 4; i++ {
 		_, err = p.db.Exec(queryGameShip, 0, gameId, i)
 		if err != nil {
 			fmt.Println(err)

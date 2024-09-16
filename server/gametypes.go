@@ -26,15 +26,15 @@ type Planet struct {
 }
 
 type Game struct {
-	Gold             big.Float
+	Gold             *big.Float
 	Diamonds         int
-	CurrentDamage    big.Float
-	MaxDamage        big.Float
+	CurrentDamage    *big.Float
+	MaxDamage        *big.Float
 	CurrentLevel     int
 	MaxLevel         int
 	CurrentStage     int
 	MaxStage         int
-	PlanetsDestroyed big.Float // rounded to 0 decimal places
+	PlanetsDestroyed *big.Float // rounded to 0 decimal places
 	Planet           Planet
 	Store            map[string]StoreUpgrade
 	Ship             map[string]ShipUpgrade
@@ -150,15 +150,15 @@ func NewGame(gameData *GameData) *Game {
 	ship["4"].Level.SetString(gameData.Ship["4"].Level)
 
 	return &Game{
-		Gold:             *gold,
+		Gold:             gold,
 		Diamonds:         diamonds,
-		CurrentDamage:    *currentDamage,
-		MaxDamage:        *maxDamage,
+		CurrentDamage:    currentDamage,
+		MaxDamage:        maxDamage,
 		CurrentLevel:     currentLevel,
 		MaxLevel:         maxLevel,
 		CurrentStage:     currentStage,
 		MaxStage:         maxStage,
-		PlanetsDestroyed: *planetsDestroyed,
+		PlanetsDestroyed: planetsDestroyed,
 		Planet:           planet,
 		Store:            store,
 		Ship:             ship,
@@ -166,11 +166,17 @@ func NewGame(gameData *GameData) *Game {
 }
 
 func (g *Game) ClickThePlanet() {
-
+	g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, g.CurrentDamage)
+	x := big.NewFloat(0)
+	if g.Planet.CurrentHealth.Cmp(x) <= 0 {
+		// Calculate Max Health
+		g.Advance()
+		g.CalculatePlanetHealth()
+	}
 }
 
-func (g *Game) CalculatePlanetHealth() string {
-	fmt.Println("from CalculatePlanetHealth")
+func (g *Game) CalculatePlanetHealth() {
+	fmt.Println("CalculatePlanetHealth")
 
 	// Formula
 	f := 1.3
@@ -185,16 +191,28 @@ func (g *Game) CalculatePlanetHealth() string {
 
 	if len(intResult.String()) > 6 {
 		fmt.Println(result.Text('e', 3))
-		return result.Text('e', 3)
+		g.Planet.MaxHealth.SetString(result.Text('e', 3))
+		g.Planet.CurrentHealth.SetString(result.Text('e', 3)) // set planet to 100%hp
 	} else {
 		fmt.Println(result.Text('f', 0))
-		return result.Text('f', 0)
+		g.Planet.MaxHealth.SetString(result.Text('f', 0))
+		g.Planet.CurrentHealth.SetString(result.Text('f', 0)) // set planet to 100%hp
 	}
 }
 
-func (g *Game) AdvanceLevel() {
+func (g *Game) Advance() {
 	// return new Planet.Health; new Planet.Name
 	// set g.CurrentStage to 1; if g.CurrentLevel > MaxLevel then g.MaxStage = g.CurrentStage
+	// calculate max health and current health equal to max health
+	g.CurrentStage++
+	if g.CurrentStage > 10 {
+		g.CurrentLevel++
+		g.CurrentStage = 1
+	}
+	if g.CurrentLevel > g.MaxLevel {
+		g.MaxLevel = g.CurrentLevel
+	}
+
 }
 
 func (g *Game) PreviousLevel() {

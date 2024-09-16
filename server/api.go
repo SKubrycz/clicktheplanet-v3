@@ -32,7 +32,7 @@ func (s *Server) Start() {
 	router.HandleFunc("/login", s.handleLogin)
 	router.HandleFunc("/register", s.handleRegister)
 	router.HandleFunc("/game", checkAuth(s.handleGame))
-	router.HandleFunc("/ws_game", s.handleGetWsGame)
+	router.HandleFunc("/ws_game", checkAuth(s.handleGetWsGame))
 
 	http.ListenAndServe(s.addr, router)
 }
@@ -78,25 +78,7 @@ func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 	// Here the user game state data is going to be fetched from the database
 
 	if r.Method == "GET" {
-		const userId UserId = "userid" // key of type UserId - it has to stay here
-
-		id, ok := r.Context().Value(userId).(int)
-		if !ok {
-			fmt.Println(id)
-			fmt.Println(ok)
-			writeJSON(w, http.StatusForbidden, "Not authorized")
-			return
-		}
-		fmt.Println(id)
-
-		gameData, err := s.db.GetGameByUserId(id)
-		if err != nil {
-			writeJSON(w, http.StatusInternalServerError, "Internal server error")
-		}
-		fmt.Println(gameData.Store)
-		game := NewGame(gameData)
-		game.CalculatePlanetHealth()
-		writeJSON(w, http.StatusOK, game)
+		writeJSON(w, http.StatusOK, "Welcome to /game")
 		return
 	} else {
 		writeJSON(w, http.StatusMethodNotAllowed, "Method not allowed")
@@ -105,6 +87,25 @@ func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
+	const userId UserId = "userid" // key of type UserId - it has to stay here
+
+	id, ok := r.Context().Value(userId).(int)
+	if !ok {
+		fmt.Println(id)
+		fmt.Println(ok)
+		writeJSON(w, http.StatusForbidden, "Not authorized")
+		return
+	}
+	fmt.Println(id)
+
+	gameData, err := s.db.GetGameByUserId(id)
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, "Internal server error")
+	}
+	fmt.Println(gameData.Store)
+	game := NewGame(gameData)
+	game.CalculatePlanetHealth()
+
 	var upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -125,6 +126,7 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	for {
 		messageType, p, err := conn.ReadMessage()
 		fmt.Println(string(p))
+		response := ActionHandler(game, string(p))
 		// IDEA: Add an action handler for each user action
 		// for example: user send "click" message
 		// message string gets sent to the ActionHandler
@@ -134,7 +136,7 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-		if err := conn.WriteMessage(messageType, p); err != nil {
+		if err := conn.WriteMessage(messageType, response); err != nil {
 			log.Println(err)
 			return
 		}

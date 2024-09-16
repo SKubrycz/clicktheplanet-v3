@@ -53,7 +53,7 @@ export default function Game() {
   });
 
   const handlePlanetClickData = (data: string) => {
-    socket.send(JSON.stringify(data));
+    socket.send(data);
     console.log("click");
   };
 
