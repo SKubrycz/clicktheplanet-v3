@@ -13,7 +13,7 @@ import (
 func assignJWT(w http.ResponseWriter, userId uint64) {
 	fmt.Println("Assigning JWT...")
 	REFRESH_MAX_AGE := 60 * 60 * 24 * 31
-	ACCESS_MAX_AGE := 60 * 15
+	ACCESS_MAX_AGE := 60 * 30
 	refreshSecret := os.Getenv("REFRESH_TOKEN_SECRET")
 	accessSecret := os.Getenv("ACCESS_TOKEN_SECRET")
 
@@ -101,7 +101,7 @@ func checkAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 		if err != nil {
 			if refreshVerify.Valid {
 				fmt.Println("Refreshing access_token")
-				ACCESS_MAX_AGE := 60 * 15
+				ACCESS_MAX_AGE := 60 * 30
 				accessClaims := &jwt.MapClaims{
 					"expiresAt": time.Now().Add(time.Duration(ACCESS_MAX_AGE) * time.Second),
 					"userId":    int(refreshVerify.Claims.(jwt.MapClaims)["userId"].(float64)),

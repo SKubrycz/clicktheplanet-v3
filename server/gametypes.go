@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"math"
 	"math/big"
 )
 
@@ -19,7 +21,7 @@ type StoreUpgrade struct {
 
 type Planet struct {
 	Name   string
-	Health big.Float
+	Health *big.Float
 }
 
 type Game struct {
@@ -32,6 +34,7 @@ type Game struct {
 	CurrentStage     int
 	MaxStage         int
 	PlanetsDestroyed big.Float // rounded to 0 decimal places
+	Planet           Planet
 	Store            map[string]StoreUpgrade
 	Ship             map[string]ShipUpgrade
 }
@@ -89,6 +92,11 @@ func NewGame(gameData *GameData) *Game {
 
 	planetsDestroyed := new(big.Float)
 	planetsDestroyed.SetString(gameData.PlanetsDestroyed)
+
+	planet := Planet{
+		Name:   "Planet_name",
+		Health: new(big.Float),
+	}
 
 	store := map[string]StoreUpgrade{
 		"1": StoreUpgrade{
@@ -149,6 +157,7 @@ func NewGame(gameData *GameData) *Game {
 		CurrentStage:     currentStage,
 		MaxStage:         maxStage,
 		PlanetsDestroyed: *planetsDestroyed,
+		Planet:           planet,
 		Store:            store,
 		Ship:             ship,
 	}
@@ -156,4 +165,25 @@ func NewGame(gameData *GameData) *Game {
 
 func (g *Game) ClickThePlanet() {
 
+}
+
+func (g *Game) CalculatePlanetHealth() {
+	fmt.Println("from CalculatePlanetHealth")
+
+	// Formula
+	f := 1.55
+
+	exp := float64( /* g.CurrentLevel */ 56 - 1)
+	pow := math.Pow(f, exp)
+
+	result := new(big.Float).SetFloat64(pow)
+	result.Mul(result, big.NewFloat(10))
+
+	intResult, _ := result.Int(nil)
+
+	if len(intResult.String()) > 6 {
+		fmt.Println(result.Text('e', 3))
+	} else {
+		fmt.Println(result.Text('f', 0))
+	}
 }

@@ -94,8 +94,8 @@ func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, http.StatusInternalServerError, "Internal server error")
 		}
 		fmt.Println(gameData.Store)
-		fmt.Println()
 		game := NewGame(gameData)
+		game.CalculatePlanetHealth()
 		writeJSON(w, http.StatusOK, game)
 		return
 	} else {
