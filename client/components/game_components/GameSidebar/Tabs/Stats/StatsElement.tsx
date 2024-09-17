@@ -1,6 +1,8 @@
+import { Data } from "@/app/game/page";
+
 interface StatsElementProps {
   title: string; // maybe set title and description
-  data: string | number;
+  data: number | string | undefined;
 }
 
 export default function StatsElement({ title, data }: StatsElementProps) {

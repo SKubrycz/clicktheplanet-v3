@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, createContext } from "react";
 import { useRouter } from "next/navigation";
 
 import GameNavbar from "@/components/game_components/GameNavbar/GameNavbar";
@@ -8,23 +8,41 @@ import GameSidebar from "@/components/game_components/GameSidebar/GameSidebar";
 import GameMain from "@/components/game_components/GameMain/GameMain";
 
 export interface Data {
-  name: string;
+  gold: string;
+  diamonds: number;
+  currentDamage: string;
+  maxDamage: string;
+  planetName: string;
   currentHealth: string;
   healthPercent: number;
   maxHealth: string;
   currentLevel: number;
+  maxLevel: number;
   currentStage: number;
+  maxStage: number;
+  planetsDestroyed: string;
 }
 
+const gameObject: Data = {
+  gold: "100",
+  diamonds: 0,
+  currentDamage: "1",
+  maxDamage: "1",
+  planetName: "Planet_name",
+  currentHealth: "10",
+  healthPercent: 100,
+  maxHealth: "10",
+  currentLevel: 1,
+  maxLevel: 1,
+  currentStage: 1,
+  maxStage: 1,
+  planetsDestroyed: "0",
+};
+
+export const GameContext = createContext<Data | undefined>(gameObject);
+
 export default function Game() {
-  const [data, setData] = useState<Data | undefined>({
-    name: "Planet_name",
-    currentHealth: "10",
-    healthPercent: 100,
-    maxHealth: "10",
-    currentLevel: 1,
-    currentStage: 1,
-  });
+  const [data, setData] = useState<Data | undefined>(gameObject);
   const socket = useRef<WebSocket | null>(null);
   const router = useRouter();
 
@@ -68,7 +86,7 @@ export default function Game() {
     socket.current.onopen = (e: Event) => {
       console.log("WebSocket connection established");
       if (socket.current) {
-        socket.current.send("click");
+        socket.current.send("init");
       }
     };
 
@@ -85,11 +103,13 @@ export default function Game() {
 
   return (
     <div className="game-wrapper">
-      <GameNavbar></GameNavbar>
-      <div className="game-content-wrapper">
-        <GameSidebar></GameSidebar>
-        <GameMain data={data} planetClick={handlePlanetClickData}></GameMain>
-      </div>
+      <GameContext.Provider value={data}>
+        <GameNavbar></GameNavbar>
+        <div className="game-content-wrapper">
+          <GameSidebar></GameSidebar>
+          <GameMain planetClick={handlePlanetClickData}></GameMain>
+        </div>
+      </GameContext.Provider>
     </div>
   );
 }

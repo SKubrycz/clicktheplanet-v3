@@ -3,13 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
-	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 	"regexp"
 	"unicode"
+
+	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Server struct {
@@ -127,11 +128,6 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 		messageType, p, err := conn.ReadMessage()
 		fmt.Println(string(p))
 		response := ActionHandler(game, string(p))
-		// IDEA: Add an action handler for each user action
-		// for example: user send "click" message
-		// message string gets sent to the ActionHandler
-		// handler decides on what to do within the game logic
-		// according to the received message
 		if err != nil {
 			log.Println(err)
 			return

@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { GameContext } from "@/app/game/page";
 
 import "./GameMain.scss";
+
 import { Data } from "@/app/game/page";
 
 export interface Health {
@@ -11,11 +13,11 @@ export interface Health {
 }
 
 interface GameMainProps {
-  data: Data | undefined;
   planetClick(data: string): void;
 }
 
-export default function GameMain({ data, planetClick }: GameMainProps) {
+export default function GameMain({ planetClick }: GameMainProps) {
+  let data: Data | undefined = useContext(GameContext);
   const [health, setHealth] = useState<Health>({
     currentHealth: "10",
     maxHealth: "10",
@@ -50,7 +52,7 @@ export default function GameMain({ data, planetClick }: GameMainProps) {
       <div className="main-spacing"></div>
       <div className="main-current-level">Level {data?.currentLevel}</div>
       <div className="main-current-stage">{data?.currentStage}/10</div>
-      <div className="main-planet-name">{data?.name}</div>
+      <div className="main-planet-name">{data?.planetName}</div>
       <div
         className="main-planet-image"
         onClick={() => handlePlanetClick()}
