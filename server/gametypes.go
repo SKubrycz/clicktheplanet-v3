@@ -24,6 +24,7 @@ type Planet struct {
 	Name          string
 	CurrentHealth *big.Float
 	MaxHealth     *big.Float
+	Gold          *big.Float
 }
 
 type Game struct {
@@ -99,6 +100,7 @@ func NewGame(gameData *GameData) *Game {
 		Name:          "Planet_name",
 		CurrentHealth: new(big.Float),
 		MaxHealth:     new(big.Float),
+		Gold:          new(big.Float),
 	}
 
 	store := map[string]StoreUpgrade{
@@ -170,9 +172,11 @@ func (g *Game) ClickThePlanet() {
 	g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, g.CurrentDamage)
 	x := big.NewFloat(0)
 	if g.Planet.CurrentHealth.Cmp(x) <= 0 {
-		// Calculate Max Health
 		g.Advance()
 		g.CalculatePlanetHealth()
+		g.AddPlanetDestroyed()
+		g.CalculateGoldEarned()
+		g.AddCurrentGold()
 	}
 }
 
@@ -239,4 +243,39 @@ func (g *Game) NextLevel() {
 
 func (g *Game) Upgrade( /* store/ship */ ) {
 
+}
+
+func (g *Game) CalculateGoldEarned() {
+	f := 1.05
+
+	exp := float64(g.CurrentLevel)
+	pow := math.Pow(f, exp)
+
+	result := new(big.Float).SetFloat64(pow)
+	result.Mul(result, big.NewFloat(10))
+
+	intResult, _ := result.Int(nil)
+
+	if len(intResult.String()) > 6 {
+		fmt.Println(result.Text('e', 3))
+		g.Planet.Gold.SetString(result.Text('e', 3))
+	} else {
+		fmt.Println(result.Text('f', 0))
+		g.Planet.Gold.SetString(result.Text('f', 0))
+	}
+}
+
+func (g *Game) AddCurrentGold() {
+	result := new(big.Float)
+	result.Add(g.Gold, g.Planet.Gold)
+
+	g.Gold = result
+}
+
+func (g *Game) AddPlanetDestroyed() {
+	add := new(big.Float)
+	one := new(big.Float)
+	one.SetString("1")
+	add.Add(g.PlanetsDestroyed, one)
+	g.PlanetsDestroyed = add
 }
