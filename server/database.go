@@ -11,6 +11,7 @@ type Database interface {
 	CreateAccount(*User) error
 	GetAccountByLogin(string) (*User, error)
 	GetGameByUserId(id int) (*GameData, error)
+	SaveGameProgress(userId int, g *Game) error
 }
 
 type Postgres struct {
@@ -49,6 +50,14 @@ func (p *Postgres) CreateAccount(u *User) error {
 	INSERT INTO game_store (level, game_id, store_id) VALUES ($1, $2, $3);
 	`
 
+	queryCountShip := `
+	SELECT COUNT(id) FROM ship;
+	`
+
+	queryCountStore := `
+	SELECT count(id) FROM store;
+	`
+
 	_, err := p.db.Exec(queryUser, u.Login, u.Email, u.Password, u.CreatedAt)
 	if err != nil {
 		return err
@@ -65,13 +74,26 @@ func (p *Postgres) CreateAccount(u *User) error {
 		return err
 	}
 
-	for i := 1; i <= 4; i++ {
+	//Count rows for store and ship before inserting to game_ship and game_store
+	var shipCount int
+	err = p.db.QueryRow(queryCountShip).Scan(&shipCount)
+	if err != nil {
+		return err
+	}
+	var storeCount int
+	err = p.db.QueryRow(queryCountStore).Scan(&storeCount)
+	if err != nil {
+		return err
+	}
+
+	for i := 1; i <= shipCount; i++ {
 		_, err = p.db.Exec(queryGameShip, 0, gameId, i)
 		if err != nil {
 			fmt.Println(err)
 			return err
 		}
-
+	}
+	for i := 1; i <= storeCount; i++ {
 		_, err = p.db.Exec(queryGameStore, 0, gameId, i)
 		if err != nil {
 			fmt.Println(err)
@@ -177,4 +199,60 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 	}
 
 	return game, nil
+}
+
+func (p *Postgres) SaveGameProgress(userId int, g *Game) error {
+	queryGame := `
+	UPDATE games
+	SET gold = $1, diamonds = $2,
+	max_damage = $3,
+	current_level = $4, max_level = $5,
+	current_stage = $6, max_stage = $7,
+	planets_destroyed = $8
+	WHERE user_id = $9
+	`
+	// Also, save store and ship upgrades
+	queryGameShip := `
+		UPDATE game_ship
+		SET level = $1
+		WHERE game_id = $2 AND ship_id = $3;
+	`
+
+	queryGameStore := `
+		UPDATE game_store
+		SET level = $1,
+		WHERE game_id = $2 AND ship_id = $3;
+	`
+
+	_, err := p.db.Exec(queryGame,
+		g.Gold.String(),
+		g.Diamonds,
+		g.MaxDamage.String(),
+		g.CurrentLevel,
+		g.MaxLevel,
+		g.CurrentStage,
+		g.MaxStage,
+		g.PlanetsDestroyed.String(),
+		userId,
+	)
+	if err != nil {
+		return err
+	}
+
+	for i := 1; i <= len(g.Ship); i++ {
+		_, err := p.db.Exec(queryGameShip, g.Ship[strconv.Itoa(i)].Level.String(), g.Id, i)
+		if err != nil {
+			return err
+		}
+	}
+
+	for i := 1; i <= len(g.Store); i++ {
+		_, err := p.db.Exec(queryGameStore, g.Store[strconv.Itoa(i)].Level.String(), g.Id, i)
+		if err != nil {
+			return err
+		}
+	}
+
+	fmt.Println("Saved game")
+	return nil
 }

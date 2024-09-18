@@ -28,6 +28,7 @@ type Planet struct {
 }
 
 type Game struct {
+	Id               int
 	Gold             *big.Float
 	Diamonds         int
 	CurrentDamage    *big.Float
@@ -55,6 +56,7 @@ type StoreUpgradeData struct {
 
 // For data retrieved from the database
 type GameData struct {
+	Id               int
 	Gold             string
 	Diamonds         int
 	MaxDamage        string
@@ -69,6 +71,9 @@ type GameData struct {
 
 func NewGame(gameData *GameData) *Game {
 	// big numbers initialization and db data assignment to variables
+	var id int
+	id = gameData.Id
+
 	gold := new(big.Float)
 	gold.SetString(gameData.Gold)
 
@@ -153,6 +158,7 @@ func NewGame(gameData *GameData) *Game {
 	ship["4"].Level.SetString(gameData.Ship["4"].Level)
 
 	return &Game{
+		Id:               id,
 		Gold:             gold,
 		Diamonds:         diamonds,
 		CurrentDamage:    currentDamage,
@@ -229,6 +235,11 @@ func (g *Game) Advance() {
 	}
 	if g.CurrentLevel > g.MaxLevel {
 		g.MaxLevel = g.CurrentLevel
+	}
+	if g.CurrentLevel == g.MaxLevel {
+		if g.CurrentStage > g.MaxStage {
+			g.MaxStage = g.CurrentStage
+		}
 	}
 
 }

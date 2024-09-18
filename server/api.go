@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"time"
 	"unicode"
 
 	"github.com/gorilla/mux"
@@ -103,7 +104,6 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, "Internal server error")
 	}
-	fmt.Println(gameData.Store)
 	game := NewGame(gameData)
 	game.CalculatePlanetHealth()
 
@@ -123,6 +123,16 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer conn.Close()
+
+	ticker := time.NewTicker(5 * time.Minute)
+	defer ticker.Stop()
+
+	go func() {
+		for range ticker.C {
+			fmt.Printf("%v: Saving game...\n", time.Now())
+			s.db.SaveGameProgress(id, game)
+		}
+	}()
 
 	for {
 		messageType, p, err := conn.ReadMessage()
