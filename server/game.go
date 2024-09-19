@@ -34,6 +34,11 @@ type ActionMessage struct {
 	Message string
 }
 
+type UpgradeMessage struct {
+	Upgrade string `json:"upgrade"`
+	Index   int    `json:"index"`
+}
+
 func ActionHandler(g *Game, action string) []byte {
 	fmt.Println("received message: ", []byte(action))
 	// Note: JSON.Stringify() from the frontend
@@ -79,6 +84,13 @@ func ActionHandler(g *Game, action string) []byte {
 		}
 		encoded, _ := json.Marshal(userClick)
 		return []byte(encoded)
+	} else {
+		unmarshaled := new(UpgradeMessage)
+		err := json.Unmarshal([]byte(action), unmarshaled)
+		if err != nil {
+			fmt.Println("ERROR json ActionHandler: ", err)
+		}
+		fmt.Println("Unmarshaled", unmarshaled)
 	} /* else {
 		message := Message{
 			Message: "error sending data",

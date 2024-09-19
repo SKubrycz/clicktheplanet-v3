@@ -1,16 +1,24 @@
+import { useContext } from "react";
+
+import { UpgradeContext } from "@/app/game/page";
+import UpgradeFunc from "@/app/game/page";
 import { Add } from "@mui/icons-material";
 
 interface StoreElementProps {
+  index: number;
   title: string;
   description: string;
   image?: string;
 }
 
 export default function StoreElement({
+  index,
   title,
   description,
   image,
 }: StoreElementProps) {
+  let upgradeFunc = useContext(UpgradeContext);
+
   return (
     <div className="store-element">
       <div className="store-element-left-wrapper">
@@ -24,7 +32,12 @@ export default function StoreElement({
           <div className="store-element-description">{description}</div>
         </div>
       </div>
-      <Add sx={{ width: 50, height: 50, cursor: "pointer" }}></Add>
+      <Add
+        onClick={() => {
+          if (upgradeFunc) upgradeFunc("store", index);
+        }}
+        sx={{ width: 50, height: 50, cursor: "pointer" }}
+      ></Add>
     </div>
   );
 }

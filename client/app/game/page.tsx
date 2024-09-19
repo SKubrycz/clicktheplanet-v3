@@ -7,6 +7,15 @@ import GameNavbar from "@/components/game_components/GameNavbar/GameNavbar";
 import GameSidebar from "@/components/game_components/GameSidebar/GameSidebar";
 import GameMain from "@/components/game_components/GameMain/GameMain";
 
+interface UpgradeFunc {
+  (upgrade: "store" | "ship", index: number | string): void;
+}
+
+interface Upgrade {
+  upgrade: "store" | "ship";
+  index: number | string;
+}
+
 export interface Data {
   gold: string;
   diamonds: number;
@@ -40,6 +49,7 @@ const gameObject: Data = {
 };
 
 export const GameContext = createContext<Data | undefined>(gameObject);
+export const UpgradeContext = createContext<UpgradeFunc | null>(null);
 
 export default function Game() {
   const [data, setData] = useState<Data | undefined>(gameObject);
@@ -78,6 +88,15 @@ export default function Game() {
     console.log("click");
   };
 
+  const handleUpgrade: UpgradeFunc = (upgrade, index) => {
+    const upgradeObj: Upgrade = {
+      upgrade: upgrade,
+      index: index,
+    };
+    if (socket.current) socket.current.send(JSON.stringify(upgradeObj));
+    console.log(`${upgrade} - ${index}`);
+  };
+
   useEffect(() => {
     handleGetGame();
 
@@ -106,7 +125,9 @@ export default function Game() {
       <GameContext.Provider value={data}>
         <GameNavbar></GameNavbar>
         <div className="game-content-wrapper">
-          <GameSidebar></GameSidebar>
+          <UpgradeContext.Provider value={handleUpgrade}>
+            <GameSidebar></GameSidebar>
+          </UpgradeContext.Provider>
           <GameMain planetClick={handlePlanetClickData}></GameMain>
         </div>
       </GameContext.Provider>
