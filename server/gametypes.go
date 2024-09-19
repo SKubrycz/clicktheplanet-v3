@@ -8,15 +8,17 @@ import (
 )
 
 type ShipUpgrade struct {
-	Level      *big.Float
+	Level      int64
+	Cost       *big.Float
 	Multiplier float64
-	Base       int
+	Base       *big.Float
 	Damage     *big.Float
 }
 
 type StoreUpgrade struct {
-	Level  *big.Float
-	Base   int
+	Level  int64
+	Cost   *big.Float
+	Base   *big.Float
 	Damage *big.Float
 }
 
@@ -28,152 +30,20 @@ type Planet struct {
 }
 
 type Game struct {
-	Id               int
+	Id               int64
 	Gold             *big.Float
-	Diamonds         int
+	Diamonds         int64
 	CurrentDamage    *big.Float
 	MaxDamage        *big.Float
-	CurrentLevel     int
-	MaxLevel         int
-	CurrentStage     int
-	MaxStage         int
+	CurrentLevel     int64
+	MaxLevel         int64
+	CurrentStage     uint8
+	MaxStage         uint8
 	PlanetsDestroyed *big.Float // rounded to 0 decimal places
 	Planet           Planet
 	Store            map[string]StoreUpgrade
 	Ship             map[string]ShipUpgrade
 	Ch               chan bool
-}
-
-type ShipUpgradeData struct {
-	Level      string
-	Multiplier float64
-	Damage     string
-}
-
-type StoreUpgradeData struct {
-	Level  string
-	Damage string
-}
-
-// For data retrieved from the database
-type GameData struct {
-	Id               int
-	Gold             string
-	Diamonds         int
-	MaxDamage        string
-	CurrentLevel     int
-	MaxLevel         int
-	CurrentStage     int
-	MaxStage         int
-	PlanetsDestroyed string
-	Store            map[string]StoreUpgradeData
-	Ship             map[string]ShipUpgradeData
-}
-
-func NewGame(gameData *GameData) *Game {
-	// big numbers initialization and db data assignment to variables
-	var id int
-	id = gameData.Id
-
-	gold := new(big.Float)
-	gold.SetString(gameData.Gold)
-
-	var diamonds int
-	diamonds = gameData.Diamonds
-
-	currentDamage := new(big.Float)
-	currentDamage.SetString("1") // This needs to be calculated after upgrade info retrieval
-
-	maxDamage := new(big.Float)
-	maxDamage.SetString(gameData.MaxDamage)
-
-	var currentLevel int
-	currentLevel = gameData.CurrentLevel
-
-	var maxLevel int
-	maxLevel = gameData.MaxLevel
-
-	var currentStage int
-	currentStage = gameData.CurrentStage
-
-	var maxStage int
-	maxStage = gameData.MaxStage
-
-	planetsDestroyed := new(big.Float)
-	planetsDestroyed.SetString(gameData.PlanetsDestroyed)
-
-	planet := Planet{
-		Name:          "Planet_name",
-		CurrentHealth: new(big.Float),
-		MaxHealth:     new(big.Float),
-		Gold:          new(big.Float),
-	}
-
-	store := map[string]StoreUpgrade{
-		"1": StoreUpgrade{
-			Level:  new(big.Float),
-			Damage: new(big.Float),
-		},
-		"2": StoreUpgrade{
-			Level:  new(big.Float),
-			Damage: new(big.Float),
-		},
-		"3": StoreUpgrade{
-			Level:  new(big.Float),
-			Damage: new(big.Float),
-		},
-		"4": StoreUpgrade{
-			Level:  new(big.Float),
-			Damage: new(big.Float),
-		},
-	}
-	store["1"].Level.SetString(gameData.Store["1"].Level)
-	store["2"].Level.SetString(gameData.Store["2"].Level)
-	store["3"].Level.SetString(gameData.Store["3"].Level)
-	store["4"].Level.SetString(gameData.Store["4"].Level)
-	ship := map[string]ShipUpgrade{
-		"1": ShipUpgrade{
-			Level:      new(big.Float),
-			Multiplier: 1.0,
-			Damage:     new(big.Float),
-		},
-		"2": ShipUpgrade{
-			Level:      new(big.Float),
-			Multiplier: 1.0,
-			Damage:     new(big.Float),
-		},
-		"3": ShipUpgrade{
-			Level:      new(big.Float),
-			Multiplier: 1.0,
-			Damage:     new(big.Float),
-		},
-		"4": ShipUpgrade{
-			Level:      new(big.Float),
-			Multiplier: 1.0,
-			Damage:     new(big.Float),
-		},
-	}
-	ship["1"].Level.SetString(gameData.Ship["1"].Level)
-	ship["2"].Level.SetString(gameData.Ship["2"].Level)
-	ship["3"].Level.SetString(gameData.Ship["3"].Level)
-	ship["4"].Level.SetString(gameData.Ship["4"].Level)
-
-	return &Game{
-		Id:               id,
-		Gold:             gold,
-		Diamonds:         diamonds,
-		CurrentDamage:    currentDamage,
-		MaxDamage:        maxDamage,
-		CurrentLevel:     currentLevel,
-		MaxLevel:         maxLevel,
-		CurrentStage:     currentStage,
-		MaxStage:         maxStage,
-		PlanetsDestroyed: planetsDestroyed,
-		Planet:           planet,
-		Store:            store,
-		Ship:             ship,
-		Ch:               make(chan bool),
-	}
 }
 
 func (g *Game) ClickThePlanet() {
@@ -224,6 +94,31 @@ func (g *Game) CalculatePlanetHealth() {
 		fmt.Println(result.Text('f', 0))
 		g.Planet.MaxHealth.SetString(result.Text('f', 0))
 		g.Planet.CurrentHealth.SetString(result.Text('f', 0)) // set planet to 100%hp
+	}
+}
+
+func (g *Game) CalculateStore(index int) {
+	// If the index != -1, calculate the specific StoreUpgrade
+	// else just calculate the whole map
+	indexStr := strconv.Itoa(index)
+	if index > len(g.Store) {
+		return
+	}
+	if index != -1 {
+		if g.Store[indexStr].Level > 0 {
+			// cost = base * 1.03 ** (level - 1)
+			// g.Store[indexStr].Cost
+			// g.Store[indexStr].Base
+			//f := 1.03
+		}
+	} else if index == -1 {
+		for k := range g.Store {
+			if g.Store[k].Level > 0 {
+
+			}
+		}
+	} else {
+		return
 	}
 }
 

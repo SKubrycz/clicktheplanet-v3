@@ -16,17 +16,17 @@ import (
 
 type UserClick struct {
 	Gold             string `json:"gold"`
-	Diamonds         int    `json:"diamonds"`
+	Diamonds         int64  `json:"diamonds"`
 	CurrentDamage    string `json:"currentDamage"`
 	MaxDamage        string `json:"maxDamage"`
 	PlanetName       string `json:"planetName"`
 	CurrentHealth    string `json:"currentHealth"`
 	HealthPercent    int    `json:"healthPercent"`
 	MaxHealth        string `json:"maxHealth"`
-	CurrentLevel     int    `json:"currentLevel"`
-	MaxLevel         int    `json:"maxLevel"`
-	CurrentStage     int    `json:"currentStage"`
-	MaxStage         int    `json:"maxStage"`
+	CurrentLevel     int64  `json:"currentLevel"`
+	MaxLevel         int64  `json:"maxLevel"`
+	CurrentStage     uint8  `json:"currentStage"`
+	MaxStage         uint8  `json:"maxStage"`
 	PlanetsDestroyed string `json:"planetsDestroyed"`
 }
 
@@ -66,6 +66,8 @@ func ActionHandler(g *Game, action string) []byte {
 		return []byte(encoded)
 	} else if action == "init" {
 		g.CalculatePlanetHealth()
+		//g.CalculateStore
+		//g.CalculateShip
 		percent := g.GetHealthPercent()
 		userClick := UserClick{
 			Gold:             g.Gold.String(),

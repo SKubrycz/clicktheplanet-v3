@@ -112,7 +112,7 @@ export default function Game() {
     socket.current.onmessage = (e: MessageEvent) => {
       let data = JSON.parse(e.data);
       console.log("From the server: ", data);
-      setData(JSON.parse(e.data));
+      if (data.currentHealth) setData(data);
     };
 
     socket.current.onclose = () => {

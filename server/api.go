@@ -163,11 +163,15 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		}
 
 		user, err := s.db.GetAccountByLogin(req.Login)
-		fmt.Println(user.Login)
 		if err != nil {
 			writeJSON(w, http.StatusInternalServerError, "Log in error")
 			return
 		}
+		if user == nil {
+			writeJSON(w, http.StatusNotFound, "User not found")
+			return
+		}
+		fmt.Println(user.Login)
 
 		compare := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 		if compare != nil {

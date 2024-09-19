@@ -40,9 +40,9 @@ export default function Login() {
       mode: "cors",
       credentials: "include",
     })
-      .then((req) => {
-        console.log(req);
-        router.push("/game");
+      .then((res) => {
+        console.log(res);
+        if (res.status >= 200 && res.status < 300) router.push("/game");
       })
       .catch((err) => {
         console.error(err);

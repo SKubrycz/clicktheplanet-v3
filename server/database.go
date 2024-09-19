@@ -107,6 +107,7 @@ func (p *Postgres) CreateAccount(u *User) error {
 func (p *Postgres) GetAccountByLogin(login string) (*User, error) {
 	query := `SELECT * FROM users WHERE login = $1`
 
+	fmt.Println("Searching for existing user...")
 	rows, err := p.db.Query(query, login)
 	if err != nil {
 		return nil, err
@@ -123,7 +124,7 @@ func (p *Postgres) GetAccountByLogin(login string) (*User, error) {
 			&user.CreatedAt,
 		)
 	}
-	fmt.Println(user)
+	fmt.Println("User result: ", user)
 	return user, err
 }
 
@@ -240,14 +241,14 @@ func (p *Postgres) SaveGameProgress(userId int, g *Game) error {
 	}
 
 	for i := 1; i <= len(g.Ship); i++ {
-		_, err := p.db.Exec(queryGameShip, g.Ship[strconv.Itoa(i)].Level.String(), g.Id, i)
+		_, err := p.db.Exec(queryGameShip, g.Ship[strconv.Itoa(i)].Level, g.Id, i)
 		if err != nil {
 			return err
 		}
 	}
 
 	for i := 1; i <= len(g.Store); i++ {
-		_, err := p.db.Exec(queryGameStore, g.Store[strconv.Itoa(i)].Level.String(), g.Id, i)
+		_, err := p.db.Exec(queryGameStore, g.Store[strconv.Itoa(i)].Level, g.Id, i)
 		if err != nil {
 			return err
 		}

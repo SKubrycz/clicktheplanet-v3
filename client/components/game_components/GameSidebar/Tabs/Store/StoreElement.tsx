@@ -1,7 +1,6 @@
 import { useContext } from "react";
 
 import { UpgradeContext } from "@/app/game/page";
-import UpgradeFunc from "@/app/game/page";
 import { Add } from "@mui/icons-material";
 
 interface StoreElementProps {

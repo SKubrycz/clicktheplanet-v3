@@ -13,3 +13,29 @@ type LoginCredentials struct {
 }
 
 type UserId string
+
+type ShipUpgradeData struct {
+	Level      int64
+	Multiplier float64
+	Damage     string
+}
+
+type StoreUpgradeData struct {
+	Level  int64
+	Damage string
+}
+
+// For data retrieved from the database
+type GameData struct {
+	Id               int64
+	Gold             string
+	Diamonds         int64
+	MaxDamage        string
+	CurrentLevel     int64
+	MaxLevel         int64
+	CurrentStage     uint8
+	MaxStage         uint8
+	PlanetsDestroyed string
+	Store            map[string]StoreUpgradeData
+	Ship             map[string]ShipUpgradeData
+}
