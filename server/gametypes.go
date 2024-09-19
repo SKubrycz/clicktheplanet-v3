@@ -41,6 +41,7 @@ type Game struct {
 	Planet           Planet
 	Store            map[string]StoreUpgrade
 	Ship             map[string]ShipUpgrade
+	Ch               chan bool
 }
 
 type ShipUpgradeData struct {
@@ -171,6 +172,7 @@ func NewGame(gameData *GameData) *Game {
 		Planet:           planet,
 		Store:            store,
 		Ship:             ship,
+		Ch:               make(chan bool),
 	}
 }
 
@@ -183,6 +185,7 @@ func (g *Game) ClickThePlanet() {
 		g.AddPlanetDestroyed()
 		g.CalculateGoldEarned()
 		g.AddCurrentGold()
+		g.Ch <- true
 	}
 }
 

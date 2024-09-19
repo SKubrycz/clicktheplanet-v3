@@ -90,7 +90,6 @@ func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	const userId UserId = "userid" // key of type UserId - it has to stay here
-
 	id, ok := r.Context().Value(userId).(int)
 	if !ok {
 		fmt.Println(id)
@@ -98,22 +97,19 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusForbidden, "Not authorized")
 		return
 	}
-	fmt.Println(id)
 
 	gameData, err := s.db.GetGameByUserId(id)
 	if err != nil {
 		writeJSON(w, http.StatusInternalServerError, "Internal server error")
 	}
 	game := NewGame(gameData)
-	game.CalculatePlanetHealth()
 
 	var upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 		CheckOrigin: func(r *http.Request) bool {
-			// origin := r.Header.Get("Origin")
-			// return origin == "http://localhost:3000"
-			return true
+			origin := r.Header.Get("Origin")
+			return origin == "http://localhost:3000"
 		},
 	}
 
@@ -130,6 +126,14 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		for range ticker.C {
 			fmt.Printf("%v: Saving game...\n", time.Now())
+			s.db.SaveGameProgress(id, game)
+		}
+	}()
+
+	defer close(game.Ch)
+	go func() {
+		for range game.Ch {
+			fmt.Printf("%v: Planet destroyed - Saving game...\n", time.Now())
 			s.db.SaveGameProgress(id, game)
 		}
 	}()

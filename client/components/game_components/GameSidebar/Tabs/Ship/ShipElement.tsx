@@ -1,3 +1,5 @@
+import { ArrowUpward } from "@mui/icons-material";
+
 interface ShipElementProps {
   title: string;
   description: string;
@@ -11,7 +13,7 @@ export default function ShipElement({ title, description }: ShipElementProps) {
         <div className="ship-element-description">{description}</div>
       </div>
       <div className="ship-element-action-wrapper">
-        <div>Upgrade</div>
+        <ArrowUpward sx={{ width: 40, height: 40 }}></ArrowUpward>
       </div>
     </div>
   );

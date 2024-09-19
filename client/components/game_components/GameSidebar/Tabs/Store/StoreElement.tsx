@@ -1,3 +1,5 @@
+import { Add } from "@mui/icons-material";
+
 interface StoreElementProps {
   title: string;
   description: string;
@@ -22,7 +24,7 @@ export default function StoreElement({
           <div className="store-element-description">{description}</div>
         </div>
       </div>
-      <div>Action buttons?</div>
+      <Add sx={{ width: 50, height: 50, cursor: "pointer" }}></Add>
     </div>
   );
 }

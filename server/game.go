@@ -60,6 +60,7 @@ func ActionHandler(g *Game, action string) []byte {
 		encoded, _ := json.Marshal(userClick)
 		return []byte(encoded)
 	} else if action == "init" {
+		g.CalculatePlanetHealth()
 		percent := g.GetHealthPercent()
 		userClick := UserClick{
 			Gold:             g.Gold.String(),
