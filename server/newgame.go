@@ -39,73 +39,91 @@ func NewGame(gameData *GameData) *Game {
 
 	store := map[string]StoreUpgrade{
 		"1": {
-			Level:  gameData.Store["1"].Level,
-			Cost:   new(big.Float),
-			Base:   new(big.Float),
-			Damage: new(big.Float),
+			Level:      gameData.Store["1"].Level,
+			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
+			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
 		},
 		"2": {
-			Level:  gameData.Store["2"].Level,
-			Cost:   new(big.Float),
-			Base:   new(big.Float),
-			Damage: new(big.Float),
+			Level:      gameData.Store["2"].Level,
+			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
+			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
 		},
 		"3": {
-			Level:  gameData.Store["3"].Level,
-			Cost:   new(big.Float),
-			Base:   new(big.Float),
-			Damage: new(big.Float),
+			Level:      gameData.Store["3"].Level,
+			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
+			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
 		},
 		"4": {
-			Level:  gameData.Store["4"].Level,
-			Cost:   new(big.Float),
-			Base:   new(big.Float),
-			Damage: new(big.Float),
+			Level:      gameData.Store["4"].Level,
+			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
+			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
 		},
 	}
 
-	store["1"].Base.SetString("10")
-	store["2"].Base.SetString("1000")
-	store["3"].Base.SetString("1.0e+5")
-	store["4"].Base.SetString("1.0e+8")
+	store["1"].BaseCost.SetString("10")
+	store["2"].BaseCost.SetString("1000")
+	store["3"].BaseCost.SetString("1.0e+5")
+	store["4"].BaseCost.SetString("1.0e+8")
+
+	store["1"].BaseDamage.SetString("1")
+	store["2"].BaseDamage.SetString("5")
+	store["3"].BaseDamage.SetString("20")
+	store["4"].BaseDamage.SetString("100")
 
 	ship := map[string]ShipUpgrade{
 		"1": {
 			Level:      gameData.Ship["1"].Level,
 			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
 			Multiplier: 1.0,
-			Base:       new(big.Float),
 			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
 		},
 		"2": {
 			Level:      gameData.Ship["2"].Level,
 			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
 			Multiplier: 1.0,
-			Base:       new(big.Float),
 			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
 		},
 		"3": {
 			Level:      gameData.Ship["3"].Level,
 			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
 			Multiplier: 1.0,
-			Base:       new(big.Float),
 			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
 		},
 		"4": {
 			Level:      gameData.Ship["4"].Level,
 			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
 			Multiplier: 1.0,
-			Base:       new(big.Float),
 			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
 		},
 	}
 
 	// These bases costs are later to be changed
 	// Depending on what function will the upgrade provide
-	ship["1"].Base.SetString("10")
-	ship["2"].Base.SetString("100")
-	ship["3"].Base.SetString("1000")
-	ship["4"].Base.SetString("10000")
+	ship["1"].BaseCost.SetString("10")
+	ship["2"].BaseCost.SetString("100")
+	ship["3"].BaseCost.SetString("1000")
+	ship["4"].BaseCost.SetString("10000")
+
+	ship["1"].BaseDamage.SetString("10")
+	ship["2"].BaseDamage.SetString("50")
+	ship["3"].BaseDamage.SetString("500")
+	ship["4"].BaseDamage.SetString("10000")
 
 	return &Game{
 		Id:               id,

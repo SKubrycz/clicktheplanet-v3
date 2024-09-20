@@ -16,6 +16,19 @@ interface Upgrade {
   index: number | string;
 }
 
+interface Store {
+  level: number;
+  cost: string;
+  damage: string;
+}
+
+interface Ship {
+  level: number;
+  cost: string;
+  multiplier: number;
+  damage: string;
+}
+
 export interface Data {
   gold: string;
   diamonds: number;
@@ -30,6 +43,8 @@ export interface Data {
   currentStage: number;
   maxStage: number;
   planetsDestroyed: string;
+  store: Store[];
+  ship: Ship[];
 }
 
 const gameObject: Data = {
@@ -46,6 +61,21 @@ const gameObject: Data = {
   currentStage: 1,
   maxStage: 1,
   planetsDestroyed: "0",
+  store: [
+    {
+      level: 0,
+      cost: "0",
+      damage: "0",
+    },
+  ],
+  ship: [
+    {
+      level: 0,
+      cost: "0",
+      multiplier: 0.0,
+      damage: "0",
+    },
+  ],
 };
 
 export const GameContext = createContext<Data | undefined>(gameObject);

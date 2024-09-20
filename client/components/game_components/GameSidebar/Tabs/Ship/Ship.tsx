@@ -25,7 +25,7 @@ export default function Ship() {
         return (
           <ShipElement
             key={i}
-            index={i}
+            index={i + 1}
             title={el.title}
             description={el.desc}
           ></ShipElement>

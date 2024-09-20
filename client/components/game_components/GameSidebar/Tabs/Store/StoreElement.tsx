@@ -1,6 +1,7 @@
 import { useContext } from "react";
 
 import { UpgradeContext } from "@/app/game/page";
+import { Data } from "@/app/game/page";
 import { Add } from "@mui/icons-material";
 
 interface StoreElementProps {
@@ -8,6 +9,7 @@ interface StoreElementProps {
   title: string;
   description: string;
   image?: string;
+  data: Data | undefined;
 }
 
 export default function StoreElement({
@@ -15,6 +17,7 @@ export default function StoreElement({
   title,
   description,
   image,
+  data,
 }: StoreElementProps) {
   let upgradeFunc = useContext(UpgradeContext);
 
@@ -27,8 +30,13 @@ export default function StoreElement({
           <div className="store-element-image-div">Image</div>
         )}
         <div className="store-element-info-wrapper">
-          <div className="store-element-title">{title}</div>
-          <div className="store-element-description">{description}</div>
+          <div className="store-element-title">
+            {title} - Level {data?.store[index].level}
+          </div>
+          <div className="store-element-description">
+            {description} - Damage: {data?.store[index].damage}
+          </div>
+          <div>Cost: {data?.store[index].cost}</div>
         </div>
       </div>
       <Add

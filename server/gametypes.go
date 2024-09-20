@@ -10,16 +10,18 @@ import (
 type ShipUpgrade struct {
 	Level      int64
 	Cost       *big.Float
+	BaseCost   *big.Float
 	Multiplier float64
-	Base       *big.Float
 	Damage     *big.Float
+	BaseDamage *big.Float
 }
 
 type StoreUpgrade struct {
-	Level  int64
-	Cost   *big.Float
-	Base   *big.Float
-	Damage *big.Float
+	Level      int64
+	Cost       *big.Float
+	BaseCost   *big.Float
+	Damage     *big.Float
+	BaseDamage *big.Float
 }
 
 type Planet struct {
@@ -100,23 +102,59 @@ func (g *Game) CalculatePlanetHealth() {
 func (g *Game) CalculateStore(index int) {
 	// If the index != -1, calculate the specific StoreUpgrade
 	// else just calculate the whole map
+	fmt.Println("index:", index)
 	indexStr := strconv.Itoa(index)
 	if index > len(g.Store) {
 		return
 	}
+	// constant for the formula
+	f := 1.03
+
 	if index != -1 {
 		if g.Store[indexStr].Level > 0 {
-			// cost = base * 1.03 ** (level - 1)
-			// g.Store[indexStr].Cost
-			// g.Store[indexStr].Base
-			//f := 1.03
+			// cost = baseCost * 1.03 ** (level - 1)
+			pow := math.Pow(f, float64(g.Store[indexStr].Level))
+			bigPow := big.NewFloat(pow)
+
+			g.Store[indexStr].Cost.Mul(g.Store[indexStr].BaseCost, bigPow)
+
+			//damage = baseDmg * level
+			bigLevel := big.NewFloat(float64(g.Store[indexStr].Level))
+			g.Store[indexStr].Damage.Mul(g.Store[indexStr].BaseDamage, bigLevel)
 		}
 	} else if index == -1 {
 		for k := range g.Store {
 			if g.Store[k].Level > 0 {
+				fmt.Println("K: ---> ", k)
+				pow := math.Pow(f, float64(g.Store[k].Level))
+				bigPow := big.NewFloat(pow)
 
+				g.Store[k].Cost.Mul(g.Store[k].BaseCost, bigPow)
+
+				bigLevel := big.NewFloat(float64(g.Store[k].Level))
+				g.Store[k].Damage.Mul(g.Store[k].BaseDamage, bigLevel)
 			}
 		}
+	} else {
+		return
+	}
+	fmt.Println("Store[i].Level: ", g.Store[indexStr].Level)
+	fmt.Println("inside CalculateStore: ", g.Store[indexStr].Cost)
+}
+
+func (g *Game) CalculateShip(index int) {
+	indexStr := strconv.Itoa(index)
+	if index > len(g.Store) {
+		return
+	}
+	fmt.Println(g.Ship[indexStr].Level)
+
+	if index != -1 {
+		// assign cost and damage of a particular ship
+		// ! Count in the multiplier to the calculation
+
+	} else if index == -1 {
+		// for loop for ship costs and damage init
 	} else {
 		return
 	}

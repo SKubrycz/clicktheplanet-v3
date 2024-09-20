@@ -135,11 +135,11 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 	`
 
 	gameShipQuery := `
-	SELECT level FROM game_ship WHERE game_id = $1
+	SELECT level FROM game_ship WHERE game_id = $1 ORDER BY id ASC
 	`
 
 	gameStoreQuery := `
-	SELECT level FROM game_store WHERE game_id = $1
+	SELECT level FROM game_store WHERE game_id = $1 ORDER BY id ASC
 	`
 
 	var game = &GameData{
