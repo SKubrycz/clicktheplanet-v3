@@ -99,6 +99,16 @@ func (g *Game) CalculatePlanetHealth() {
 	}
 }
 
+func (g *Game) UpgradeStore(index int) {
+	indexStr := strconv.Itoa(index)
+	if g.Gold.Cmp(g.Store[indexStr].Cost) >= 0 {
+		if entry, ok := g.Store[indexStr]; ok {
+			entry.Level += 1
+			g.Store[indexStr] = entry
+		}
+	}
+}
+
 func (g *Game) CalculateStore(index int) {
 	// If the index != -1, calculate the specific StoreUpgrade
 	// else just calculate the whole map
@@ -140,6 +150,16 @@ func (g *Game) CalculateStore(index int) {
 	}
 	fmt.Println("Store[i].Level: ", g.Store[indexStr].Level)
 	fmt.Println("inside CalculateStore: ", g.Store[indexStr].Cost)
+}
+
+func (g *Game) UpgradeShip(index int) {
+	indexStr := strconv.Itoa(index)
+	if g.Gold.Cmp(g.Ship[indexStr].Cost) >= 0 {
+		if entry, ok := g.Ship[indexStr]; ok {
+			entry.Level += 1
+			g.Ship[indexStr] = entry
+		}
+	}
 }
 
 func (g *Game) CalculateShip(index int) {
@@ -185,10 +205,6 @@ func (g *Game) PreviousLevel() {
 }
 
 func (g *Game) NextLevel() {
-
-}
-
-func (g *Game) Upgrade( /* store/ship */ ) {
 
 }
 

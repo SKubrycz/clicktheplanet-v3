@@ -63,22 +63,22 @@ func ActionHandler(g *Game, action string) []byte {
 	if action == "click" {
 		g.ClickThePlanet()
 		percent := g.GetHealthPercent()
-		// store := map[string]StoreDataMessage{}
-		// for k := range g.Store {
-		// 	s := new(StoreDataMessage)
-		// 	s.Level = g.Store[k].Level
-		// 	s.Cost = g.Store[k].Cost.String()
-		// 	s.Damage = g.Store[k].Damage.String()
-		// 	store[k] = *s
-		// }
-		// ship := map[string]ShipDataMessage{}
-		// for k := range g.Store {
-		// 	s := new(ShipDataMessage)
-		// 	s.Level = g.Ship[k].Level
-		// 	s.Cost = g.Ship[k].Cost.String()
-		// 	s.Damage = g.Ship[k].Damage.String()
-		// 	ship[k] = *s
-		// }
+		store := map[string]StoreDataMessage{}
+		for k := range g.Store {
+			s := new(StoreDataMessage)
+			s.Level = g.Store[k].Level
+			s.Cost = g.Store[k].Cost.String()
+			s.Damage = g.Store[k].Damage.String()
+			store[k] = *s
+		}
+		ship := map[string]ShipDataMessage{}
+		for k := range g.Store {
+			s := new(ShipDataMessage)
+			s.Level = g.Ship[k].Level
+			s.Cost = g.Ship[k].Cost.String()
+			s.Damage = g.Ship[k].Damage.String()
+			ship[k] = *s
+		}
 		userClick := UserClick{
 			Gold:             g.Gold.String(),
 			Diamonds:         g.Diamonds,
@@ -93,6 +93,8 @@ func ActionHandler(g *Game, action string) []byte {
 			CurrentStage:     g.CurrentStage,
 			MaxStage:         g.MaxStage,
 			PlanetsDestroyed: g.PlanetsDestroyed.String(),
+			Store:            store,
+			Ship:             ship,
 		}
 		encoded, _ := json.Marshal(userClick)
 		return []byte(encoded)
@@ -143,6 +145,7 @@ func ActionHandler(g *Game, action string) []byte {
 			fmt.Println("ERROR json ActionHandler: ", err)
 		}
 		if unmarshaled.Upgrade == "store" {
+			g.UpgradeStore(unmarshaled.Index)
 			g.CalculateStore(unmarshaled.Index)
 			indexStr := strconv.Itoa(unmarshaled.Index)
 			storeData := StoreDataMessage{
@@ -154,6 +157,7 @@ func ActionHandler(g *Game, action string) []byte {
 			return []byte(encoded)
 		}
 		if unmarshaled.Upgrade == "ship" {
+			g.UpgradeShip(unmarshaled.Index)
 			g.CalculateShip(unmarshaled.Index)
 			indexStr := strconv.Itoa(unmarshaled.Index)
 			shipData := ShipDataMessage{

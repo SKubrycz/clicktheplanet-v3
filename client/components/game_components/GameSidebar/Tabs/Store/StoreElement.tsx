@@ -1,3 +1,5 @@
+"use client";
+
 import { useContext } from "react";
 
 import { UpgradeContext } from "@/app/game/page";
@@ -31,12 +33,12 @@ export default function StoreElement({
         )}
         <div className="store-element-info-wrapper">
           <div className="store-element-title">
-            {title} - Level {data?.store[index].level}
+            {title} - Level {data?.store[index]?.level}
           </div>
           <div className="store-element-description">
-            {description} - Damage: {data?.store[index].damage}
+            {description} - Damage: {data?.store[index]?.damage}
           </div>
-          <div>Cost: {data?.store[index].cost}</div>
+          <div>Cost: {data?.store[index]?.cost}</div>
         </div>
       </div>
       <Add
