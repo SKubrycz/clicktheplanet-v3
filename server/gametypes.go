@@ -61,6 +61,19 @@ func (g *Game) ClickThePlanet() {
 	}
 }
 
+func (g *Game) CalculateCurrentDamage() {
+	res := big.NewFloat(1) //base dmg
+	for k := range g.Store {
+		if g.Store[k].Level > 0 {
+			res.Add(res, g.Store[k].Damage)
+		}
+	}
+	g.CurrentDamage = res
+
+	fmt.Println("CurrentDamage")
+	// Here would be something with Ship upgrades
+}
+
 func (g *Game) GetHealthPercent() int {
 	hundred := big.NewFloat(100)
 	healthMultiplied := new(big.Float)
@@ -105,8 +118,10 @@ func (g *Game) UpgradeStore(index int) {
 		if entry, ok := g.Store[indexStr]; ok {
 			entry.Level += 1
 			g.Store[indexStr] = entry
+			g.Gold.Sub(g.Gold, g.Store[indexStr].Cost)
 		}
 	}
+	g.CalculateCurrentDamage()
 }
 
 func (g *Game) CalculateStore(index int) {
@@ -160,6 +175,7 @@ func (g *Game) UpgradeShip(index int) {
 			g.Ship[indexStr] = entry
 		}
 	}
+	g.CalculateCurrentDamage()
 }
 
 func (g *Game) CalculateShip(index int) {

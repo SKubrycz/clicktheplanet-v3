@@ -48,11 +48,19 @@ type StoreDataMessage struct {
 	Damage string `json:"damage"`
 }
 
+type StoreDataMessageWrapper struct {
+	Store StoreDataMessage `json:"store"`
+}
+
 type ShipDataMessage struct {
 	Level      int64   `json:"level"`
 	Cost       string  `json:"cost"`
 	Multiplier float64 `json:"multiplier"`
 	Damage     string  `json:"damage"`
+}
+
+type ShipDataMessageWrapper struct {
+	Ship ShipDataMessage `json:"ship"`
 }
 
 func ActionHandler(g *Game, action string) []byte {
@@ -101,6 +109,7 @@ func ActionHandler(g *Game, action string) []byte {
 	} else if action == "init" {
 		g.CalculatePlanetHealth()
 		g.CalculateStore(-1)
+		g.CalculateCurrentDamage()
 		//g.CalculateShip
 		store := map[string]StoreDataMessage{}
 		for k := range g.Store {
@@ -153,7 +162,10 @@ func ActionHandler(g *Game, action string) []byte {
 				Cost:   g.Store[indexStr].Cost.String(),
 				Damage: g.Store[indexStr].Damage.String(),
 			}
-			encoded, _ := json.Marshal(storeData)
+			storeDataWrapper := StoreDataMessageWrapper{
+				Store: storeData,
+			}
+			encoded, _ := json.Marshal(storeDataWrapper)
 			return []byte(encoded)
 		}
 		if unmarshaled.Upgrade == "ship" {
@@ -166,7 +178,10 @@ func ActionHandler(g *Game, action string) []byte {
 				Multiplier: g.Ship[indexStr].Multiplier,
 				Damage:     g.Ship[indexStr].Damage.String(),
 			}
-			encoded, _ := json.Marshal(shipData)
+			shipDataWrapper := ShipDataMessageWrapper{
+				Ship: shipData,
+			}
+			encoded, _ := json.Marshal(shipDataWrapper)
 			return []byte(encoded)
 		}
 		fmt.Println("Unmarshaled", unmarshaled)

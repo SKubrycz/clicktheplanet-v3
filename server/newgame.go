@@ -72,11 +72,19 @@ func NewGame(gameData *GameData) *Game {
 	store["2"].BaseCost.SetString("1000")
 	store["3"].BaseCost.SetString("1.0e+5")
 	store["4"].BaseCost.SetString("1.0e+8")
+	store["1"].Cost.SetString("10")
+	store["2"].Cost.SetString("1000")
+	store["3"].Cost.SetString("1.0e+5")
+	store["4"].Cost.SetString("1.0e+8")
 
 	store["1"].BaseDamage.SetString("1")
 	store["2"].BaseDamage.SetString("5")
 	store["3"].BaseDamage.SetString("20")
 	store["4"].BaseDamage.SetString("100")
+	store["1"].Damage.SetString("1")
+	store["2"].Damage.SetString("5")
+	store["3"].Damage.SetString("20")
+	store["4"].Damage.SetString("100")
 
 	ship := map[string]ShipUpgrade{
 		"1": {
@@ -119,11 +127,19 @@ func NewGame(gameData *GameData) *Game {
 	ship["2"].BaseCost.SetString("100")
 	ship["3"].BaseCost.SetString("1000")
 	ship["4"].BaseCost.SetString("10000")
+	ship["1"].Cost.SetString("10")
+	ship["2"].Cost.SetString("100")
+	ship["3"].Cost.SetString("1000")
+	ship["4"].Cost.SetString("10000")
 
 	ship["1"].BaseDamage.SetString("10")
 	ship["2"].BaseDamage.SetString("50")
 	ship["3"].BaseDamage.SetString("500")
 	ship["4"].BaseDamage.SetString("10000")
+	ship["1"].Damage.SetString("10")
+	ship["2"].Damage.SetString("50")
+	ship["3"].Damage.SetString("500")
+	ship["4"].Damage.SetString("10000")
 
 	return &Game{
 		Id:               id,
