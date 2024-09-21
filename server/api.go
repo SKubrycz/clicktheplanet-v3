@@ -132,11 +132,20 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 
 	defer close(game.Ch)
 	go func() {
-		for range game.Ch {
-			fmt.Printf("%v: Planet destroyed - Saving game...\n", time.Now())
-			err := s.db.SaveGameProgress(id, game)
-			if err != nil {
-				fmt.Println("!Error: SaveGameProgress: ", err)
+		for message := range game.Ch {
+			switch message {
+			case "click":
+				fmt.Printf("%v: Planet destroyed - Saving game...\n", time.Now())
+				err := s.db.SaveGameProgress(id, game)
+				if err != nil {
+					fmt.Println("!Error: SaveGameProgress: ", err)
+				}
+			case "upgrade":
+				fmt.Printf("%v: Element upgraded - Saving game...\n", time.Now())
+				err := s.db.SaveGameProgress(id, game)
+				if err != nil {
+					fmt.Println("!Error: SaveGameProgress: ", err)
+				}
 			}
 		}
 	}()

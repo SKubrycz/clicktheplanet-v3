@@ -45,7 +45,7 @@ type Game struct {
 	Planet           Planet
 	Store            map[int]StoreUpgrade
 	Ship             map[int]ShipUpgrade
-	Ch               chan bool
+	Ch               chan string
 }
 
 func (g *Game) ClickThePlanet() {
@@ -57,7 +57,7 @@ func (g *Game) ClickThePlanet() {
 		g.AddPlanetDestroyed()
 		g.CalculateGoldEarned()
 		g.AddCurrentGold()
-		g.Ch <- true
+		g.Ch <- "click"
 	}
 }
 
@@ -114,6 +114,7 @@ func (g *Game) UpgradeStore(index int) {
 		}
 	}
 	g.CalculateCurrentDamage()
+	g.Ch <- "upgrade"
 }
 
 func (g *Game) CalculateStore(index int) {
@@ -172,6 +173,7 @@ func (g *Game) UpgradeShip(index int) {
 		}
 	}
 	g.CalculateCurrentDamage()
+	g.Ch <- "upgrade"
 }
 
 func (g *Game) CalculateShip(index int) {

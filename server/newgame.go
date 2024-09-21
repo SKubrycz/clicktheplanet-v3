@@ -155,6 +155,6 @@ func NewGame(gameData *GameData) *Game {
 		Planet:           planet,
 		Store:            store,
 		Ship:             ship,
-		Ch:               make(chan bool),
+		Ch:               make(chan string),
 	}
 }

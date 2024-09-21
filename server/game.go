@@ -43,6 +43,7 @@ type UpgradeMessage struct {
 }
 
 type StoreDataMessage struct {
+	Index  int    `json:"index"`
 	Level  int64  `json:"level"`
 	Cost   string `json:"cost"`
 	Damage string `json:"damage"`
@@ -53,6 +54,7 @@ type StoreDataMessageWrapper struct {
 }
 
 type ShipDataMessage struct {
+	Index      int     `json:"index"`
 	Level      int64   `json:"level"`
 	Cost       string  `json:"cost"`
 	Multiplier float64 `json:"multiplier"`
@@ -118,6 +120,7 @@ func ActionHandler(g *Game, action string) []byte {
 		store := map[int]StoreDataMessage{}
 		for k := range g.Store {
 			s := new(StoreDataMessage)
+			s.Index = k
 			s.Level = g.Store[k].Level
 			s.Cost = g.Store[k].Cost.String()
 			s.Damage = g.Store[k].Damage.String()
@@ -126,6 +129,7 @@ func ActionHandler(g *Game, action string) []byte {
 		ship := map[int]ShipDataMessage{}
 		for k := range g.Store {
 			s := new(ShipDataMessage)
+			s.Index = k
 			s.Level = g.Ship[k].Level
 			s.Cost = g.Ship[k].Cost.String()
 			s.Damage = g.Ship[k].Damage.String()
@@ -164,6 +168,7 @@ func ActionHandler(g *Game, action string) []byte {
 			g.UpgradeStore(unmarshaled.Index)
 			g.CalculateStore(unmarshaled.Index)
 			storeData := StoreDataMessage{
+				Index:  unmarshaled.Index,
 				Level:  g.Store[unmarshaled.Index].Level,
 				Cost:   g.Store[unmarshaled.Index].Cost.String(),
 				Damage: g.Store[unmarshaled.Index].Damage.String(),
@@ -181,6 +186,7 @@ func ActionHandler(g *Game, action string) []byte {
 			g.UpgradeShip(unmarshaled.Index)
 			g.CalculateShip(unmarshaled.Index)
 			shipData := ShipDataMessage{
+				Index:      unmarshaled.Index,
 				Level:      g.Ship[unmarshaled.Index].Level,
 				Cost:       g.Ship[unmarshaled.Index].Cost.String(),
 				Multiplier: g.Ship[unmarshaled.Index].Multiplier,

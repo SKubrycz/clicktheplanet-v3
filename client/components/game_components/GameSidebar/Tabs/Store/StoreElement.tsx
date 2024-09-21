@@ -3,7 +3,7 @@
 import { useContext } from "react";
 
 import { UpgradeContext } from "@/app/game/page";
-import { Data } from "@/app/game/page";
+import { Data } from "@/lib/game/gameSlice";
 import { Add } from "@mui/icons-material";
 
 interface StoreElementProps {

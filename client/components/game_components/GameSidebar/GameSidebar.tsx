@@ -7,7 +7,7 @@ import Tabs from "./Tabs/Tabs";
 
 import "./GameSidebar.scss";
 
-import { Data } from "@/app/game/page";
+import { Data } from "@/lib/game/gameSlice";
 
 export default function GameSidebar() {
   let data: Data | undefined = useContext(GameContext);

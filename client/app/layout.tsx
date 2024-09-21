@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 
-import { ThemeProvider } from "@emotion/react";
-import { defaultTheme } from "../assets/defaultTheme";
-
 import "./globals.scss";
 import "./home.scss";
 import "./login/login.scss";
 import "./register/register.scss";
 import "./game/game.scss";
+import StoreProvider from "./StoreProvider";
 
 export const metadata: Metadata = {
   title: "Click the planet",
@@ -24,7 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <StoreProvider>
+        <body>{children}</body>
+      </StoreProvider>
     </html>
   );
 }

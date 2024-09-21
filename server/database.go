@@ -243,15 +243,10 @@ func (p *Postgres) SaveGameProgress(userId int, g *Game) error {
 	}
 
 	for i := 1; i <= len(g.Store); i++ {
-		res, err := p.db.Exec(queryGameStore, g.Store[i].Level, g.Id, i)
+		_, err := p.db.Exec(queryGameStore, g.Store[i].Level, g.Id, i)
 		if err != nil {
 			return err
 		}
-		rowsAffected, err := res.RowsAffected()
-		if err != nil {
-			return err
-		}
-		fmt.Println(rowsAffected)
 	}
 
 	fmt.Println("Saved game")

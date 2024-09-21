@@ -5,7 +5,7 @@ import { GameContext } from "@/app/game/page";
 
 import "./GameMain.scss";
 
-import { Data } from "@/app/game/page";
+import { Data } from "@/lib/game/gameSlice";
 
 export interface Health {
   currentHealth: string;
