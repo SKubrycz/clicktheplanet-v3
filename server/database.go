@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
-	"strconv"
 )
 
 type Database interface {
@@ -143,8 +142,8 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 	`
 
 	var game = &GameData{
-		Store: map[string]StoreUpgradeData{},
-		Ship:  map[string]ShipUpgradeData{},
+		Store: map[int]StoreUpgradeData{},
+		Ship:  map[int]ShipUpgradeData{},
 	}
 	var gameId int
 	err := p.db.QueryRow(gameQuery, id).Scan(
@@ -175,8 +174,7 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 		if err != nil {
 			return nil, err
 		}
-		iStr := strconv.Itoa(i)
-		game.Ship[iStr] = *ship
+		game.Ship[i] = *ship
 		i++
 	}
 
@@ -193,9 +191,7 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 		if err != nil {
 			return nil, err
 		}
-		iStr := strconv.Itoa(i)
-		fmt.Println(iStr)
-		game.Store[iStr] = *store
+		game.Store[i] = *store
 		i++
 	}
 
@@ -241,14 +237,14 @@ func (p *Postgres) SaveGameProgress(userId int, g *Game) error {
 	}
 
 	for i := 1; i <= len(g.Ship); i++ {
-		_, err := p.db.Exec(queryGameShip, g.Ship[strconv.Itoa(i)].Level, g.Id, i)
+		_, err := p.db.Exec(queryGameShip, g.Ship[i].Level, g.Id, i)
 		if err != nil {
 			return err
 		}
 	}
 
 	for i := 1; i <= len(g.Store); i++ {
-		_, err := p.db.Exec(queryGameStore, g.Store[strconv.Itoa(i)].Level, g.Id, i)
+		_, err := p.db.Exec(queryGameStore, g.Store[i].Level, g.Id, i)
 		if err != nil {
 			return err
 		}

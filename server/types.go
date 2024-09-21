@@ -36,6 +36,6 @@ type GameData struct {
 	CurrentStage     uint8
 	MaxStage         uint8
 	PlanetsDestroyed string
-	Store            map[string]StoreUpgradeData
-	Ship             map[string]ShipUpgradeData
+	Store            map[int]StoreUpgradeData
+	Ship             map[int]ShipUpgradeData
 }

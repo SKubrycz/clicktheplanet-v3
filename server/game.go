@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 )
 
 // Game logic here
@@ -16,25 +15,26 @@ import (
 // - next level
 
 type UserClick struct {
-	Gold             string                      `json:"gold"`
-	Diamonds         int64                       `json:"diamonds"`
-	CurrentDamage    string                      `json:"currentDamage"`
-	MaxDamage        string                      `json:"maxDamage"`
-	PlanetName       string                      `json:"planetName"`
-	CurrentHealth    string                      `json:"currentHealth"`
-	HealthPercent    int                         `json:"healthPercent"`
-	MaxHealth        string                      `json:"maxHealth"`
-	CurrentLevel     int64                       `json:"currentLevel"`
-	MaxLevel         int64                       `json:"maxLevel"`
-	CurrentStage     uint8                       `json:"currentStage"`
-	MaxStage         uint8                       `json:"maxStage"`
-	PlanetsDestroyed string                      `json:"planetsDestroyed"`
-	Store            map[string]StoreDataMessage `json:"store"`
-	Ship             map[string]ShipDataMessage  `json:"ship"`
+	Gold             string                   `json:"gold"`
+	Diamonds         int64                    `json:"diamonds"`
+	CurrentDamage    string                   `json:"currentDamage"`
+	MaxDamage        string                   `json:"maxDamage"`
+	PlanetName       string                   `json:"planetName"`
+	CurrentHealth    string                   `json:"currentHealth"`
+	HealthPercent    int                      `json:"healthPercent"`
+	MaxHealth        string                   `json:"maxHealth"`
+	CurrentLevel     int64                    `json:"currentLevel"`
+	MaxLevel         int64                    `json:"maxLevel"`
+	CurrentStage     uint8                    `json:"currentStage"`
+	MaxStage         uint8                    `json:"maxStage"`
+	PlanetsDestroyed string                   `json:"planetsDestroyed"`
+	Store            map[int]StoreDataMessage `json:"store"`
+	Ship             map[int]ShipDataMessage  `json:"ship"`
 }
 
 type ActionMessage struct {
-	Message string
+	Action string `json:"action"`
+	Data   any    `json:"data"`
 }
 
 type UpgradeMessage struct {
@@ -71,7 +71,7 @@ func ActionHandler(g *Game, action string) []byte {
 	if action == "click" {
 		g.ClickThePlanet()
 		percent := g.GetHealthPercent()
-		store := map[string]StoreDataMessage{}
+		store := map[int]StoreDataMessage{}
 		for k := range g.Store {
 			s := new(StoreDataMessage)
 			s.Level = g.Store[k].Level
@@ -79,7 +79,7 @@ func ActionHandler(g *Game, action string) []byte {
 			s.Damage = g.Store[k].Damage.String()
 			store[k] = *s
 		}
-		ship := map[string]ShipDataMessage{}
+		ship := map[int]ShipDataMessage{}
 		for k := range g.Store {
 			s := new(ShipDataMessage)
 			s.Level = g.Ship[k].Level
@@ -87,31 +87,35 @@ func ActionHandler(g *Game, action string) []byte {
 			s.Damage = g.Ship[k].Damage.String()
 			ship[k] = *s
 		}
-		userClick := UserClick{
-			Gold:             g.Gold.String(),
-			Diamonds:         g.Diamonds,
-			CurrentDamage:    g.CurrentDamage.String(),
-			MaxDamage:        g.MaxDamage.String(),
-			PlanetName:       g.Planet.Name,
-			CurrentHealth:    g.Planet.CurrentHealth.String(),
-			HealthPercent:    percent,
-			MaxHealth:        g.Planet.MaxHealth.String(),
-			CurrentLevel:     g.CurrentLevel,
-			MaxLevel:         g.MaxLevel,
-			CurrentStage:     g.CurrentStage,
-			MaxStage:         g.MaxStage,
-			PlanetsDestroyed: g.PlanetsDestroyed.String(),
-			Store:            store,
-			Ship:             ship,
+		// Wrapper to indicate for frontend how to behave depending on the action field
+		message := ActionMessage{
+			Action: action,
+			Data: UserClick{
+				Gold:             g.Gold.String(),
+				Diamonds:         g.Diamonds,
+				CurrentDamage:    g.CurrentDamage.String(),
+				MaxDamage:        g.MaxDamage.String(),
+				PlanetName:       g.Planet.Name,
+				CurrentHealth:    g.Planet.CurrentHealth.String(),
+				HealthPercent:    percent,
+				MaxHealth:        g.Planet.MaxHealth.String(),
+				CurrentLevel:     g.CurrentLevel,
+				MaxLevel:         g.MaxLevel,
+				CurrentStage:     g.CurrentStage,
+				MaxStage:         g.MaxStage,
+				PlanetsDestroyed: g.PlanetsDestroyed.String(),
+				Store:            store,
+				Ship:             ship,
+			},
 		}
-		encoded, _ := json.Marshal(userClick)
+		encoded, _ := json.Marshal(message)
 		return []byte(encoded)
 	} else if action == "init" {
 		g.CalculatePlanetHealth()
 		g.CalculateStore(-1)
 		g.CalculateCurrentDamage()
 		//g.CalculateShip
-		store := map[string]StoreDataMessage{}
+		store := map[int]StoreDataMessage{}
 		for k := range g.Store {
 			s := new(StoreDataMessage)
 			s.Level = g.Store[k].Level
@@ -119,7 +123,7 @@ func ActionHandler(g *Game, action string) []byte {
 			s.Damage = g.Store[k].Damage.String()
 			store[k] = *s
 		}
-		ship := map[string]ShipDataMessage{}
+		ship := map[int]ShipDataMessage{}
 		for k := range g.Store {
 			s := new(ShipDataMessage)
 			s.Level = g.Ship[k].Level
@@ -128,24 +132,27 @@ func ActionHandler(g *Game, action string) []byte {
 			ship[k] = *s
 		}
 		percent := g.GetHealthPercent()
-		userClick := UserClick{
-			Gold:             g.Gold.String(),
-			Diamonds:         g.Diamonds,
-			CurrentDamage:    g.CurrentDamage.String(),
-			MaxDamage:        g.MaxDamage.String(),
-			PlanetName:       g.Planet.Name,
-			CurrentHealth:    g.Planet.CurrentHealth.String(),
-			HealthPercent:    percent,
-			MaxHealth:        g.Planet.MaxHealth.String(),
-			CurrentLevel:     g.CurrentLevel,
-			MaxLevel:         g.MaxLevel,
-			CurrentStage:     g.CurrentStage,
-			MaxStage:         g.MaxStage,
-			PlanetsDestroyed: g.PlanetsDestroyed.String(),
-			Store:            store,
-			Ship:             ship,
+		message := ActionMessage{
+			Action: action,
+			Data: UserClick{
+				Gold:             g.Gold.String(),
+				Diamonds:         g.Diamonds,
+				CurrentDamage:    g.CurrentDamage.String(),
+				MaxDamage:        g.MaxDamage.String(),
+				PlanetName:       g.Planet.Name,
+				CurrentHealth:    g.Planet.CurrentHealth.String(),
+				HealthPercent:    percent,
+				MaxHealth:        g.Planet.MaxHealth.String(),
+				CurrentLevel:     g.CurrentLevel,
+				MaxLevel:         g.MaxLevel,
+				CurrentStage:     g.CurrentStage,
+				MaxStage:         g.MaxStage,
+				PlanetsDestroyed: g.PlanetsDestroyed.String(),
+				Store:            store,
+				Ship:             ship,
+			},
 		}
-		encoded, _ := json.Marshal(userClick)
+		encoded, _ := json.Marshal(message)
 		return []byte(encoded)
 	} else {
 		unmarshaled := new(UpgradeMessage)
@@ -156,32 +163,36 @@ func ActionHandler(g *Game, action string) []byte {
 		if unmarshaled.Upgrade == "store" {
 			g.UpgradeStore(unmarshaled.Index)
 			g.CalculateStore(unmarshaled.Index)
-			indexStr := strconv.Itoa(unmarshaled.Index)
 			storeData := StoreDataMessage{
-				Level:  g.Store[indexStr].Level,
-				Cost:   g.Store[indexStr].Cost.String(),
-				Damage: g.Store[indexStr].Damage.String(),
+				Level:  g.Store[unmarshaled.Index].Level,
+				Cost:   g.Store[unmarshaled.Index].Cost.String(),
+				Damage: g.Store[unmarshaled.Index].Damage.String(),
 			}
-			storeDataWrapper := StoreDataMessageWrapper{
-				Store: storeData,
+			message := ActionMessage{
+				Action: "store",
+				Data: StoreDataMessageWrapper{
+					Store: storeData,
+				},
 			}
-			encoded, _ := json.Marshal(storeDataWrapper)
+			encoded, _ := json.Marshal(message)
 			return []byte(encoded)
 		}
 		if unmarshaled.Upgrade == "ship" {
 			g.UpgradeShip(unmarshaled.Index)
 			g.CalculateShip(unmarshaled.Index)
-			indexStr := strconv.Itoa(unmarshaled.Index)
 			shipData := ShipDataMessage{
-				Level:      g.Ship[indexStr].Level,
-				Cost:       g.Ship[indexStr].Cost.String(),
-				Multiplier: g.Ship[indexStr].Multiplier,
-				Damage:     g.Ship[indexStr].Damage.String(),
+				Level:      g.Ship[unmarshaled.Index].Level,
+				Cost:       g.Ship[unmarshaled.Index].Cost.String(),
+				Multiplier: g.Ship[unmarshaled.Index].Multiplier,
+				Damage:     g.Ship[unmarshaled.Index].Damage.String(),
 			}
-			shipDataWrapper := ShipDataMessageWrapper{
-				Ship: shipData,
+			message := ActionMessage{
+				Action: "ship",
+				Data: ShipDataMessageWrapper{
+					Ship: shipData,
+				},
 			}
-			encoded, _ := json.Marshal(shipDataWrapper)
+			encoded, _ := json.Marshal(message)
 			return []byte(encoded)
 		}
 		fmt.Println("Unmarshaled", unmarshaled)
@@ -195,7 +206,8 @@ func ActionHandler(g *Game, action string) []byte {
 	// ^ switch case to be considered
 
 	message := ActionMessage{
-		Message: action,
+		Action: "unknown",
+		Data:   nil,
 	}
 	encoded, _ := json.Marshal(message)
 	return []byte(encoded)

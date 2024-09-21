@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import GameNavbar from "@/components/game_components/GameNavbar/GameNavbar";
 import GameSidebar from "@/components/game_components/GameSidebar/GameSidebar";
 import GameMain from "@/components/game_components/GameMain/GameMain";
+import Store from "@/components/game_components/GameSidebar/Tabs/Store/Store";
 
 interface UpgradeFunc {
   (upgrade: "store" | "ship", index: number | string): void;
@@ -27,6 +28,11 @@ interface Ship {
   cost: string;
   multiplier: number;
   damage: string;
+}
+
+interface ActionMessage {
+  action: string;
+  data: any;
 }
 
 export interface Data {
@@ -140,9 +146,11 @@ export default function Game() {
     };
 
     socket.current.onmessage = (e: MessageEvent) => {
-      let data = JSON.parse(e.data);
-      console.log("From the server: ", data);
-      if (data.currentHealth) setData(data);
+      let message: ActionMessage = JSON.parse(e.data);
+      console.log("From the server: ", message);
+      if (message.action === "click" || message.action == "init")
+        setData(message.data);
+      if (message.action === "store") console.log(message.data);
     };
 
     socket.current.onclose = () => {

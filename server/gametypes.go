@@ -43,8 +43,8 @@ type Game struct {
 	MaxStage         uint8
 	PlanetsDestroyed *big.Float // rounded to 0 decimal places
 	Planet           Planet
-	Store            map[string]StoreUpgrade
-	Ship             map[string]ShipUpgrade
+	Store            map[int]StoreUpgrade
+	Ship             map[int]ShipUpgrade
 	Ch               chan bool
 }
 
@@ -113,12 +113,11 @@ func (g *Game) CalculatePlanetHealth() {
 }
 
 func (g *Game) UpgradeStore(index int) {
-	indexStr := strconv.Itoa(index)
-	if g.Gold.Cmp(g.Store[indexStr].Cost) >= 0 {
-		if entry, ok := g.Store[indexStr]; ok {
+	if g.Gold.Cmp(g.Store[index].Cost) >= 0 {
+		if entry, ok := g.Store[index]; ok {
 			entry.Level += 1
-			g.Store[indexStr] = entry
-			g.Gold.Sub(g.Gold, g.Store[indexStr].Cost)
+			g.Store[index] = entry
+			g.Gold.Sub(g.Gold, g.Store[index].Cost)
 		}
 	}
 	g.CalculateCurrentDamage()
@@ -128,7 +127,6 @@ func (g *Game) CalculateStore(index int) {
 	// If the index != -1, calculate the specific StoreUpgrade
 	// else just calculate the whole map
 	fmt.Println("index:", index)
-	indexStr := strconv.Itoa(index)
 	if index > len(g.Store) {
 		return
 	}
@@ -136,16 +134,16 @@ func (g *Game) CalculateStore(index int) {
 	f := 1.03
 
 	if index != -1 {
-		if g.Store[indexStr].Level > 0 {
+		if g.Store[index].Level > 0 {
 			// cost = baseCost * 1.03 ** (level - 1)
-			pow := math.Pow(f, float64(g.Store[indexStr].Level))
+			pow := math.Pow(f, float64(g.Store[index].Level))
 			bigPow := big.NewFloat(pow)
 
-			g.Store[indexStr].Cost.Mul(g.Store[indexStr].BaseCost, bigPow)
+			g.Store[index].Cost.Mul(g.Store[index].BaseCost, bigPow)
 
 			//damage = baseDmg * level
-			bigLevel := big.NewFloat(float64(g.Store[indexStr].Level))
-			g.Store[indexStr].Damage.Mul(g.Store[indexStr].BaseDamage, bigLevel)
+			bigLevel := big.NewFloat(float64(g.Store[index].Level))
+			g.Store[index].Damage.Mul(g.Store[index].BaseDamage, bigLevel)
 		}
 	} else if index == -1 {
 		for k := range g.Store {
@@ -163,27 +161,25 @@ func (g *Game) CalculateStore(index int) {
 	} else {
 		return
 	}
-	fmt.Println("Store[i].Level: ", g.Store[indexStr].Level)
-	fmt.Println("inside CalculateStore: ", g.Store[indexStr].Cost)
+	fmt.Println("Store[i].Level: ", g.Store[index].Level)
+	fmt.Println("inside CalculateStore: ", g.Store[index].Cost)
 }
 
 func (g *Game) UpgradeShip(index int) {
-	indexStr := strconv.Itoa(index)
-	if g.Gold.Cmp(g.Ship[indexStr].Cost) >= 0 {
-		if entry, ok := g.Ship[indexStr]; ok {
+	if g.Gold.Cmp(g.Ship[index].Cost) >= 0 {
+		if entry, ok := g.Ship[index]; ok {
 			entry.Level += 1
-			g.Ship[indexStr] = entry
+			g.Ship[index] = entry
 		}
 	}
 	g.CalculateCurrentDamage()
 }
 
 func (g *Game) CalculateShip(index int) {
-	indexStr := strconv.Itoa(index)
 	if index > len(g.Store) {
 		return
 	}
-	fmt.Println(g.Ship[indexStr].Level)
+	fmt.Println(g.Ship[index].Level)
 
 	if index != -1 {
 		// assign cost and damage of a particular ship
