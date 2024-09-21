@@ -99,17 +99,8 @@ func (g *Game) CalculatePlanetHealth() {
 	result := new(big.Float).SetFloat64(pow)
 	result.Mul(result, big.NewFloat(10))
 
-	intResult, _ := result.Int(nil)
-
-	if len(intResult.String()) > 6 {
-		fmt.Println(result.Text('e', 3))
-		g.Planet.MaxHealth.SetString(result.Text('e', 3))
-		g.Planet.CurrentHealth.SetString(result.Text('e', 3)) // set planet to 100%hp
-	} else {
-		fmt.Println(result.Text('f', 0))
-		g.Planet.MaxHealth.SetString(result.Text('f', 0))
-		g.Planet.CurrentHealth.SetString(result.Text('f', 0)) // set planet to 100%hp
-	}
+	g.ConvertNumber(result, g.Planet.MaxHealth)
+	g.ConvertNumber(result, g.Planet.CurrentHealth)
 }
 
 func (g *Game) UpgradeStore(index int) {
@@ -117,7 +108,9 @@ func (g *Game) UpgradeStore(index int) {
 		if entry, ok := g.Store[index]; ok {
 			entry.Level += 1
 			g.Store[index] = entry
-			g.Gold.Sub(g.Gold, g.Store[index].Cost)
+			result := new(big.Float)
+			result.Sub(g.Gold, g.Store[index].Cost)
+			g.ConvertNumber(result, g.Gold)
 		}
 	}
 	g.CalculateCurrentDamage()
@@ -138,8 +131,11 @@ func (g *Game) CalculateStore(index int) {
 			// cost = baseCost * 1.03 ** (level - 1)
 			pow := math.Pow(f, float64(g.Store[index].Level))
 			bigPow := big.NewFloat(pow)
+			cost := new(big.Float)
 
-			g.Store[index].Cost.Mul(g.Store[index].BaseCost, bigPow)
+			cost.Mul(g.Store[index].BaseCost, bigPow)
+
+			g.ConvertNumber(cost, g.Store[index].Cost)
 
 			//damage = baseDmg * level
 			bigLevel := big.NewFloat(float64(g.Store[index].Level))
@@ -152,7 +148,10 @@ func (g *Game) CalculateStore(index int) {
 				pow := math.Pow(f, float64(g.Store[k].Level))
 				bigPow := big.NewFloat(pow)
 
-				g.Store[k].Cost.Mul(g.Store[k].BaseCost, bigPow)
+				cost := new(big.Float)
+				cost.Mul(g.Store[k].BaseCost, bigPow)
+
+				g.ConvertNumber(cost, g.Store[k].Cost)
 
 				bigLevel := big.NewFloat(float64(g.Store[k].Level))
 				g.Store[k].Damage.Mul(g.Store[k].BaseDamage, bigLevel)
@@ -229,22 +228,14 @@ func (g *Game) CalculateGoldEarned() {
 	result := new(big.Float).SetFloat64(pow)
 	result.Mul(result, big.NewFloat(10))
 
-	intResult, _ := result.Int(nil)
-
-	if len(intResult.String()) > 6 {
-		fmt.Println(result.Text('e', 3))
-		g.Planet.Gold.SetString(result.Text('e', 3))
-	} else {
-		fmt.Println(result.Text('f', 0))
-		g.Planet.Gold.SetString(result.Text('f', 0))
-	}
+	g.ConvertNumber(result, g.Planet.Gold)
 }
 
 func (g *Game) AddCurrentGold() {
 	result := new(big.Float)
 	result.Add(g.Gold, g.Planet.Gold)
 
-	g.Gold = result
+	g.ConvertNumber(result, g.Gold)
 }
 
 func (g *Game) AddPlanetDestroyed() {
@@ -253,4 +244,14 @@ func (g *Game) AddPlanetDestroyed() {
 	one.SetString("1")
 	add.Add(g.PlanetsDestroyed, one)
 	g.PlanetsDestroyed = add
+}
+
+func (g *Game) ConvertNumber(res *big.Float, dest *big.Float) {
+	intRes, _ := res.Int(nil)
+
+	if len(intRes.String()) > 6 {
+		dest.SetString(res.Text('e', 3))
+	} else {
+		dest.SetString(res.Text('f', 0))
+	}
 }

@@ -134,7 +134,10 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		for range game.Ch {
 			fmt.Printf("%v: Planet destroyed - Saving game...\n", time.Now())
-			s.db.SaveGameProgress(id, game)
+			err := s.db.SaveGameProgress(id, game)
+			if err != nil {
+				fmt.Println("!Error: SaveGameProgress: ", err)
+			}
 		}
 	}()
 

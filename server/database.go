@@ -145,9 +145,8 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 		Store: map[int]StoreUpgradeData{},
 		Ship:  map[int]ShipUpgradeData{},
 	}
-	var gameId int
 	err := p.db.QueryRow(gameQuery, id).Scan(
-		&gameId,
+		&game.Id,
 		&game.Gold,
 		&game.Diamonds,
 		&game.MaxDamage,
@@ -162,7 +161,7 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 	}
 
 	i := 1
-	rows, err := p.db.Query(gameShipQuery, gameId)
+	rows, err := p.db.Query(gameShipQuery, game.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +178,7 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 	}
 
 	i = 1
-	rows, err = p.db.Query(gameStoreQuery, gameId)
+	rows, err = p.db.Query(gameStoreQuery, game.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -217,8 +216,8 @@ func (p *Postgres) SaveGameProgress(userId int, g *Game) error {
 
 	queryGameStore := `
 		UPDATE game_store
-		SET level = $1,
-		WHERE game_id = $2 AND ship_id = $3;
+		SET level = $1
+		WHERE game_id = $2 AND store_id = $3;
 	`
 
 	_, err := p.db.Exec(queryGame,
@@ -244,10 +243,15 @@ func (p *Postgres) SaveGameProgress(userId int, g *Game) error {
 	}
 
 	for i := 1; i <= len(g.Store); i++ {
-		_, err := p.db.Exec(queryGameStore, g.Store[i].Level, g.Id, i)
+		res, err := p.db.Exec(queryGameStore, g.Store[i].Level, g.Id, i)
 		if err != nil {
 			return err
 		}
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+		fmt.Println(rowsAffected)
 	}
 
 	fmt.Println("Saved game")
