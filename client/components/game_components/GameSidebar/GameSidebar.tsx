@@ -1,16 +1,14 @@
 "use client";
 
-import { useState, useContext } from "react";
-import { GameContext } from "@/app/game/page";
+import { useState } from "react";
+import { useAppSelector } from "@/lib/hooks";
 
 import Tabs from "./Tabs/Tabs";
 
 import "./GameSidebar.scss";
 
-import { Data } from "@/lib/game/gameSlice";
-
 export default function GameSidebar() {
-  let data: Data | undefined = useContext(GameContext);
+  const gameData = useAppSelector((state) => state.game);
   const tabs: Array<string> = ["Store", "Ship", "Stats"];
 
   const [tabTitle, setTabTitle] = useState<string>(tabs[0]);
@@ -23,10 +21,10 @@ export default function GameSidebar() {
     <aside className="game-sidebar">
       <div className="game-sidebar-currency">
         <div style={{ display: "flex" }}>
-          <div className="test-yellow">Gold"icon"</div>: {data?.gold}
+          <div className="test-yellow">Gold"icon"</div>: {gameData?.gold}
         </div>
         <div style={{ display: "flex" }}>
-          <div className="test-blue">Diamond"icon"</div>: {data?.diamonds}
+          <div className="test-blue">Diamond"icon"</div>: {gameData?.diamonds}
         </div>
       </div>
       <div className="game-sidebar-options">

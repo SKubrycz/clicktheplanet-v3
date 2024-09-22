@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, createContext } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import GameNavbar from "@/components/game_components/GameNavbar/GameNavbar";
@@ -23,9 +23,6 @@ interface ActionMessage {
   action: string;
   data: any;
 }
-
-export const GameContext = createContext<Data | undefined>(gameObject);
-export const UpgradeContext = createContext<UpgradeFunc | null>(null);
 
 export default function Game() {
   const gameData = useAppSelector((state) => state.game);
@@ -73,15 +70,6 @@ export default function Game() {
     }
   }, [upgradeData]);
 
-  const handleUpgrade: UpgradeFunc = (upgrade, index) => {
-    const upgradeObj: Upgrade = {
-      upgrade: upgrade,
-      index: index,
-    };
-    if (socket.current) socket.current.send(JSON.stringify(upgradeObj));
-    console.log(`${upgrade} - ${index}`);
-  };
-
   useEffect(() => {
     handleGetGame();
 
@@ -100,13 +88,14 @@ export default function Game() {
       if (message.action === "init") {
         //setData(message.data);
         dispatch(Init(message.data));
+        console.log(typeof message.data.store);
       }
       if (message.action === "click") {
         //setData(message.data);
         dispatch(Click(message.data));
       }
       if (message.action === "store") {
-        //dispatch(UpdateStore(message.data.store));
+        dispatch(UpdateStore(message.data.store));
         console.log(gameData);
       }
     };
@@ -118,13 +107,11 @@ export default function Game() {
 
   return (
     <div className="game-wrapper">
-      <GameContext.Provider value={undefined}>
-        <GameNavbar></GameNavbar>
-        <div className="game-content-wrapper">
-          <GameSidebar></GameSidebar>
-          <GameMain planetClick={handlePlanetClickData}></GameMain>
-        </div>
-      </GameContext.Provider>
+      <GameNavbar></GameNavbar>
+      <div className="game-content-wrapper">
+        <GameSidebar></GameSidebar>
+        <GameMain planetClick={handlePlanetClickData}></GameMain>
+      </div>
     </div>
   );
 }

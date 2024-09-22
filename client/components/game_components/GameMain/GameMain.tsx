@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useContext } from "react";
-import { GameContext } from "@/app/game/page";
+import { useState, useEffect } from "react";
+
+import { useAppSelector } from "@/lib/hooks";
+import { Data } from "@/lib/game/gameSlice";
 
 import "./GameMain.scss";
-
-import { Data } from "@/lib/game/gameSlice";
 
 export interface Health {
   currentHealth: string;
@@ -17,7 +17,7 @@ interface GameMainProps {
 }
 
 export default function GameMain({ planetClick }: GameMainProps) {
-  let data: Data | undefined = useContext(GameContext);
+  const gameData = useAppSelector((state) => state.game);
   const [health, setHealth] = useState<Health>({
     currentHealth: "10",
     maxHealth: "10",
@@ -25,15 +25,15 @@ export default function GameMain({ planetClick }: GameMainProps) {
   const [width, setWidth] = useState<number>(100);
 
   useEffect(() => {
-    if (data) {
+    if (gameData) {
       setHealth({
         ...health,
-        currentHealth: data.currentHealth,
-        maxHealth: data.maxHealth,
+        currentHealth: gameData.currentHealth,
+        maxHealth: gameData.maxHealth,
       });
-      setWidth(data.healthPercent);
+      setWidth(gameData.healthPercent);
     }
-  }, [data]);
+  }, [gameData]);
 
   const handlePlanetClick = () => {
     // after WebSocket connection -> send click message to the server
@@ -50,9 +50,9 @@ export default function GameMain({ planetClick }: GameMainProps) {
   return (
     <main className="game-main">
       <div className="main-spacing"></div>
-      <div className="main-current-level">Level {data?.currentLevel}</div>
-      <div className="main-current-stage">{data?.currentStage}/10</div>
-      <div className="main-planet-name">{data?.planetName}</div>
+      <div className="main-current-level">Level {gameData?.currentLevel}</div>
+      <div className="main-current-stage">{gameData?.currentStage}/10</div>
+      <div className="main-planet-name">{gameData?.planetName}</div>
       <div
         className="main-planet-image"
         onClick={() => handlePlanetClick()}

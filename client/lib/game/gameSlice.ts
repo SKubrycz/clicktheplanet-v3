@@ -86,23 +86,15 @@ export const gameSlice = createSlice({
       return { ...action.payload };
     },
     UpdateStore: (state, action: PayloadAction<Store>) => {
-      console.log("UpdateStore payload: ", action.payload);
-      console.log("State.store: ", current(state.store));
-      const storeElement = state.store.find(
-        (el) => el.index === action.payload.index
-      );
-      if (storeElement) {
-        return {
-          ...state,
-          store: state.store.map((el) => {
-            if (el.index === action.payload.index) {
-              return action.payload;
-            } else {
-              return el;
-            }
-          }),
-        };
-      }
+      // HUGE NOTE - it is important to note that
+      // store AND ship are obth returned from API as objects
+      // of which keys are like `1` or `2` and so on
+      // they are in fact NOT Arrays, which had to be unfortunately
+      // found out the hard way
+      return {
+        ...state,
+        store: { ...state.store, [action.payload.index]: action.payload },
+      };
     },
   },
 });

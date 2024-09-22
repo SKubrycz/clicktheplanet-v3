@@ -1,5 +1,3 @@
-import { Data } from "@/app/game/page";
-
 interface StatsElementProps {
   title: string; // maybe set title and description
   data: number | string | undefined;
