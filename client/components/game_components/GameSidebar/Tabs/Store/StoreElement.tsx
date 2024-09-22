@@ -1,10 +1,9 @@
 "use client";
 
-import { useContext } from "react";
-
-import { UpgradeContext } from "@/app/game/page";
-import { Data } from "@/lib/game/gameSlice";
+import type { Data } from "@/lib/game/gameSlice";
+import { Upgrade } from "@/lib/game/upgradeSlice";
 import { Add } from "@mui/icons-material";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
 interface StoreElementProps {
   index: number;
@@ -21,7 +20,8 @@ export default function StoreElement({
   image,
   data,
 }: StoreElementProps) {
-  let upgradeFunc = useContext(UpgradeContext);
+  const gameData = useAppSelector((state) => state.game);
+  const dispatch = useAppDispatch();
 
   return (
     <div className="store-element">
@@ -33,18 +33,16 @@ export default function StoreElement({
         )}
         <div className="store-element-info-wrapper">
           <div className="store-element-title">
-            {title} - Level {data?.store[index]?.level}
+            {title} - Level {gameData?.store[index]?.level}
           </div>
           <div className="store-element-description">
-            {description} - Damage: {data?.store[index]?.damage}
+            {description} - Damage: {gameData?.store[index]?.damage}
           </div>
-          <div>Cost: {data?.store[index]?.cost}</div>
+          <div>Cost: {gameData?.store[index]?.cost}</div>
         </div>
       </div>
       <Add
-        onClick={() => {
-          if (upgradeFunc) upgradeFunc("store", index);
-        }}
+        onClick={() => dispatch(Upgrade({ upgrade: "store", index: index }))}
         sx={{ width: 50, height: 50, cursor: "pointer" }}
       ></Add>
     </div>

@@ -6,14 +6,7 @@ import { useRouter } from "next/navigation";
 import GameNavbar from "@/components/game_components/GameNavbar/GameNavbar";
 import GameSidebar from "@/components/game_components/GameSidebar/GameSidebar";
 import GameMain from "@/components/game_components/GameMain/GameMain";
-import type { RootState } from "@/lib/store";
-import {
-  Init,
-  Click,
-  UpgradeStore,
-  UpgradeShip,
-  gameObject,
-} from "@/lib/game/gameSlice";
+import { Init, Click, UpdateStore, gameObject } from "@/lib/game/gameSlice";
 import type { Store, Ship, Data } from "@/lib/game/gameSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
@@ -35,9 +28,10 @@ export const GameContext = createContext<Data | undefined>(gameObject);
 export const UpgradeContext = createContext<UpgradeFunc | null>(null);
 
 export default function Game() {
-  const gameData = useAppSelector((state: RootState) => state.game);
+  const gameData = useAppSelector((state) => state.game);
+  const upgradeData = useAppSelector((state) => state.upgrade);
   const dispatch = useAppDispatch();
-  const [data, setData] = useState<Data | undefined>(gameObject);
+  //const [data, setData] = useState<Data | undefined>(gameObject);
   const socket = useRef<WebSocket | null>(null);
   const router = useRouter();
 
@@ -73,6 +67,12 @@ export default function Game() {
     console.log("click");
   };
 
+  useEffect(() => {
+    if (upgradeData && upgradeData.index != -1) {
+      if (socket.current) socket.current.send(JSON.stringify(upgradeData));
+    }
+  }, [upgradeData]);
+
   const handleUpgrade: UpgradeFunc = (upgrade, index) => {
     const upgradeObj: Upgrade = {
       upgrade: upgrade,
@@ -98,14 +98,17 @@ export default function Game() {
       let message: ActionMessage = JSON.parse(e.data);
       console.log("From the server: ", message);
       if (message.action === "init") {
-        setData(message.data);
+        //setData(message.data);
         dispatch(Init(message.data));
       }
       if (message.action === "click") {
-        setData(message.data);
+        //setData(message.data);
         dispatch(Click(message.data));
       }
-      if (message.action === "store") console.log(message.data);
+      if (message.action === "store") {
+        //dispatch(UpdateStore(message.data.store));
+        console.log(gameData);
+      }
     };
 
     socket.current.onclose = () => {
@@ -115,12 +118,10 @@ export default function Game() {
 
   return (
     <div className="game-wrapper">
-      <GameContext.Provider value={data}>
+      <GameContext.Provider value={undefined}>
         <GameNavbar></GameNavbar>
         <div className="game-content-wrapper">
-          <UpgradeContext.Provider value={handleUpgrade}>
-            <GameSidebar></GameSidebar>
-          </UpgradeContext.Provider>
+          <GameSidebar></GameSidebar>
           <GameMain planetClick={handlePlanetClickData}></GameMain>
         </div>
       </GameContext.Provider>

@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, current } from "@reduxjs/toolkit";
 
 export interface Store {
   index: number;
@@ -31,6 +31,11 @@ export interface Data {
   planetsDestroyed: string;
   store: Store[];
   ship: Ship[];
+}
+
+export interface UpgradeMessage {
+  upgrade: "store" | "ship";
+  index: number;
 }
 
 export const gameObject: Data = {
@@ -71,20 +76,37 @@ export const gameSlice = createSlice({
   initialState: gameObject,
   reducers: {
     Init: (state, action: PayloadAction<Data>) => {
-      state = action.payload;
       console.log("Init reducer");
       console.log(state);
+      return { ...action.payload };
     },
     Click: (state, action: PayloadAction<Data>) => {
-      state = action.payload;
       console.log("Click reducer");
       console.log(state);
+      return { ...action.payload };
     },
-    UpgradeStore: (state, action: PayloadAction<Data>) => {},
-    UpgradeShip: (state, action: PayloadAction<Data>) => {},
+    UpdateStore: (state, action: PayloadAction<Store>) => {
+      console.log("UpdateStore payload: ", action.payload);
+      console.log("State.store: ", current(state.store));
+      const storeElement = state.store.find(
+        (el) => el.index === action.payload.index
+      );
+      if (storeElement) {
+        return {
+          ...state,
+          store: state.store.map((el) => {
+            if (el.index === action.payload.index) {
+              return action.payload;
+            } else {
+              return el;
+            }
+          }),
+        };
+      }
+    },
   },
 });
 
-export const { Init, Click, UpgradeStore, UpgradeShip } = gameSlice.actions;
+export const { Init, Click, UpdateStore } = gameSlice.actions;
 
 export default gameSlice.reducer;

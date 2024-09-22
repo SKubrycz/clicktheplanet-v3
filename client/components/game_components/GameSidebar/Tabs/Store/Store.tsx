@@ -1,11 +1,9 @@
 "use client";
 
-import { useContext } from "react";
-
 import StoreElement from "./StoreElement";
 
 import "./Store.scss";
-import { GameContext } from "@/app/game/page";
+import { useAppSelector } from "@/lib/hooks";
 
 interface IStoreElement {
   title: string;
@@ -13,7 +11,7 @@ interface IStoreElement {
 }
 
 export default function Store() {
-  let data = useContext(GameContext);
+  const gameData = useAppSelector((state) => state.game);
 
   const storeElementsArr: IStoreElement[] = [
     { title: "Element 1 title", desc: "Brief element description" },
@@ -31,7 +29,7 @@ export default function Store() {
             index={i + 1}
             title={el.title}
             description={el.desc}
-            data={data}
+            data={gameData}
           ></StoreElement>
         );
       })}
