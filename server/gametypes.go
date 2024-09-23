@@ -257,3 +257,14 @@ func (g *Game) ConvertNumber(res *big.Float, dest *big.Float) {
 		dest.SetString(res.Text('f', 0))
 	}
 }
+
+// DisplayNumber returns a big number string to be sent to client
+func (g *Game) DisplayNumber(num *big.Float) string {
+	intNum, _ := num.Int(nil)
+
+	if len(intNum.String()) > 6 {
+		return num.Text('e', 3)
+	} else {
+		return num.Text('f', 0)
+	}
+}

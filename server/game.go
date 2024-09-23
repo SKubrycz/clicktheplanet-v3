@@ -77,35 +77,35 @@ func ActionHandler(g *Game, action string) []byte {
 		for k := range g.Store {
 			s := new(StoreDataMessage)
 			s.Level = g.Store[k].Level
-			s.Cost = g.Store[k].Cost.String()
-			s.Damage = g.Store[k].Damage.String()
+			s.Cost = g.DisplayNumber(g.Store[k].Cost)
+			s.Damage = g.DisplayNumber(g.Store[k].Damage)
 			store[k] = *s
 		}
 		ship := map[int]ShipDataMessage{}
 		for k := range g.Store {
 			s := new(ShipDataMessage)
 			s.Level = g.Ship[k].Level
-			s.Cost = g.Ship[k].Cost.String()
-			s.Damage = g.Ship[k].Damage.String()
+			s.Cost = g.DisplayNumber(g.Ship[k].Cost)
+			s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 			ship[k] = *s
 		}
 		// Wrapper to indicate for frontend how to behave depending on the action field
 		message := ActionMessage{
 			Action: action,
 			Data: UserClick{
-				Gold:             g.Gold.String(),
+				Gold:             g.DisplayNumber(g.Gold),
 				Diamonds:         g.Diamonds,
-				CurrentDamage:    g.CurrentDamage.String(),
-				MaxDamage:        g.MaxDamage.String(),
+				CurrentDamage:    g.DisplayNumber(g.CurrentDamage),
+				MaxDamage:        g.DisplayNumber(g.MaxDamage),
 				PlanetName:       g.Planet.Name,
-				CurrentHealth:    g.Planet.CurrentHealth.String(),
+				CurrentHealth:    g.DisplayNumber(g.Planet.CurrentHealth),
 				HealthPercent:    percent,
-				MaxHealth:        g.Planet.MaxHealth.String(),
+				MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
 				CurrentLevel:     g.CurrentLevel,
 				MaxLevel:         g.MaxLevel,
 				CurrentStage:     g.CurrentStage,
 				MaxStage:         g.MaxStage,
-				PlanetsDestroyed: g.PlanetsDestroyed.String(),
+				PlanetsDestroyed: g.DisplayNumber(g.PlanetsDestroyed),
 				Store:            store,
 				Ship:             ship,
 			},
@@ -122,8 +122,8 @@ func ActionHandler(g *Game, action string) []byte {
 			s := new(StoreDataMessage)
 			s.Index = k
 			s.Level = g.Store[k].Level
-			s.Cost = g.Store[k].Cost.String()
-			s.Damage = g.Store[k].Damage.String()
+			s.Cost = g.DisplayNumber(g.Store[k].Cost)
+			s.Damage = g.DisplayNumber(g.Store[k].Damage)
 			store[k] = *s
 		}
 		ship := map[int]ShipDataMessage{}
@@ -131,27 +131,28 @@ func ActionHandler(g *Game, action string) []byte {
 			s := new(ShipDataMessage)
 			s.Index = k
 			s.Level = g.Ship[k].Level
-			s.Cost = g.Ship[k].Cost.String()
-			s.Damage = g.Ship[k].Damage.String()
+			s.Cost = g.DisplayNumber(g.Ship[k].Cost)
+			s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 			ship[k] = *s
 		}
 		percent := g.GetHealthPercent()
+		g.ConvertNumber(g.Planet.MaxHealth, g.Planet.MaxHealth)
 		message := ActionMessage{
 			Action: action,
 			Data: UserClick{
-				Gold:             g.Gold.String(),
+				Gold:             g.DisplayNumber(g.Gold),
 				Diamonds:         g.Diamonds,
-				CurrentDamage:    g.CurrentDamage.String(),
-				MaxDamage:        g.MaxDamage.String(),
+				CurrentDamage:    g.DisplayNumber(g.CurrentDamage),
+				MaxDamage:        g.DisplayNumber(g.MaxDamage),
 				PlanetName:       g.Planet.Name,
-				CurrentHealth:    g.Planet.CurrentHealth.String(),
+				CurrentHealth:    g.DisplayNumber(g.Planet.CurrentHealth),
 				HealthPercent:    percent,
-				MaxHealth:        g.Planet.MaxHealth.String(),
+				MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
 				CurrentLevel:     g.CurrentLevel,
 				MaxLevel:         g.MaxLevel,
 				CurrentStage:     g.CurrentStage,
 				MaxStage:         g.MaxStage,
-				PlanetsDestroyed: g.PlanetsDestroyed.String(),
+				PlanetsDestroyed: g.DisplayNumber(g.PlanetsDestroyed),
 				Store:            store,
 				Ship:             ship,
 			},
@@ -170,8 +171,8 @@ func ActionHandler(g *Game, action string) []byte {
 			storeData := StoreDataMessage{
 				Index:  unmarshaled.Index,
 				Level:  g.Store[unmarshaled.Index].Level,
-				Cost:   g.Store[unmarshaled.Index].Cost.String(),
-				Damage: g.Store[unmarshaled.Index].Damage.String(),
+				Cost:   g.DisplayNumber(g.Store[unmarshaled.Index].Cost),
+				Damage: g.DisplayNumber(g.Store[unmarshaled.Index].Damage),
 			}
 			message := ActionMessage{
 				Action: "store",
@@ -188,9 +189,9 @@ func ActionHandler(g *Game, action string) []byte {
 			shipData := ShipDataMessage{
 				Index:      unmarshaled.Index,
 				Level:      g.Ship[unmarshaled.Index].Level,
-				Cost:       g.Ship[unmarshaled.Index].Cost.String(),
+				Cost:       g.DisplayNumber(g.Ship[unmarshaled.Index].Cost),
 				Multiplier: g.Ship[unmarshaled.Index].Multiplier,
-				Damage:     g.Ship[unmarshaled.Index].Damage.String(),
+				Damage:     g.DisplayNumber(g.Ship[unmarshaled.Index].Damage),
 			}
 			message := ActionMessage{
 				Action: "ship",
