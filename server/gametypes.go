@@ -83,7 +83,7 @@ func (g *Game) GetHealthPercent() int {
 	intHealth, _ := healthMultiplied.Int(nil)
 	intText := intHealth.Text(10)
 	percentage, _ := strconv.Atoi(intText)
-	fmt.Println(percentage)
+	fmt.Printf("%v%%", percentage)
 	return percentage
 }
 
@@ -145,7 +145,6 @@ func (g *Game) CalculateStore(index int) {
 	} else if index == -1 {
 		for k := range g.Store {
 			if g.Store[k].Level > 0 {
-				fmt.Println("K: ---> ", k)
 				pow := math.Pow(f, float64(g.Store[k].Level))
 				bigPow := big.NewFloat(pow)
 

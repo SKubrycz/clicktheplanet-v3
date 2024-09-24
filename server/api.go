@@ -153,7 +153,10 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	for {
 		messageType, p, err := conn.ReadMessage()
 		fmt.Println(string(p))
-		response := ActionHandler(game, string(p))
+		var response []byte
+		if len(string(p)) > 0 {
+			response = ActionHandler(game, string(p))
+		}
 		if err != nil {
 			log.Println(err)
 			return

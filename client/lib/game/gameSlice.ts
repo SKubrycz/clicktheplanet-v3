@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, current } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface Store {
   index: number;
@@ -7,12 +7,24 @@ export interface Store {
   damage: string;
 }
 
+interface StoreMessage {
+  gold: string;
+  diamonds: number;
+  store: Store;
+}
+
 export interface Ship {
   index: number;
   level: number;
   cost: string;
   multiplier: number;
   damage: string;
+}
+
+interface ShipMessage {
+  gold: string;
+  diamonds: number;
+  ship: Ship;
 }
 
 export interface Data {
@@ -85,15 +97,20 @@ export const gameSlice = createSlice({
       console.log(state);
       return { ...action.payload };
     },
-    UpdateStore: (state, action: PayloadAction<Store>) => {
-      // HUGE NOTE - it is important to note that
-      // store AND ship are obth returned from API as objects
-      // of which keys are like `1` or `2` and so on
-      // they are in fact NOT Arrays, which had to be unfortunately
-      // found out the hard way
+    UpdateStore: (state, action: PayloadAction<StoreMessage>) => {
       return {
         ...state,
-        store: { ...state.store, [action.payload.index]: action.payload },
+        gold: action.payload.gold,
+        diamonds: action.payload.diamonds,
+        store: {
+          ...state.store,
+          [action.payload.store.index]: {
+            index: action.payload.store.index,
+            level: action.payload.store.level,
+            cost: action.payload.store.cost,
+            damage: action.payload.store.damage,
+          },
+        },
       };
     },
   },

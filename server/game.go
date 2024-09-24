@@ -50,7 +50,9 @@ type StoreDataMessage struct {
 }
 
 type StoreDataMessageWrapper struct {
-	Store StoreDataMessage `json:"store"`
+	Gold     string           `json:"gold"`
+	Diamonds int64            `json:"diamonds"`
+	Store    StoreDataMessage `json:"store"`
 }
 
 type ShipDataMessage struct {
@@ -62,7 +64,9 @@ type ShipDataMessage struct {
 }
 
 type ShipDataMessageWrapper struct {
-	Ship ShipDataMessage `json:"ship"`
+	Gold     string          `json:"gold"`
+	Diamonds int64           `json:"diamonds"`
+	Ship     ShipDataMessage `json:"ship"`
 }
 
 func ActionHandler(g *Game, action string) []byte {
@@ -177,7 +181,9 @@ func ActionHandler(g *Game, action string) []byte {
 			message := ActionMessage{
 				Action: "store",
 				Data: StoreDataMessageWrapper{
-					Store: storeData,
+					Gold:     g.DisplayNumber(g.Gold),
+					Diamonds: g.Diamonds,
+					Store:    storeData,
 				},
 			}
 			encoded, _ := json.Marshal(message)
@@ -202,7 +208,6 @@ func ActionHandler(g *Game, action string) []byte {
 			encoded, _ := json.Marshal(message)
 			return []byte(encoded)
 		}
-		fmt.Println("Unmarshaled", unmarshaled)
 	} /* else {
 		message := Message{
 			Message: "error sending data",
