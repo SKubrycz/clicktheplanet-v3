@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation";
 import GameNavbar from "@/components/game_components/GameNavbar/GameNavbar";
 import GameSidebar from "@/components/game_components/GameSidebar/GameSidebar";
 import GameMain from "@/components/game_components/GameMain/GameMain";
-import { Init, Click, UpdateStore, gameObject } from "@/lib/game/gameSlice";
+import {
+  Init,
+  Click,
+  UpdateStore,
+  DealDps,
+  gameObject,
+} from "@/lib/game/gameSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
 interface UpgradeFunc {
@@ -78,6 +84,7 @@ export default function Game() {
       console.log("WebSocket connection established");
       if (socket.current) {
         socket.current.send("init");
+        socket.current.send("dps");
       }
     };
 
@@ -96,6 +103,9 @@ export default function Game() {
       if (message.action === "store") {
         dispatch(UpdateStore(message.data));
         console.log(gameData);
+      }
+      if (message.action === "dps") {
+        dispatch(DealDps(message.data));
       }
     };
 

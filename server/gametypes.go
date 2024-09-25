@@ -72,13 +72,14 @@ func (g *Game) DamagePerSecond() {
 	// and then it would start to be sent to the client
 
 	// ---> use channel to pass data and every 100ms just click with dps damage
+	// fmt.Println("DamagePerSecond")
 
 	// dps := time.NewTicker(100 * time.Millisecond)
 	// defer dps.Stop()
 
 	// go func() {
 	// 	for range dps.C {
-	// 		g.Ch <- ""
+	// 		g.Ch <- "dps"
 	// 	}
 	// }()
 }
@@ -99,9 +100,9 @@ func (g *Game) CalculateCurrentDamage() {
 func (g *Game) CalculateDamagePerSecond() {
 	// this function should be run after each damage upgrade
 
-	if g.Ship[1].Level > 0 {
+	// if g.Ship[1].Level > 0 {
 
-	}
+	// }
 }
 
 func (g *Game) GetHealthPercent() int {
@@ -113,7 +114,6 @@ func (g *Game) GetHealthPercent() int {
 	intHealth, _ := healthMultiplied.Int(nil)
 	intText := intHealth.Text(10)
 	percentage, _ := strconv.Atoi(intText)
-	fmt.Printf("%v%%", percentage)
 	return percentage
 }
 

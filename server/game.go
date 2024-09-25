@@ -120,6 +120,7 @@ func ActionHandler(g *Game, action string) []byte {
 		g.CalculatePlanetHealth()
 		g.CalculateStore(-1)
 		g.CalculateCurrentDamage()
+		g.DamagePerSecond()
 		//g.CalculateShip
 		store := map[int]StoreDataMessage{}
 		for k := range g.Store {
@@ -223,4 +224,29 @@ func ActionHandler(g *Game, action string) []byte {
 	}
 	encoded, _ := json.Marshal(message)
 	return []byte(encoded)
+}
+
+func DealDps(g *Game) []byte {
+	g.ClickThePlanet(g.Dps)
+	percent := g.GetHealthPercent()
+	message := ActionMessage{
+		Action: "dps",
+		Data: UserClick{
+			Gold:             g.DisplayNumber(g.Gold),
+			Diamonds:         g.Diamonds,
+			CurrentDamage:    g.DisplayNumber(g.CurrentDamage),
+			MaxDamage:        g.DisplayNumber(g.MaxDamage),
+			PlanetName:       g.Planet.Name,
+			CurrentHealth:    g.DisplayNumber(g.Planet.CurrentHealth),
+			HealthPercent:    percent,
+			MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
+			CurrentLevel:     g.CurrentLevel,
+			MaxLevel:         g.MaxLevel,
+			CurrentStage:     g.CurrentStage,
+			MaxStage:         g.MaxStage,
+			PlanetsDestroyed: g.DisplayNumber(g.PlanetsDestroyed),
+		},
+	}
+	enc, _ := json.Marshal(message)
+	return []byte(enc)
 }

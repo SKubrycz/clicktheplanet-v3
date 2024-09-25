@@ -152,18 +152,34 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 
 	for {
 		messageType, p, err := conn.ReadMessage()
-		fmt.Println(string(p))
-		var response []byte
-		if len(string(p)) > 0 {
-			response = ActionHandler(game, string(p))
-		}
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		if err := conn.WriteMessage(messageType, response); err != nil {
-			log.Println(err)
-			return
+		fmt.Println(string(p))
+		var response []byte
+		if len(string(p)) > 0 && string(p) != "dps" {
+			response = ActionHandler(game, string(p))
+		}
+		dpsSent := false
+		if string(p) == "dps" && !dpsSent {
+			dpsSent = true
+			dps := time.NewTicker(1 * time.Second)
+			defer dps.Stop()
+			go func() {
+				for range dps.C {
+					response = DealDps(game)
+					if err := conn.WriteMessage(messageType, response); err != nil {
+						log.Println(err)
+						return
+					}
+				}
+			}()
+		} else {
+			if err := conn.WriteMessage(messageType, response); err != nil {
+				log.Println(err)
+				return
+			}
 		}
 	}
 }

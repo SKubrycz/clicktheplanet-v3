@@ -20,7 +20,7 @@ func NewGame(gameData *GameData) *Game {
 	maxDamage.SetString(gameData.MaxDamage)
 
 	dps := new(big.Float)
-	dps.SetString("0")
+	dps.SetString("1")
 
 	currentLevel := gameData.CurrentLevel
 
