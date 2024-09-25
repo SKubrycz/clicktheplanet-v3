@@ -19,6 +19,9 @@ func NewGame(gameData *GameData) *Game {
 	maxDamage := new(big.Float)
 	maxDamage.SetString(gameData.MaxDamage)
 
+	dps := new(big.Float)
+	dps.SetString("0")
+
 	currentLevel := gameData.CurrentLevel
 
 	maxLevel := gameData.MaxLevel
@@ -69,13 +72,13 @@ func NewGame(gameData *GameData) *Game {
 	}
 
 	store[1].BaseCost.SetString("10")
-	store[2].BaseCost.SetString("1000")
-	store[3].BaseCost.SetString("1.0e+5")
-	store[4].BaseCost.SetString("1.0e+8")
+	store[2].BaseCost.SetString("50")
+	store[3].BaseCost.SetString("1000")
+	store[4].BaseCost.SetString("100000")
 	store[1].Cost.SetString("10")
-	store[2].Cost.SetString("1000")
-	store[3].Cost.SetString("1.0e+5")
-	store[4].Cost.SetString("1.0e+8")
+	store[2].Cost.SetString("50")
+	store[3].Cost.SetString("1000")
+	store[4].Cost.SetString("100000")
 
 	store[1].BaseDamage.SetString("1")
 	store[2].BaseDamage.SetString("50")
@@ -147,6 +150,7 @@ func NewGame(gameData *GameData) *Game {
 		Diamonds:         diamonds,
 		CurrentDamage:    currentDamage,
 		MaxDamage:        maxDamage,
+		Dps:              dps,
 		CurrentLevel:     currentLevel,
 		MaxLevel:         maxLevel,
 		CurrentStage:     currentStage,

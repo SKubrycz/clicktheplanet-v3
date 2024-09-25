@@ -37,6 +37,7 @@ type Game struct {
 	Diamonds         int64
 	CurrentDamage    *big.Float
 	MaxDamage        *big.Float
+	Dps              *big.Float
 	CurrentLevel     int64
 	MaxLevel         int64
 	CurrentStage     uint8
@@ -48,8 +49,8 @@ type Game struct {
 	Ch               chan string
 }
 
-func (g *Game) ClickThePlanet() {
-	g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, g.CurrentDamage)
+func (g *Game) ClickThePlanet(dmg *big.Float) {
+	g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, dmg) // dmg to choose from dps of g.CurrentDamage
 	x := big.NewFloat(0)
 	if g.Planet.CurrentHealth.Cmp(x) <= 0 {
 		g.Advance()
@@ -59,6 +60,27 @@ func (g *Game) ClickThePlanet() {
 		g.AddCurrentGold()
 		g.Ch <- "click"
 	}
+}
+
+func (g *Game) DamagePerSecond() {
+	// damage per second divided into
+	// some portions of the damage
+	// to make the dps smoother for the user
+	// for example: ticker every 100ms
+	// with dps / 10
+	// DPS value would be activated with first ship upgrade
+	// and then it would start to be sent to the client
+
+	// ---> use channel to pass data and every 100ms just click with dps damage
+
+	// dps := time.NewTicker(100 * time.Millisecond)
+	// defer dps.Stop()
+
+	// go func() {
+	// 	for range dps.C {
+	// 		g.Ch <- ""
+	// 	}
+	// }()
 }
 
 func (g *Game) CalculateCurrentDamage() {
@@ -72,6 +94,14 @@ func (g *Game) CalculateCurrentDamage() {
 
 	fmt.Println("CurrentDamage")
 	// Here would be something with Ship upgrades
+}
+
+func (g *Game) CalculateDamagePerSecond() {
+	// this function should be run after each damage upgrade
+
+	if g.Ship[1].Level > 0 {
+
+	}
 }
 
 func (g *Game) GetHealthPercent() int {

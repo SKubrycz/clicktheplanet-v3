@@ -75,7 +75,7 @@ func ActionHandler(g *Game, action string) []byte {
 	// adds additional quotes around the string,
 	// so "click" instead of plain click
 	if action == "click" {
-		g.ClickThePlanet()
+		g.ClickThePlanet(g.CurrentDamage)
 		percent := g.GetHealthPercent()
 		store := map[int]StoreDataMessage{}
 		for k := range g.Store {
