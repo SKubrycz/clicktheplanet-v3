@@ -92,8 +92,6 @@ func (g *Game) CalculateCurrentDamage() {
 		}
 	}
 	g.CurrentDamage = res
-
-	fmt.Println("CurrentDamage")
 	// Here would be something with Ship upgrades
 }
 
@@ -118,9 +116,6 @@ func (g *Game) GetHealthPercent() int {
 }
 
 func (g *Game) CalculatePlanetHealth() {
-	fmt.Println("CalculatePlanetHealth")
-
-	// Formula
 	f := 1.3
 
 	exp := float64(g.CurrentLevel - 1)
@@ -150,7 +145,6 @@ func (g *Game) UpgradeStore(index int) {
 func (g *Game) CalculateStore(index int) {
 	// If the index != -1, calculate the specific StoreUpgrade
 	// else just calculate the whole map
-	fmt.Println("index:", index)
 	if index > len(g.Store) {
 		return
 	}
@@ -209,14 +203,32 @@ func (g *Game) UpgradeShip(index int) {
 }
 
 func (g *Game) CalculateShip(index int) {
-	if index > len(g.Store) {
+	if index > len(g.Ship) {
 		return
 	}
 	fmt.Println(g.Ship[index].Level)
 
 	f := 1.5
 
-	if index != -1 {
+	if index == 1 {
+		// cost = baseCost * 1.5 ** (level - 1)
+		pow := math.Pow(f, float64(g.Ship[index].Level))
+		bigPow := big.NewFloat(pow)
+
+		cost := new(big.Float)
+		cost.Mul(g.Ship[index].BaseCost, bigPow)
+		g.ConvertNumber(cost, g.Ship[index].Cost)
+
+		if entry, ok := g.Ship[index]; ok {
+			entry.Multiplier = 0.01 * float64(g.Ship[index].Level)
+			g.Ship[index] = entry
+		}
+
+		//damage = currentDamage * multiplier
+		bigMultiplier := big.NewFloat(g.Ship[index].Multiplier)
+		g.Ship[index].Damage.Mul(g.CurrentDamage, bigMultiplier)
+		g.Dps = g.Ship[index].Damage
+	} else if index != -1 {
 		// Level      int64
 		// Cost       *big.Float
 		// BaseCost   *big.Float

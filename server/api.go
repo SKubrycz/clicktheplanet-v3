@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"regexp"
-	"slices"
 	"time"
 	"unicode"
 
@@ -153,7 +152,6 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 
 	dpsSent := false
 	var dps *time.Ticker
-	allowed := []string{"init", "click"}
 	for {
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
@@ -162,7 +160,7 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println(string(p))
 		var response []byte
-		if len(string(p)) > 0 && slices.Contains(allowed, string(p)) {
+		if len(string(p)) > 0 && string(p) != " " {
 			response = ActionHandler(game, string(p))
 			if err := conn.WriteMessage(messageType, response); err != nil {
 				log.Println(err)
