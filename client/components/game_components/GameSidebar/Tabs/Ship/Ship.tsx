@@ -9,7 +9,7 @@ interface IShipElement {
 
 export default function Ship() {
   const shipElementsArr: IShipElement[] = [
-    { title: "Element 1", desc: "Lorem ipsum dolor sit amet" },
+    { title: "Dps", desc: "Damage per second based on click damage" },
     { title: "Element 2", desc: "Lorem ipsum dolor sit amet" },
     { title: "Element 3", desc: "Lorem ipsum dolor sit amet" },
     { title: "Element 4", desc: "Lorem ipsum dolor sit amet" },

@@ -34,7 +34,7 @@ export default function ShipElement({
       <div className="ship-element-action-wrapper">
         <ArrowUpward
           onClick={() => dispatch(Upgrade({ upgrade: "ship", index: index }))}
-          sx={{ width: 40, height: 40 }}
+          sx={{ width: 40, height: 40, cursor: "pointer" }}
         ></ArrowUpward>
       </div>
     </div>

@@ -15,6 +15,7 @@ import {
   UpdateShip,
 } from "@/lib/game/gameSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { CircularProgress } from "@mui/material";
 
 interface UpgradeFunc {
   (upgrade: "store" | "ship", index: number | string): void;
@@ -31,6 +32,7 @@ interface ActionMessage {
 }
 
 export default function Game() {
+  const [loading, setLoading] = useState<boolean>(true);
   const gameData = useAppSelector((state) => state.game);
   const upgradeData = useAppSelector((state) => state.upgrade);
   const dispatch = useAppDispatch();
@@ -82,6 +84,7 @@ export default function Game() {
     socket.current = new WebSocket("ws://localhost:8000/ws_game");
 
     socket.current.onopen = (e: Event) => {
+      setLoading(false);
       console.log("WebSocket connection established");
       if (socket.current) {
         socket.current.send("init");
@@ -120,11 +123,24 @@ export default function Game() {
 
   return (
     <div className="game-wrapper">
-      <GameNavbar></GameNavbar>
-      <div className="game-content-wrapper">
-        <GameSidebar></GameSidebar>
-        <GameMain planetClick={handlePlanetClickData}></GameMain>
-      </div>
+      {loading ? (
+        <CircularProgress
+          sx={{
+            position: "absolute",
+            transform: "translate(-50%, -50%)",
+            top: "50%",
+            left: "50%",
+          }}
+        ></CircularProgress>
+      ) : (
+        <>
+          <GameNavbar></GameNavbar>
+          <div className="game-content-wrapper">
+            <GameSidebar></GameSidebar>
+            <GameMain planetClick={handlePlanetClickData}></GameMain>
+          </div>
+        </>
+      )}
     </div>
   );
 }

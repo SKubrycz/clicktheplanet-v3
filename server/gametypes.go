@@ -199,6 +199,9 @@ func (g *Game) UpgradeShip(index int) {
 		if entry, ok := g.Ship[index]; ok {
 			entry.Level += 1
 			g.Ship[index] = entry
+			result := new(big.Float)
+			result.Sub(g.Gold, g.Ship[index].Cost)
+			g.ConvertNumber(result, g.Gold)
 		}
 	}
 	g.CalculateCurrentDamage()
@@ -211,12 +214,52 @@ func (g *Game) CalculateShip(index int) {
 	}
 	fmt.Println(g.Ship[index].Level)
 
+	f := 1.5
+
 	if index != -1 {
-		// assign cost and damage of a particular ship
-		// ! Count in the multiplier to the calculation
+		// Level      int64
+		// Cost       *big.Float
+		// BaseCost   *big.Float
+		// Multiplier float64
+		// Damage     *big.Float
+		// BaseDamage *big.Float
+
+		// cost = baseCost * 1.5 ** (level - 1)
+		pow := math.Pow(f, float64(g.Ship[index].Level))
+		bigPow := big.NewFloat(pow)
+
+		cost := new(big.Float)
+		cost.Mul(g.Ship[index].BaseCost, bigPow)
+		g.ConvertNumber(cost, g.Ship[index].Cost)
+
+		if entry, ok := g.Ship[index]; ok {
+			entry.Multiplier = 0.01 * float64(g.Ship[index].Level)
+			g.Ship[index] = entry
+		}
+
+		//damage = currentDamage * multiplier
+		bigMultiplier := big.NewFloat(g.Ship[index].Multiplier)
+		g.Ship[index].Damage.Mul(g.CurrentDamage, bigMultiplier)
 
 	} else if index == -1 {
-		// for loop for ship costs and damage init
+		for k := range g.Ship {
+			// cost = baseCost * 1.5 ** (level - 1)
+			pow := math.Pow(f, float64(g.Ship[k].Level))
+			bigPow := big.NewFloat(pow)
+
+			cost := new(big.Float)
+			cost.Mul(g.Ship[k].BaseCost, bigPow)
+			g.ConvertNumber(cost, g.Ship[k].Cost)
+
+			if entry, ok := g.Ship[k]; ok {
+				entry.Multiplier = 0.01 * float64(g.Ship[k].Level)
+				g.Ship[k] = entry
+			}
+
+			//damage = currentDamage * multiplier
+			bigMultiplier := big.NewFloat(g.Ship[k].Multiplier)
+			g.Ship[k].Damage.Mul(g.CurrentDamage, bigMultiplier)
+		}
 	} else {
 		return
 	}

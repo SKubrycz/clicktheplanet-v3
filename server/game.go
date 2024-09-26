@@ -86,10 +86,11 @@ func ActionHandler(g *Game, action string) []byte {
 			store[k] = *s
 		}
 		ship := map[int]ShipDataMessage{}
-		for k := range g.Store {
+		for k := range g.Ship {
 			s := new(ShipDataMessage)
 			s.Level = g.Ship[k].Level
 			s.Cost = g.DisplayNumber(g.Ship[k].Cost)
+			s.Multiplier = g.Ship[k].Multiplier
 			s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 			ship[k] = *s
 		}
@@ -119,6 +120,7 @@ func ActionHandler(g *Game, action string) []byte {
 	} else if action == "init" {
 		g.CalculatePlanetHealth()
 		g.CalculateStore(-1)
+		g.CalculateShip(-1)
 		g.CalculateCurrentDamage()
 		g.DamagePerSecond()
 		//g.CalculateShip
@@ -132,11 +134,12 @@ func ActionHandler(g *Game, action string) []byte {
 			store[k] = *s
 		}
 		ship := map[int]ShipDataMessage{}
-		for k := range g.Store {
+		for k := range g.Ship {
 			s := new(ShipDataMessage)
 			s.Index = k
 			s.Level = g.Ship[k].Level
 			s.Cost = g.DisplayNumber(g.Ship[k].Cost)
+			s.Multiplier = g.Ship[k].Multiplier
 			s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 			ship[k] = *s
 		}
