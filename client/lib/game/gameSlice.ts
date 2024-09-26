@@ -113,6 +113,23 @@ export const gameSlice = createSlice({
         },
       };
     },
+    UpdateShip: (state, action: PayloadAction<ShipMessage>) => {
+      return {
+        ...state,
+        gold: action.payload.gold,
+        diamonds: action.payload.diamonds,
+        ship: {
+          ...state.ship,
+          [action.payload.ship.index]: {
+            index: action.payload.ship.index,
+            level: action.payload.ship.level,
+            cost: action.payload.ship.cost,
+            multiplier: action.payload.ship.multiplier,
+            damage: action.payload.ship.damage,
+          },
+        },
+      };
+    },
     DealDps: (state, action: PayloadAction<Data>) => {
       return {
         ...state,
@@ -134,6 +151,7 @@ export const gameSlice = createSlice({
   },
 });
 
-export const { Init, Click, UpdateStore, DealDps } = gameSlice.actions;
+export const { Init, Click, UpdateStore, UpdateShip, DealDps } =
+  gameSlice.actions;
 
 export default gameSlice.reducer;

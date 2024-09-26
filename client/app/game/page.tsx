@@ -12,6 +12,7 @@ import {
   UpdateStore,
   DealDps,
   gameObject,
+  UpdateShip,
 } from "@/lib/game/gameSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
@@ -103,6 +104,9 @@ export default function Game() {
       if (message.action === "store") {
         dispatch(UpdateStore(message.data));
         console.log(gameData);
+      }
+      if (message.action === "ship") {
+        dispatch(UpdateShip(message.data));
       }
       if (message.action === "dps") {
         dispatch(DealDps(message.data));

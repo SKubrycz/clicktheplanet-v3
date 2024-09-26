@@ -1,5 +1,8 @@
 "use client";
 
+import { useAppSelector, useAppDispatch } from "@/lib/hooks";
+import { Upgrade } from "@/lib/game/upgradeSlice";
+
 import { ArrowUpward } from "@mui/icons-material";
 
 interface ShipElementProps {
@@ -13,14 +16,26 @@ export default function ShipElement({
   title,
   description,
 }: ShipElementProps) {
+  const gameData = useAppSelector((state) => state.game);
+  const dispatch = useAppDispatch();
+
   return (
     <div className="ship-element">
       <div className="ship-element-info-wrapper">
-        <div className="ship-element-title">{title}</div>
-        <div className="ship-element-description">{description}</div>
+        <div className="ship-element-title">
+          {title} - Level: {gameData?.ship[index]?.level} | Multiplier:{" "}
+          {gameData?.ship[index]?.multiplier}
+        </div>
+        <div className="ship-element-description">
+          {description} - Damage: {gameData?.ship[index]?.damage}
+        </div>
+        <div>Cost: {gameData?.ship[index]?.cost}</div>
       </div>
       <div className="ship-element-action-wrapper">
-        <ArrowUpward sx={{ width: 40, height: 40 }}></ArrowUpward>
+        <ArrowUpward
+          onClick={() => dispatch(Upgrade({ upgrade: "ship", index: index }))}
+          sx={{ width: 40, height: 40 }}
+        ></ArrowUpward>
       </div>
     </div>
   );
