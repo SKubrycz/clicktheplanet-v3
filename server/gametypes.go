@@ -62,28 +62,6 @@ func (g *Game) ClickThePlanet(dmg *big.Float) {
 	}
 }
 
-func (g *Game) DamagePerSecond() {
-	// damage per second divided into
-	// some portions of the damage
-	// to make the dps smoother for the user
-	// for example: ticker every 100ms
-	// with dps / 10
-	// DPS value would be activated with first ship upgrade
-	// and then it would start to be sent to the client
-
-	// ---> use channel to pass data and every 100ms just click with dps damage
-	// fmt.Println("DamagePerSecond")
-
-	// dps := time.NewTicker(100 * time.Millisecond)
-	// defer dps.Stop()
-
-	// go func() {
-	// 	for range dps.C {
-	// 		g.Ch <- "dps"
-	// 	}
-	// }()
-}
-
 func (g *Game) CalculateCurrentDamage() {
 	res := big.NewFloat(1) //base dmg
 	for k := range g.Store {
@@ -93,14 +71,7 @@ func (g *Game) CalculateCurrentDamage() {
 	}
 	g.CurrentDamage = res
 	// Here would be something with Ship upgrades
-}
-
-func (g *Game) CalculateDamagePerSecond() {
-	// this function should be run after each damage upgrade
-
-	// if g.Ship[1].Level > 0 {
-
-	// }
+	g.Dps.Mul(g.Ship[1].Damage, big.NewFloat(10.0)) // per second
 }
 
 func (g *Game) GetHealthPercent() int {
@@ -138,7 +109,6 @@ func (g *Game) UpgradeStore(index int) {
 			g.ConvertNumber(result, g.Gold)
 		}
 	}
-	g.CalculateCurrentDamage()
 	g.Ch <- "upgrade"
 }
 
@@ -184,6 +154,9 @@ func (g *Game) CalculateStore(index int) {
 	} else {
 		return
 	}
+
+	g.CalculateCurrentDamage()
+
 	fmt.Println("Store[i].Level: ", g.Store[index].Level)
 	fmt.Println("inside CalculateStore: ", g.Store[index].Cost)
 }
@@ -220,14 +193,15 @@ func (g *Game) CalculateShip(index int) {
 		g.ConvertNumber(cost, g.Ship[index].Cost)
 
 		if entry, ok := g.Ship[index]; ok {
-			entry.Multiplier = 0.01 * float64(g.Ship[index].Level)
+			// division for more frequent damage
+			// every 100ms
+			entry.Multiplier = toFixed((0.001 * float64(g.Ship[index].Level)), 3) // 10
 			g.Ship[index] = entry
 		}
 
 		//damage = currentDamage * multiplier
 		bigMultiplier := big.NewFloat(g.Ship[index].Multiplier)
-		g.Ship[index].Damage.Mul(g.CurrentDamage, bigMultiplier)
-		g.Dps = g.Ship[index].Damage
+		g.Ship[index].Damage.Mul(g.CurrentDamage, bigMultiplier) // per 100ms
 	} else if index != -1 {
 		// Level      int64
 		// Cost       *big.Float
@@ -245,13 +219,15 @@ func (g *Game) CalculateShip(index int) {
 		g.ConvertNumber(cost, g.Ship[index].Cost)
 
 		if entry, ok := g.Ship[index]; ok {
-			entry.Multiplier = 0.01 * float64(g.Ship[index].Level)
+			// division for more frequent damage
+			// every 100ms
+			entry.Multiplier = toFixed((0.001 * float64(g.Ship[index].Level)), 3) // 10
 			g.Ship[index] = entry
 		}
 
 		//damage = currentDamage * multiplier
 		bigMultiplier := big.NewFloat(g.Ship[index].Multiplier)
-		g.Ship[index].Damage.Mul(g.CurrentDamage, bigMultiplier)
+		g.Ship[index].Damage.Mul(g.CurrentDamage, bigMultiplier) // per 100ms
 
 	} else if index == -1 {
 		for k := range g.Ship {
@@ -264,17 +240,25 @@ func (g *Game) CalculateShip(index int) {
 			g.ConvertNumber(cost, g.Ship[k].Cost)
 
 			if entry, ok := g.Ship[k]; ok {
-				entry.Multiplier = 0.01 * float64(g.Ship[k].Level)
+				// division for more frequent damage
+				// every 100ms
+				entry.Multiplier = toFixed((0.001 * float64(g.Ship[k].Level)), 3) // 10
 				g.Ship[k] = entry
 			}
 
 			//damage = currentDamage * multiplier
 			bigMultiplier := big.NewFloat(g.Ship[k].Multiplier)
-			g.Ship[k].Damage.Mul(g.CurrentDamage, bigMultiplier)
+			g.Ship[k].Damage.Mul(g.CurrentDamage, bigMultiplier) // per 100ms
 		}
 	} else {
 		return
 	}
+
+	g.CalculateCurrentDamage()
+
+	fmt.Printf("\n %v <- currentDamage inside ship \n", g.CurrentDamage)
+	fmt.Printf("\nship1damage: %v\n", g.Ship[1].Damage)
+	fmt.Printf("\nDPS: %v\n", g.Dps)
 }
 
 func (g *Game) Advance() {
@@ -351,4 +335,10 @@ func (g *Game) DisplayNumber(num *big.Float) string {
 	} else {
 		return num.Text('f', 0)
 	}
+}
+
+func toFixed(num float64, prec int) float64 {
+	output := math.Pow(10, float64(prec))
+	round := int((num * output) + math.Copysign(0.5, num))
+	return float64(round) / output
 }

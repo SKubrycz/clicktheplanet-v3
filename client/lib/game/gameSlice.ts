@@ -27,6 +27,13 @@ interface ShipMessage {
   ship: Ship;
 }
 
+interface UpgradeMessage {
+  gold: string;
+  diamonds: number;
+  store: Store[];
+  ship: Ship[];
+}
+
 export interface Data {
   gold: string;
   diamonds: number;
@@ -45,10 +52,10 @@ export interface Data {
   ship: Ship[];
 }
 
-export interface UpgradeMessage {
-  upgrade: "store" | "ship";
-  index: number;
-}
+// export interface UpgradeMessage {
+//   upgrade: "store" | "ship";
+//   index: number;
+// }
 
 export const gameObject: Data = {
   gold: "100",
@@ -96,6 +103,15 @@ export const gameSlice = createSlice({
       console.log("Click reducer");
       console.log(state);
       return { ...action.payload };
+    },
+    Upgrade: (state, action: PayloadAction<UpgradeMessage>) => {
+      return {
+        ...state,
+        gold: action.payload.gold,
+        diamonds: action.payload.diamonds,
+        store: action.payload.store,
+        ship: action.payload.ship,
+      };
     },
     UpdateStore: (state, action: PayloadAction<StoreMessage>) => {
       return {
@@ -151,7 +167,7 @@ export const gameSlice = createSlice({
   },
 });
 
-export const { Init, Click, UpdateStore, UpdateShip, DealDps } =
+export const { Init, Click, Upgrade, UpdateStore, UpdateShip, DealDps } =
   gameSlice.actions;
 
 export default gameSlice.reducer;

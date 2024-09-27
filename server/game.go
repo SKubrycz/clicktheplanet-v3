@@ -50,9 +50,9 @@ type StoreDataMessage struct {
 }
 
 type StoreDataMessageWrapper struct {
-	Gold     string           `json:"gold"`
-	Diamonds int64            `json:"diamonds"`
-	Store    StoreDataMessage `json:"store"`
+	Gold     string                   `json:"gold"`
+	Diamonds int64                    `json:"diamonds"`
+	Store    map[int]StoreDataMessage `json:"store"`
 }
 
 type ShipDataMessage struct {
@@ -67,6 +67,13 @@ type ShipDataMessageWrapper struct {
 	Gold     string          `json:"gold"`
 	Diamonds int64           `json:"diamonds"`
 	Ship     ShipDataMessage `json:"ship"`
+}
+
+type UpgradeDataMessageWrapper struct {
+	Gold     string                   `json:"gold"`
+	Diamonds int64                    `json:"diamonds"`
+	Store    map[int]StoreDataMessage `json:"store"`
+	Ship     map[int]ShipDataMessage  `json:"ship"`
 }
 
 func ActionHandler(g *Game, action string) []byte {
@@ -91,7 +98,11 @@ func ActionHandler(g *Game, action string) []byte {
 			s.Level = g.Ship[k].Level
 			s.Cost = g.DisplayNumber(g.Ship[k].Cost)
 			s.Multiplier = g.Ship[k].Multiplier
-			s.Damage = g.DisplayNumber(g.Ship[k].Damage)
+			if k == 1 {
+				s.Damage = g.DisplayNumber(g.Dps)
+			} else {
+				s.Damage = g.DisplayNumber(g.Ship[k].Damage)
+			}
 			ship[k] = *s
 		}
 		// Wrapper to indicate for frontend how to behave depending on the action field
@@ -119,11 +130,10 @@ func ActionHandler(g *Game, action string) []byte {
 		return []byte(encoded)
 	} else if action == "init" {
 		g.CalculatePlanetHealth()
+		g.CalculateCurrentDamage()
 		g.CalculateStore(-1)
 		g.CalculateShip(-1)
-		g.CalculateCurrentDamage()
-		g.DamagePerSecond()
-		//g.CalculateShip
+
 		store := map[int]StoreDataMessage{}
 		for k := range g.Store {
 			s := new(StoreDataMessage)
@@ -140,7 +150,11 @@ func ActionHandler(g *Game, action string) []byte {
 			s.Level = g.Ship[k].Level
 			s.Cost = g.DisplayNumber(g.Ship[k].Cost)
 			s.Multiplier = g.Ship[k].Multiplier
-			s.Damage = g.DisplayNumber(g.Ship[k].Damage)
+			if k == 1 {
+				s.Damage = g.DisplayNumber(g.Dps)
+			} else {
+				s.Damage = g.DisplayNumber(g.Ship[k].Damage)
+			}
 			ship[k] = *s
 		}
 		percent := g.GetHealthPercent()
@@ -169,58 +183,53 @@ func ActionHandler(g *Game, action string) []byte {
 		return []byte(encoded)
 	} else {
 		unmarshaled := new(UpgradeMessage)
-		err := json.Unmarshal([]byte(action), unmarshaled)
-		if err != nil {
-			fmt.Println("ERROR json ActionHandler: ", err)
+		if action != "dps" {
+			err := json.Unmarshal([]byte(action), unmarshaled)
+			if err != nil {
+				fmt.Println("ERROR json ActionHandler: ", err)
+			}
 		}
-		if unmarshaled.Upgrade == "store" {
+		if unmarshaled.Upgrade == "store" || unmarshaled.Upgrade == "ship" {
 			g.UpgradeStore(unmarshaled.Index)
 			g.CalculateStore(unmarshaled.Index)
-			storeData := StoreDataMessage{
-				Index:  unmarshaled.Index,
-				Level:  g.Store[unmarshaled.Index].Level,
-				Cost:   g.DisplayNumber(g.Store[unmarshaled.Index].Cost),
-				Damage: g.DisplayNumber(g.Store[unmarshaled.Index].Damage),
-			}
-			message := ActionMessage{
-				Action: "store",
-				Data: StoreDataMessageWrapper{
-					Gold:     g.DisplayNumber(g.Gold),
-					Diamonds: g.Diamonds,
-					Store:    storeData,
-				},
-			}
-			encoded, _ := json.Marshal(message)
-			return []byte(encoded)
-		}
-		if unmarshaled.Upgrade == "ship" {
 			g.UpgradeShip(unmarshaled.Index)
 			g.CalculateShip(unmarshaled.Index)
-			shipData := ShipDataMessage{
-				Index:      unmarshaled.Index,
-				Level:      g.Ship[unmarshaled.Index].Level,
-				Cost:       g.DisplayNumber(g.Ship[unmarshaled.Index].Cost),
-				Multiplier: g.Ship[unmarshaled.Index].Multiplier,
-				Damage:     g.DisplayNumber(g.Ship[unmarshaled.Index].Damage),
+			store := map[int]StoreDataMessage{}
+			for k := range g.Store {
+				s := new(StoreDataMessage)
+				s.Index = k
+				s.Level = g.Store[k].Level
+				s.Cost = g.DisplayNumber(g.Store[k].Cost)
+				s.Damage = g.DisplayNumber(g.Store[k].Damage)
+				store[k] = *s
+			}
+			ship := map[int]ShipDataMessage{}
+			for k := range g.Ship {
+				s := new(ShipDataMessage)
+				s.Index = k
+				s.Level = g.Ship[k].Level
+				s.Cost = g.DisplayNumber(g.Ship[k].Cost)
+				s.Multiplier = g.Ship[k].Multiplier
+				if k == 1 {
+					s.Damage = g.DisplayNumber(g.Dps)
+				} else {
+					s.Damage = g.DisplayNumber(g.Ship[k].Damage)
+				}
+				ship[k] = *s
 			}
 			message := ActionMessage{
-				Action: "ship",
-				Data: ShipDataMessageWrapper{
+				Action: "upgrade",
+				Data: UpgradeDataMessageWrapper{
 					Gold:     g.DisplayNumber(g.Gold),
 					Diamonds: g.Diamonds,
-					Ship:     shipData,
+					Store:    store,
+					Ship:     ship,
 				},
 			}
 			encoded, _ := json.Marshal(message)
 			return []byte(encoded)
 		}
-	} /* else {
-		message := Message{
-			Message: "error sending data",
-		}
-		encMessage, _ := json.Marshal(message)
-		return []byte(encMessage)
-	} */
+	}
 	// ^ switch case to be considered
 
 	message := ActionMessage{
@@ -232,7 +241,7 @@ func ActionHandler(g *Game, action string) []byte {
 }
 
 func DealDps(g *Game) []byte {
-	g.ClickThePlanet(g.Dps)
+	g.ClickThePlanet(g.Ship[1].Damage)
 	percent := g.GetHealthPercent()
 	store := map[int]StoreDataMessage{}
 	for k := range g.Store {
@@ -247,7 +256,11 @@ func DealDps(g *Game) []byte {
 		s := new(ShipDataMessage)
 		s.Level = g.Ship[k].Level
 		s.Cost = g.DisplayNumber(g.Ship[k].Cost)
-		s.Damage = g.DisplayNumber(g.Ship[k].Damage)
+		if k == 1 {
+			s.Damage = g.DisplayNumber(g.Dps)
+		} else {
+			s.Damage = g.DisplayNumber(g.Ship[k].Damage)
+		}
 		ship[k] = *s
 	}
 	message := ActionMessage{

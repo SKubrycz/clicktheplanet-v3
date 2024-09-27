@@ -172,7 +172,7 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 				dps.Stop()
 			}
 			dpsSent = true
-			dps = time.NewTicker(1 * time.Second)
+			dps = time.NewTicker(100 * time.Millisecond)
 			defer dps.Stop()
 			go func() {
 				for range dps.C {

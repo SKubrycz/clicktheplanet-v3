@@ -9,6 +9,7 @@ import GameMain from "@/components/game_components/GameMain/GameMain";
 import {
   Init,
   Click,
+  Upgrade,
   UpdateStore,
   DealDps,
   gameObject,
@@ -16,15 +17,6 @@ import {
 } from "@/lib/game/gameSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { CircularProgress } from "@mui/material";
-
-interface UpgradeFunc {
-  (upgrade: "store" | "ship", index: number | string): void;
-}
-
-interface Upgrade {
-  upgrade: "store" | "ship";
-  index: number | string;
-}
 
 interface ActionMessage {
   action: string;
@@ -94,23 +86,25 @@ export default function Game() {
 
     socket.current.onmessage = (e: MessageEvent) => {
       let message: ActionMessage = JSON.parse(e.data);
-      console.log("From the server: ", message);
+      //console.log("From the server: ", message);
       if (message.action === "init") {
-        //setData(message.data);
         dispatch(Init(message.data));
-        console.log(typeof message.data.store);
+        console.log(message.data);
       }
       if (message.action === "click") {
-        //setData(message.data);
         dispatch(Click(message.data));
+        console.log(message.data);
       }
-      if (message.action === "store") {
-        dispatch(UpdateStore(message.data));
-        console.log(gameData);
+      if (message.action === "upgrade") {
+        dispatch(Upgrade(message.data));
       }
-      if (message.action === "ship") {
-        dispatch(UpdateShip(message.data));
-      }
+      // if (message.action === "store") {
+      //   dispatch(UpdateStore(message.data));
+      //   console.log(gameData);
+      // }
+      // if (message.action === "ship") {
+      //   dispatch(UpdateShip(message.data));
+      // }
       if (message.action === "dps") {
         dispatch(DealDps(message.data));
       }
