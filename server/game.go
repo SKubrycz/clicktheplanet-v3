@@ -190,9 +190,13 @@ func ActionHandler(g *Game, action string) []byte {
 			}
 		}
 		if unmarshaled.Upgrade == "store" || unmarshaled.Upgrade == "ship" {
-			g.UpgradeStore(unmarshaled.Index)
+			if unmarshaled.Upgrade == "store" {
+				g.UpgradeStore(unmarshaled.Index)
+			}
+			if unmarshaled.Upgrade == "ship" {
+				g.UpgradeShip(unmarshaled.Index)
+			}
 			g.CalculateStore(unmarshaled.Index)
-			g.UpgradeShip(unmarshaled.Index)
 			g.CalculateShip(unmarshaled.Index)
 			store := map[int]StoreDataMessage{}
 			for k := range g.Store {

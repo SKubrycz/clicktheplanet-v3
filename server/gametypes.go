@@ -155,6 +155,7 @@ func (g *Game) CalculateStore(index int) {
 		return
 	}
 
+	g.CalculateShip(1)
 	g.CalculateCurrentDamage()
 
 	fmt.Println("Store[i].Level: ", g.Store[index].Level)
@@ -290,7 +291,7 @@ func (g *Game) NextLevel() {
 }
 
 func (g *Game) CalculateGoldEarned() {
-	f := 1.05
+	f := 1.4
 
 	exp := float64(g.CurrentLevel)
 	pow := math.Pow(f, exp)

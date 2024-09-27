@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"sync"
 	"time"
 	"unicode"
 
@@ -152,6 +153,7 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 
 	dpsSent := false
 	var dps *time.Ticker
+	var mu sync.Mutex
 	for {
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
@@ -161,11 +163,13 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(string(p))
 		var response []byte
 		if len(string(p)) > 0 && string(p) != " " {
+			mu.Lock()
 			response = ActionHandler(game, string(p))
 			if err := conn.WriteMessage(messageType, response); err != nil {
 				log.Println(err)
 				return
 			}
+			mu.Unlock()
 		}
 		if string(p) == "dps" {
 			if dpsSent {
@@ -176,11 +180,13 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 			defer dps.Stop()
 			go func() {
 				for range dps.C {
+					mu.Lock()
 					response = DealDps(game)
 					if err := conn.WriteMessage(messageType, response); err != nil {
 						log.Println(err)
 						return
 					}
+					mu.Unlock()
 				}
 			}()
 		}
