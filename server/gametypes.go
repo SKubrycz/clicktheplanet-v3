@@ -42,7 +42,7 @@ type Game struct {
 	MaxLevel         int64
 	CurrentStage     uint8
 	MaxStage         uint8
-	PlanetsDestroyed *big.Float // rounded to 0 decimal places
+	PlanetsDestroyed *big.Float
 	Planet           Planet
 	Store            map[int]StoreUpgrade
 	Ship             map[int]ShipUpgrade
@@ -50,7 +50,7 @@ type Game struct {
 }
 
 func (g *Game) ClickThePlanet(dmg *big.Float) {
-	g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, dmg) // dmg to choose from dps of g.CurrentDamage
+	g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, dmg)
 	x := big.NewFloat(0)
 	if g.Planet.CurrentHealth.Cmp(x) <= 0 {
 		g.Advance()
@@ -70,7 +70,10 @@ func (g *Game) CalculateCurrentDamage() {
 		}
 	}
 	g.CurrentDamage = res
-	// Here would be something with Ship upgrades
+	if g.CurrentDamage.Cmp(g.MaxDamage) > 0 {
+		g.MaxDamage = g.CurrentDamage
+	}
+
 	g.Dps.Mul(g.Ship[1].Damage, big.NewFloat(10.0)) // per second
 }
 
@@ -194,7 +197,6 @@ func (g *Game) CalculateShip(index int) {
 		g.ConvertNumber(cost, g.Ship[index].Cost)
 
 		if entry, ok := g.Ship[index]; ok {
-			// division for more frequent damage
 			// every 100ms
 			entry.Multiplier = toFixed((0.001 * float64(g.Ship[index].Level)), 3) // 10
 			g.Ship[index] = entry
@@ -220,7 +222,6 @@ func (g *Game) CalculateShip(index int) {
 		g.ConvertNumber(cost, g.Ship[index].Cost)
 
 		if entry, ok := g.Ship[index]; ok {
-			// division for more frequent damage
 			// every 100ms
 			entry.Multiplier = toFixed((0.001 * float64(g.Ship[index].Level)), 3) // 10
 			g.Ship[index] = entry
@@ -241,7 +242,6 @@ func (g *Game) CalculateShip(index int) {
 			g.ConvertNumber(cost, g.Ship[k].Cost)
 
 			if entry, ok := g.Ship[k]; ok {
-				// division for more frequent damage
 				// every 100ms
 				entry.Multiplier = toFixed((0.001 * float64(g.Ship[k].Level)), 3) // 10
 				g.Ship[k] = entry
@@ -263,21 +263,16 @@ func (g *Game) CalculateShip(index int) {
 }
 
 func (g *Game) Advance() {
-	// return new Planet.Health; new Planet.Name
-	// set g.CurrentStage to 1; if g.CurrentLevel > MaxLevel then g.MaxStage = g.CurrentStage
-	// calculate max health and current health equal to max health
 	g.CurrentStage++
 	if g.CurrentStage > 10 {
-		g.CurrentLevel++ // for each level up / stage up, save progress to database
+		g.CurrentLevel++
 		g.CurrentStage = 1
 	}
 	if g.CurrentLevel > g.MaxLevel {
 		g.MaxLevel = g.CurrentLevel
 	}
 	if g.CurrentLevel == g.MaxLevel {
-		if g.CurrentStage > g.MaxStage {
-			g.MaxStage = g.CurrentStage
-		}
+		g.MaxStage = g.CurrentStage
 	}
 
 }

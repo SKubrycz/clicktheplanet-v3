@@ -10,9 +10,15 @@ interface IShipElement {
 export default function Ship() {
   const shipElementsArr: IShipElement[] = [
     { title: "Dps", desc: "Damage per second based on click damage" },
-    { title: "Element 2", desc: "Lorem ipsum dolor sit amet" },
-    { title: "Element 3", desc: "Lorem ipsum dolor sit amet" },
-    { title: "Element 4", desc: "Lorem ipsum dolor sit amet" },
+    {
+      title: "Click damage",
+      desc: "Boost the amount of damage dealt through clicks",
+    },
+    {
+      title: "Critical click",
+      desc: "Increase the chance of clicking critically",
+    },
+    { title: "Planet gold", desc: "Gold gained from destroying planets" },
   ];
 
   return (
