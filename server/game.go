@@ -130,6 +130,7 @@ func ActionHandler(g *Game, action string) []byte {
 		return []byte(encoded)
 	} else if action == "init" {
 		g.CalculatePlanetHealth()
+		g.GeneratePlanetName()
 		g.CalculateCurrentDamage()
 		g.CalculateStore(-1)
 		g.CalculateShip(-1)

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
 	"math"
 	"math/big"
 	"strconv"
@@ -102,6 +102,37 @@ func (g *Game) CalculatePlanetHealth() {
 	g.ConvertNumber(result, g.Planet.CurrentHealth)
 }
 
+func (g *Game) GeneratePlanetName() {
+	lns := g.CurrentLevel + int64(g.CurrentStage)
+
+	rand := (123*lns + 123768173) % 7847681738
+	stringLength := int((rand % 5) + 4)
+
+	var byteName bytes.Buffer
+	// 48 - 57 range 9
+	// 65 - 90 range 25
+	// ^ inclusive
+
+	randNumber := (5634*lns + 5609872012) % 5609872012923
+	randLetter := (8946*lns + 5609872012) % 5609872012923
+
+	for i := 0; i < stringLength; i++ {
+		randNumber = (2119*randNumber + 5609872012) % 5609872012923
+		randLetter = (8946*randLetter + 1238971239) % 5609872012923
+
+		number := (randNumber % 9) + 48
+		letter := (randLetter % 25) + 65
+
+		if randNumber > randLetter {
+			byteName.WriteByte(byte(number))
+		} else if randNumber <= randLetter {
+			byteName.WriteByte(byte(letter))
+		}
+	}
+
+	g.Planet.Name = byteName.String()
+}
+
 func (g *Game) UpgradeStore(index int) {
 	if g.Gold.Cmp(g.Store[index].Cost) >= 0 {
 		if entry, ok := g.Store[index]; ok {
@@ -111,8 +142,8 @@ func (g *Game) UpgradeStore(index int) {
 			result.Sub(g.Gold, g.Store[index].Cost)
 			g.ConvertNumber(result, g.Gold)
 		}
+		g.Ch <- "upgrade"
 	}
-	g.Ch <- "upgrade"
 }
 
 func (g *Game) CalculateStore(index int) {
@@ -160,9 +191,6 @@ func (g *Game) CalculateStore(index int) {
 
 	g.CalculateShip(1)
 	g.CalculateCurrentDamage()
-
-	fmt.Println("Store[i].Level: ", g.Store[index].Level)
-	fmt.Println("inside CalculateStore: ", g.Store[index].Cost)
 }
 
 func (g *Game) UpgradeShip(index int) {
@@ -174,16 +202,15 @@ func (g *Game) UpgradeShip(index int) {
 			result.Sub(g.Gold, g.Ship[index].Cost)
 			g.ConvertNumber(result, g.Gold)
 		}
+		g.Ch <- "upgrade"
 	}
 	g.CalculateCurrentDamage()
-	g.Ch <- "upgrade"
 }
 
 func (g *Game) CalculateShip(index int) {
 	if index > len(g.Ship) {
 		return
 	}
-	fmt.Println(g.Ship[index].Level)
 
 	f := 1.5
 
@@ -257,9 +284,9 @@ func (g *Game) CalculateShip(index int) {
 
 	g.CalculateCurrentDamage()
 
-	fmt.Printf("\n %v <- currentDamage inside ship \n", g.CurrentDamage)
-	fmt.Printf("\nship1damage: %v\n", g.Ship[1].Damage)
-	fmt.Printf("\nDPS: %v\n", g.Dps)
+	// fmt.Printf("\n %v <- currentDamage inside ship \n", g.CurrentDamage)
+	// fmt.Printf("\nship1damage: %v\n", g.Ship[1].Damage)
+	// fmt.Printf("\nDPS: %v\n", g.Dps)
 }
 
 func (g *Game) Advance() {
@@ -274,15 +301,15 @@ func (g *Game) Advance() {
 	if g.CurrentLevel == g.MaxLevel {
 		g.MaxStage = g.CurrentStage
 	}
-
+	g.GeneratePlanetName()
 }
 
 func (g *Game) PreviousLevel() {
-
+	// g.GeneratePlanetName()
 }
 
 func (g *Game) NextLevel() {
-
+	// g.GeneratePlanetName()
 }
 
 func (g *Game) CalculateGoldEarned() {

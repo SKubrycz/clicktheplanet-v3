@@ -12,13 +12,16 @@ export default function Ship() {
     { title: "Dps", desc: "Damage per second based on click damage" },
     {
       title: "Click damage",
-      desc: "Boost the amount of damage dealt through clicks",
+      desc: "Boost the amount of damage dealt through clicks - DPS",
     },
     {
       title: "Critical click",
-      desc: "Increase the chance of clicking critically",
+      desc: "Increase the chance of clicking critically - Chance",
     },
-    { title: "Planet gold", desc: "Gold gained from destroying planets" },
+    {
+      title: "Planet gold",
+      desc: "Gold gained from destroying planets - Bonus",
+    },
   ];
 
   return (

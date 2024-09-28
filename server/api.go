@@ -290,7 +290,6 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(u)
 
 		if err := s.db.CreateAccount(u); err != nil {
-			fmt.Println("Here error2")
 			writeJSON(w, http.StatusInternalServerError, "Internal server error")
 			return
 		}

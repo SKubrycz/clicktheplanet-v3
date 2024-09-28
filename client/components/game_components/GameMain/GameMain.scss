@@ -40,8 +40,17 @@ $levelBorderDist: 0.2em;
   }
 }
 
+.main-planet-name-title {
+  margin: 2em 0em 0.2em 0em;
+
+  font: {
+    size: 14px;
+    weight: 100;
+  }
+}
+
 .main-planet-name {
-  margin: 2em 1em 1em 1em;
+  margin: 0em 1em 1em 1em;
 
   font: {
     size: 22px;

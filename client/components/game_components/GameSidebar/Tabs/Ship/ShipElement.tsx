@@ -27,7 +27,7 @@ export default function ShipElement({
           {gameData?.ship[index]?.multiplier}
         </div>
         <div className="ship-element-description">
-          {description} - Damage: {gameData?.ship[index]?.damage}
+          {description}: {gameData?.ship[index]?.damage}
         </div>
         <div>Cost: {gameData?.ship[index]?.cost}</div>
       </div>
