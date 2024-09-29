@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"math/big"
+	"math/rand"
 	"strconv"
 )
 
@@ -50,8 +51,16 @@ type Game struct {
 	Ch               chan string
 }
 
-func (g *Game) ClickThePlanet(dmg *big.Float) {
-	g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, dmg)
+func (g *Game) ClickThePlanet(dmg *big.Float, isClick bool) {
+	if isClick {
+		random := rand.Float64()
+		if g.Ship[3].Multiplier > 0.0 && random <= g.Ship[3].Multiplier {
+			dmg = g.Ship[3].Damage
+		}
+		g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, dmg)
+	} else {
+		g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, dmg)
+	}
 	x := big.NewFloat(0)
 	if g.Planet.CurrentHealth.Cmp(x) <= 0 {
 		g.Advance()
@@ -70,6 +79,8 @@ func (g *Game) CalculateCurrentDamage() {
 			res.Add(res, g.Store[k].Damage)
 		}
 	}
+	bigMultiplier := big.NewFloat(g.Ship[2].Multiplier)
+	res.Mul(res, bigMultiplier)
 	g.CurrentDamage = res
 	if g.CurrentDamage.Cmp(g.MaxDamage) > 0 {
 		g.MaxDamage = g.CurrentDamage
@@ -240,72 +251,19 @@ func (g *Game) CalculateShip(index int) {
 		return
 	}
 
-	f := 1.5
-
 	if index == 1 {
-		// cost = baseCost * 1.5 ** (level - 1)
-		pow := math.Pow(f, float64(g.Ship[index].Level))
-		bigPow := big.NewFloat(pow)
-
-		cost := new(big.Float)
-		cost.Mul(g.Ship[index].BaseCost, bigPow)
-		g.ConvertNumber(cost, g.Ship[index].Cost)
-
-		if entry, ok := g.Ship[index]; ok {
-			// every 100ms
-			entry.Multiplier = toFixed((0.001 * float64(g.Ship[index].Level)), 3) // 10
-			g.Ship[index] = entry
-		}
-
-		//damage = currentDamage * multiplier
-		bigMultiplier := big.NewFloat(g.Ship[index].Multiplier)
-		g.Ship[index].Damage.Mul(g.CurrentDamage, bigMultiplier) // per 100ms
-	} else if index != -1 {
-		// Level      int64
-		// Cost       *big.Float
-		// BaseCost   *big.Float
-		// Multiplier float64
-		// Damage     *big.Float
-		// BaseDamage *big.Float
-
-		// cost = baseCost * 1.5 ** (level - 1)
-		pow := math.Pow(f, float64(g.Ship[index].Level))
-		bigPow := big.NewFloat(pow)
-
-		cost := new(big.Float)
-		cost.Mul(g.Ship[index].BaseCost, bigPow)
-		g.ConvertNumber(cost, g.Ship[index].Cost)
-
-		if entry, ok := g.Ship[index]; ok {
-			// every 100ms
-			entry.Multiplier = toFixed((0.001 * float64(g.Ship[index].Level)), 3) // 10
-			g.Ship[index] = entry
-		}
-
-		//damage = currentDamage * multiplier
-		bigMultiplier := big.NewFloat(g.Ship[index].Multiplier)
-		g.Ship[index].Damage.Mul(g.CurrentDamage, bigMultiplier) // per 100ms
-
+		g.CalculateShipOne()
+	} else if index == 2 {
+		g.CalculateShipTwo()
+	} else if index == 3 {
+		g.CalculateShipThree()
+	} else if index == 4 {
+		g.CalculateShipFour()
 	} else if index == -1 {
-		for k := range g.Ship {
-			// cost = baseCost * 1.5 ** (level - 1)
-			pow := math.Pow(f, float64(g.Ship[k].Level))
-			bigPow := big.NewFloat(pow)
-
-			cost := new(big.Float)
-			cost.Mul(g.Ship[k].BaseCost, bigPow)
-			g.ConvertNumber(cost, g.Ship[k].Cost)
-
-			if entry, ok := g.Ship[k]; ok {
-				// every 100ms
-				entry.Multiplier = toFixed((0.001 * float64(g.Ship[k].Level)), 3) // 10
-				g.Ship[k] = entry
-			}
-
-			//damage = currentDamage * multiplier
-			bigMultiplier := big.NewFloat(g.Ship[k].Multiplier)
-			g.Ship[k].Damage.Mul(g.CurrentDamage, bigMultiplier) // per 100ms
-		}
+		g.CalculateShipOne()
+		g.CalculateShipTwo()
+		g.CalculateShipThree()
+		g.CalculateShipFour()
 	} else {
 		return
 	}
@@ -349,6 +307,9 @@ func (g *Game) CalculateGoldEarned() {
 	result := new(big.Float).SetFloat64(pow)
 	result.Mul(result, big.NewFloat(10))
 
+	bigMultiplier := big.NewFloat(g.Ship[4].Multiplier)
+	result.Mul(result, bigMultiplier)
+
 	g.ConvertNumber(result, g.Planet.Gold)
 }
 
@@ -385,6 +346,94 @@ func (g *Game) DisplayNumber(num *big.Float) string {
 		return num.Text('e', 3)
 	} else {
 		return num.Text('f', 0)
+	}
+}
+
+// First index of ship map (1: dps)
+func (g *Game) CalculateShipOne() {
+	f := 1.5
+
+	// cost = baseCost * 1.5 ** (level - 1)
+	pow := math.Pow(f, float64(g.Ship[1].Level))
+	bigPow := big.NewFloat(pow)
+
+	cost := new(big.Float)
+	cost.Mul(g.Ship[1].BaseCost, bigPow)
+	g.ConvertNumber(cost, g.Ship[1].Cost)
+
+	if entry, ok := g.Ship[1]; ok {
+		// every 100ms
+		entry.Multiplier = toFixed((0.001 * float64(g.Ship[1].Level)), 3) // 10
+		g.Ship[1] = entry
+	}
+
+	//damage = currentDamage * multiplier
+	bigMultiplier := big.NewFloat(g.Ship[1].Multiplier)
+	g.Ship[1].Damage.Mul(g.CurrentDamage, bigMultiplier) // per 100ms
+}
+
+// Second index of ship map (2: Click damage)
+func (g *Game) CalculateShipTwo() {
+	f := 1.5
+
+	// cost = baseCost * 1.5 ** (level - 1)
+	pow := math.Pow(f, float64(g.Ship[2].Level))
+	bigPow := big.NewFloat(pow)
+
+	cost := new(big.Float)
+	cost.Mul(g.Ship[2].BaseCost, bigPow)
+	g.ConvertNumber(cost, g.Ship[2].Cost)
+
+	if entry, ok := g.Ship[2]; ok {
+		entry.Multiplier = toFixed((1.0 + 0.002*float64(g.Ship[2].Level)), 3)
+		g.Ship[2] = entry
+	}
+
+	//damage = currentDamage * multiplier
+	bigMultiplier := big.NewFloat(g.Ship[2].Multiplier)
+	g.Ship[2].Damage.Mul(g.CurrentDamage, bigMultiplier)
+}
+
+// Third index of ship map (3: Critical Click)
+func (g *Game) CalculateShipThree() {
+	f := 1.5
+
+	// cost = baseCost * 1.5 ** (level - 1)
+	pow := math.Pow(f, float64(g.Ship[3].Level))
+	bigPow := big.NewFloat(pow)
+
+	cost := new(big.Float)
+	cost.Mul(g.Ship[3].BaseCost, bigPow)
+	g.ConvertNumber(cost, g.Ship[3].Cost)
+
+	if entry, ok := g.Ship[3]; ok {
+		entry.Multiplier = toFixed((0.002 * float64(g.Ship[3].Level)), 3)
+		if entry.Multiplier > 0.5 {
+			entry.Multiplier = 0.5
+		} // critical chance cap - 50%
+		g.Ship[3] = entry
+	}
+
+	//critical damage = currentDamage * 5 <-- for now
+	bigMultiplier := big.NewFloat(5.0)
+	g.Ship[3].Damage.Mul(g.CurrentDamage, bigMultiplier)
+}
+
+// Fourth index of ship map (4: Planet gold)
+func (g *Game) CalculateShipFour() {
+	f := 1.5
+
+	// cost = baseCost * 1.5 ** (level - 1)
+	pow := math.Pow(f, float64(g.Ship[4].Level))
+	bigPow := big.NewFloat(pow)
+
+	cost := new(big.Float)
+	cost.Mul(g.Ship[4].BaseCost, bigPow)
+	g.ConvertNumber(cost, g.Ship[4].Cost)
+
+	if entry, ok := g.Ship[4]; ok {
+		entry.Multiplier = toFixed((1.0 + 0.001*float64(g.Ship[4].Level)), 3)
+		g.Ship[4] = entry
 	}
 }
 

@@ -23,11 +23,12 @@ export default function ShipElement({
     <div className="ship-element">
       <div className="ship-element-info-wrapper">
         <div className="ship-element-title">
-          {title} - Level: {gameData?.ship[index]?.level} | Multiplier:{" "}
+          {title} - Level: {gameData?.ship[index]?.level} | Multiplier: x
           {gameData?.ship[index]?.multiplier}
         </div>
         <div className="ship-element-description">
-          {description}: {gameData?.ship[index]?.damage}
+          {description}{" "}
+          {index !== 4 && index !== 3 ? gameData?.ship[index]?.damage : ""}
         </div>
         <div>Cost: {gameData?.ship[index]?.cost}</div>
       </div>
