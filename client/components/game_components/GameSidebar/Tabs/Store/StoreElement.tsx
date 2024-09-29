@@ -1,7 +1,7 @@
 "use client";
 
 import type { Data } from "@/lib/game/gameSlice";
-import { Upgrade } from "@/lib/game/upgradeSlice";
+import { UpgradeElement } from "@/lib/game/upgradeSlice";
 import { Add } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
@@ -21,6 +21,7 @@ export default function StoreElement({
   data,
 }: StoreElementProps) {
   const gameData = useAppSelector((state) => state.game);
+  const upgradeData = useAppSelector((state) => state.upgrade);
   const dispatch = useAppDispatch();
 
   return (
@@ -42,7 +43,15 @@ export default function StoreElement({
         </div>
       </div>
       <Add
-        onClick={() => dispatch(Upgrade({ upgrade: "store", index: index }))}
+        onClick={() =>
+          dispatch(
+            UpgradeElement({
+              upgrade: "store",
+              index: index,
+              levels: upgradeData.levels,
+            })
+          )
+        }
         sx={{ width: 50, height: 50, cursor: "pointer" }}
       ></Add>
     </div>

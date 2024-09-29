@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"math"
 	"math/big"
 	"strconv"
@@ -111,7 +112,7 @@ func (g *Game) GeneratePlanetName() {
 	var byteName bytes.Buffer
 	// 48 - 57 range 9
 	// 65 - 90 range 25
-	// ^ inclusive
+	// (ASCII) ^ inclusive
 
 	randNumber := (5634*lns + 5609872012) % 5609872012923
 	randLetter := (8946*lns + 5609872012) % 5609872012923
@@ -133,17 +134,40 @@ func (g *Game) GeneratePlanetName() {
 	g.Planet.Name = byteName.String()
 }
 
-func (g *Game) UpgradeStore(index int) {
+func (g *Game) UpgradeStore(index int, levels int) string {
 	if g.Gold.Cmp(g.Store[index].Cost) >= 0 {
+		f := 1.03
+		bulkCost := new(big.Float)
+
+		for i := 1; i <= levels; i++ {
+			pow := math.Pow(f, float64(g.Store[index].Level))
+			bigPow := big.NewFloat(pow)
+			cost := new(big.Float)
+
+			cost.Mul(g.Store[index].BaseCost, bigPow)
+
+			bulkCost.Add(bulkCost, cost)
+		}
+		fmt.Println("   ---> bulkCost: ", bulkCost)
+
+		if bulkCost.Cmp(g.Gold) > 0 {
+			return "insufficient resources"
+		}
+
+		fmt.Printf("\n %v \n", bulkCost)
+
 		if entry, ok := g.Store[index]; ok {
-			entry.Level += 1
+			entry.Level += int64(levels)
 			g.Store[index] = entry
 			result := new(big.Float)
-			result.Sub(g.Gold, g.Store[index].Cost)
+			result.Sub(g.Gold, bulkCost) // g.Store[index].Cost * levels
 			g.ConvertNumber(result, g.Gold)
 		}
 		g.Ch <- "upgrade"
+	} else {
+		return "insufficient resources"
 	}
+	return ""
 }
 
 func (g *Game) CalculateStore(index int) {
@@ -193,7 +217,7 @@ func (g *Game) CalculateStore(index int) {
 	g.CalculateCurrentDamage()
 }
 
-func (g *Game) UpgradeShip(index int) {
+func (g *Game) UpgradeShip(index int) string {
 	if g.Gold.Cmp(g.Ship[index].Cost) >= 0 {
 		if entry, ok := g.Ship[index]; ok {
 			entry.Level += 1
@@ -203,8 +227,12 @@ func (g *Game) UpgradeShip(index int) {
 			g.ConvertNumber(result, g.Gold)
 		}
 		g.Ch <- "upgrade"
+	} else {
+		return "insufficient resources"
 	}
 	g.CalculateCurrentDamage()
+
+	return ""
 }
 
 func (g *Game) CalculateShip(index int) {

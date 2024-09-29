@@ -40,6 +40,7 @@ type ActionMessage struct {
 type UpgradeMessage struct {
 	Upgrade string `json:"upgrade"`
 	Index   int    `json:"index"`
+	Levels  int    `json:"levels"`
 }
 
 type StoreDataMessage struct {
@@ -74,6 +75,10 @@ type UpgradeDataMessageWrapper struct {
 	Diamonds int64                    `json:"diamonds"`
 	Store    map[int]StoreDataMessage `json:"store"`
 	Ship     map[int]ShipDataMessage  `json:"ship"`
+}
+
+type ErrorDataMessage struct {
+	Error string `json:"error"`
 }
 
 func ActionHandler(g *Game, action string) []byte {
@@ -192,10 +197,30 @@ func ActionHandler(g *Game, action string) []byte {
 		}
 		if unmarshaled.Upgrade == "store" || unmarshaled.Upgrade == "ship" {
 			if unmarshaled.Upgrade == "store" {
-				g.UpgradeStore(unmarshaled.Index)
+				err := g.UpgradeStore(unmarshaled.Index, unmarshaled.Levels)
+				if err != "" {
+					message := ActionMessage{
+						Action: "error",
+						Data: ErrorDataMessage{
+							Error: err,
+						},
+					}
+					enc, _ := json.Marshal(message)
+					return []byte(enc)
+				}
 			}
 			if unmarshaled.Upgrade == "ship" {
-				g.UpgradeShip(unmarshaled.Index)
+				err := g.UpgradeShip(unmarshaled.Index)
+				if err != "" {
+					message := ActionMessage{
+						Action: "error",
+						Data: ErrorDataMessage{
+							Error: err,
+						},
+					}
+					enc, _ := json.Marshal(message)
+					return []byte(enc)
+				}
 			}
 			g.CalculateStore(unmarshaled.Index)
 			g.CalculateShip(unmarshaled.Index)

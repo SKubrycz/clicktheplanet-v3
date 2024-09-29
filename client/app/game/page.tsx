@@ -15,6 +15,7 @@ import {
   gameObject,
   UpdateShip,
 } from "@/lib/game/gameSlice";
+import { UpgradeElement } from "@/lib/game/upgradeSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { CircularProgress } from "@mui/material";
 
@@ -64,6 +65,22 @@ export default function Game() {
     console.log("click");
   };
 
+  const handleBulkUpgrade = (e: KeyboardEvent, pressed: boolean) => {
+    if (pressed) {
+      if (e.key === "z") {
+        dispatch(UpgradeElement({ upgrade: "", index: -1, levels: 10 }));
+      }
+      if (e.key === "x") {
+        dispatch(UpgradeElement({ upgrade: "", index: -1, levels: 100 }));
+      }
+      if (e.key === "c") {
+        dispatch(UpgradeElement({ upgrade: "", index: -1, levels: 1000 }));
+      }
+    } else if (!pressed) {
+      dispatch(UpgradeElement({ upgrade: "", index: -1, levels: 1 }));
+    }
+  };
+
   useEffect(() => {
     if (upgradeData && upgradeData.index != -1) {
       if (socket.current) socket.current.send(JSON.stringify(upgradeData));
@@ -98,6 +115,10 @@ export default function Game() {
       if (message.action === "upgrade") {
         dispatch(Upgrade(message.data));
       }
+
+      if (message.action === "error") {
+        console.log(message.data);
+      }
       // if (message.action === "store") {
       //   dispatch(UpdateStore(message.data));
       //   console.log(gameData);
@@ -112,6 +133,16 @@ export default function Game() {
 
     socket.current.onclose = () => {
       console.log("Disconnected");
+    };
+
+    document.addEventListener("keydown", (e) => handleBulkUpgrade(e, true));
+    document.addEventListener("keyup", (e) => handleBulkUpgrade(e, false));
+
+    return () => {
+      document.removeEventListener("keydown", (e) =>
+        handleBulkUpgrade(e, true)
+      );
+      document.removeEventListener("keyup", (e) => handleBulkUpgrade(e, false));
     };
   }, []);
 

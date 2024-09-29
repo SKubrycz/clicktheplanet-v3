@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
-import { Upgrade } from "@/lib/game/upgradeSlice";
+import { UpgradeElement } from "@/lib/game/upgradeSlice";
 
 import { ArrowUpward } from "@mui/icons-material";
 
@@ -33,7 +33,9 @@ export default function ShipElement({
       </div>
       <div className="ship-element-action-wrapper">
         <ArrowUpward
-          onClick={() => dispatch(Upgrade({ upgrade: "ship", index: index }))}
+          onClick={() =>
+            dispatch(UpgradeElement({ upgrade: "ship", index: index }))
+          }
           sx={{ width: 40, height: 40, cursor: "pointer" }}
         ></ArrowUpward>
       </div>

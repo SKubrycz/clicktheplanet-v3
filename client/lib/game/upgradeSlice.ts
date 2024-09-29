@@ -5,15 +5,29 @@ export const upgradeSlice = createSlice({
   initialState: {
     upgrade: "",
     index: -1,
+    levels: 1,
   },
   reducers: {
-    Upgrade: (state, action: PayloadAction<any>) => {
-      console.log("Upgrade() upgradeSlice: ", action.payload);
-      return { ...action.payload };
+    UpgradeElement: (state, action: PayloadAction<any>) => {
+      if (action.payload.levels === undefined || state.levels === undefined) {
+        return {
+          ...state,
+          upgrade: action.payload.upgrade,
+          index: action.payload.index,
+          levels: 1,
+        };
+      } else {
+        return {
+          ...state,
+          upgrade: action.payload.upgrade,
+          index: action.payload.index,
+          levels: action.payload.levels,
+        };
+      }
     },
   },
 });
 
-export const { Upgrade } = upgradeSlice.actions;
+export const { UpgradeElement } = upgradeSlice.actions;
 
 export default upgradeSlice.reducer;
