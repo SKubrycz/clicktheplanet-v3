@@ -62,17 +62,16 @@ func (g *Game) ClickThePlanet(dmg *big.Float, isClick bool) {
 		random := rand.Float64()
 		if g.Ship[3].Multiplier > 0.0 && random <= g.Ship[3].Multiplier {
 			dmg = g.Ship[3].Damage
+			g.DamageDone.Damage = dmg
 			g.DamageDone.Critical = true
 		} else {
+			g.DamageDone.Damage = dmg
 			g.DamageDone.Critical = false
 		}
 		g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, dmg)
-		g.DamageDone.Damage = dmg
-		g.ConvertNumber(dmg, g.DamageDone.Damage)
 	} else {
 		g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, dmg)
 		g.DamageDone.Damage = dmg
-		g.ConvertNumber(dmg, g.DamageDone.Damage)
 		g.DamageDone.Critical = false
 	}
 	x := big.NewFloat(0)
@@ -238,7 +237,7 @@ func (g *Game) CalculateStore(index int) {
 		return
 	}
 
-	g.CalculateShip(1)
+	g.CalculateShip(-1)
 	g.CalculateCurrentDamage()
 }
 
