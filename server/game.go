@@ -87,6 +87,8 @@ func ActionHandler(g *Game, action string) []byte {
 	// adds additional quotes around the string,
 	// so "click" instead of plain click
 	if action == "click" {
+		// There needs to be sent a new information
+		// about whether the click was critical
 		g.ClickThePlanet(g.CurrentDamage, true)
 		percent := g.GetHealthPercent()
 		store := map[int]StoreDataMessage{}
