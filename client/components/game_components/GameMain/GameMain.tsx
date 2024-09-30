@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 
 import { useAppSelector } from "@/lib/hooks";
 
+import type { DamageDone } from "@/lib/game/gameSlice";
+
 import "./GameMain.scss";
 import DamageText from "./DamageText";
 
@@ -12,17 +14,12 @@ export interface Health {
   maxHealth: string;
 }
 
-export interface Coords {
-  x: number;
-  y: number;
-}
-
 interface GameMainProps {
   planetClick(data: string): void;
 }
 
 interface DmgText {
-  dmg: string;
+  damageDone: DamageDone;
   x: number;
   y: number;
 }
@@ -34,10 +31,6 @@ export default function GameMain({ planetClick }: GameMainProps) {
     maxHealth: "10",
   });
   const [width, setWidth] = useState<number>(100);
-  const [coords, setCoords] = useState<Coords>({
-    x: 0,
-    y: 0,
-  });
   const [dmgTextArr, setDmgTextArr] = useState<DmgText[]>([]);
   const planetRef = useRef<HTMLDivElement>(null);
 
@@ -70,7 +63,14 @@ export default function GameMain({ planetClick }: GameMainProps) {
     if (e.target === planetRef.current) {
       setDmgTextArr([
         ...dmgTextArr,
-        { dmg: gameData?.currentDamage, x: e.clientX, y: e.clientY },
+        {
+          damageDone: {
+            damage: gameData?.damageDone?.damage,
+            critical: gameData?.damageDone?.critical,
+          },
+          x: e.clientX,
+          y: e.clientY,
+        },
       ]);
     }
   };
@@ -110,7 +110,7 @@ export default function GameMain({ planetClick }: GameMainProps) {
           return (
             <DamageText
               key={i}
-              dmg={el.dmg}
+              damageDone={el.damageDone}
               pos={{
                 x: el.x,
                 y: el.y,

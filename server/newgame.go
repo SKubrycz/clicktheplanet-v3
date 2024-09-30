@@ -19,6 +19,11 @@ func NewGame(gameData *GameData) *Game {
 	maxDamage := new(big.Float)
 	maxDamage.SetString(gameData.MaxDamage)
 
+	damageDone := DamageDone{
+		Damage:   big.NewFloat(0),
+		Critical: false,
+	}
+
 	dps := new(big.Float)
 	dps.SetString("1")
 
@@ -150,6 +155,7 @@ func NewGame(gameData *GameData) *Game {
 		Diamonds:         diamonds,
 		CurrentDamage:    currentDamage,
 		MaxDamage:        maxDamage,
+		DamageDone:       damageDone,
 		Dps:              dps,
 		CurrentLevel:     currentLevel,
 		MaxLevel:         maxLevel,

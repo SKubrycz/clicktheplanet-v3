@@ -34,11 +34,17 @@ interface UpgradeMessage {
   ship: Ship[];
 }
 
+export interface DamageDone {
+  damage: string;
+  critical: boolean;
+}
+
 export interface Data {
   gold: string;
   diamonds: number;
   currentDamage: string;
   maxDamage: string;
+  damageDone: DamageDone;
   planetName: string;
   currentHealth: string;
   healthPercent: number;
@@ -62,6 +68,10 @@ export const gameObject: Data = {
   diamonds: 0,
   currentDamage: "1",
   maxDamage: "1",
+  damageDone: {
+    damage: "0",
+    critical: false,
+  },
   planetName: "Planet_name",
   currentHealth: "10",
   healthPercent: 100,

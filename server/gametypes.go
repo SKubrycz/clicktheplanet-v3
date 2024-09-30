@@ -33,12 +33,18 @@ type Planet struct {
 	Gold          *big.Float
 }
 
+type DamageDone struct {
+	Damage   *big.Float
+	Critical bool
+}
+
 type Game struct {
 	Id               int64
 	Gold             *big.Float
 	Diamonds         int64
 	CurrentDamage    *big.Float
 	MaxDamage        *big.Float
+	DamageDone       DamageDone
 	Dps              *big.Float
 	CurrentLevel     int64
 	MaxLevel         int64
@@ -56,10 +62,18 @@ func (g *Game) ClickThePlanet(dmg *big.Float, isClick bool) {
 		random := rand.Float64()
 		if g.Ship[3].Multiplier > 0.0 && random <= g.Ship[3].Multiplier {
 			dmg = g.Ship[3].Damage
+			g.DamageDone.Critical = true
+		} else {
+			g.DamageDone.Critical = false
 		}
 		g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, dmg)
+		g.DamageDone.Damage = dmg
+		g.ConvertNumber(dmg, g.DamageDone.Damage)
 	} else {
 		g.Planet.CurrentHealth.Sub(g.Planet.CurrentHealth, dmg)
+		g.DamageDone.Damage = dmg
+		g.ConvertNumber(dmg, g.DamageDone.Damage)
+		g.DamageDone.Critical = false
 	}
 	x := big.NewFloat(0)
 	if g.Planet.CurrentHealth.Cmp(x) <= 0 {

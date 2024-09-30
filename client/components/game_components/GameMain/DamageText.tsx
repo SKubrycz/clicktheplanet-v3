@@ -1,38 +1,37 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import type { Coords } from "@/components/game_components/GameMain/GameMain";
+import { DamageDone } from "@/lib/game/gameSlice";
+
+interface Coords {
+  x: number;
+  y: number;
+}
 
 interface DamageTextProps {
-  dmg: string;
+  damageDone: DamageDone;
   pos: Coords;
   duration: number;
 }
 
-export default function DamageText({ dmg, pos, duration }: DamageTextProps) {
-  //   const [visible, setVisible] = useState<boolean>(true);
-  //   const timeoutRef = useRef<NodeJS.Timeout>();
-
-  //   useEffect(() => {
-  //     console.log("DamageText initialized");
-
-  //     timeoutRef.current = setTimeout(() => {
-  //       setVisible(false);
-  //     }, duration);
-
-  //     return () => clearTimeout(timeoutRef.current);
-  //   }, []);
-
+export default function DamageText({
+  damageDone,
+  pos,
+  duration,
+}: DamageTextProps) {
   return (
     <div
-      className="damage-text"
+      className={
+        damageDone.critical
+          ? "damage-text damage-text-critical"
+          : "damage-text damage-text-normal"
+      }
       style={{
         top: `${pos.y}px`,
         left: `${pos.x}px`,
         animation: `${duration}ms fadeAway 1 forwards`,
       }}
     >
-      {dmg}
+      {damageDone.damage}
     </div>
   );
 }

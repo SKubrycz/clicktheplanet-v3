@@ -19,6 +19,7 @@ type UserClick struct {
 	Diamonds         int64                    `json:"diamonds"`
 	CurrentDamage    string                   `json:"currentDamage"`
 	MaxDamage        string                   `json:"maxDamage"`
+	DamageDone       DamageDoneData           `json:"damageDone"`
 	PlanetName       string                   `json:"planetName"`
 	CurrentHealth    string                   `json:"currentHealth"`
 	HealthPercent    int                      `json:"healthPercent"`
@@ -35,6 +36,11 @@ type UserClick struct {
 type ActionMessage struct {
 	Action string `json:"action"`
 	Data   any    `json:"data"`
+}
+
+type DamageDoneData struct {
+	Damage   string `json:"damage"`
+	Critical bool   `json:"critical"`
 }
 
 type UpgradeMessage struct {
@@ -90,6 +96,10 @@ func ActionHandler(g *Game, action string) []byte {
 		// There needs to be sent a new information
 		// about whether the click was critical
 		g.ClickThePlanet(g.CurrentDamage, true)
+		damageDone := DamageDoneData{
+			Damage:   g.DisplayNumber(g.DamageDone.Damage),
+			Critical: g.DamageDone.Critical,
+		}
 		percent := g.GetHealthPercent()
 		store := map[int]StoreDataMessage{}
 		for k := range g.Store {
@@ -120,6 +130,7 @@ func ActionHandler(g *Game, action string) []byte {
 				Diamonds:         g.Diamonds,
 				CurrentDamage:    g.DisplayNumber(g.CurrentDamage),
 				MaxDamage:        g.DisplayNumber(g.MaxDamage),
+				DamageDone:       damageDone,
 				PlanetName:       g.Planet.Name,
 				CurrentHealth:    g.DisplayNumber(g.Planet.CurrentHealth),
 				HealthPercent:    percent,
