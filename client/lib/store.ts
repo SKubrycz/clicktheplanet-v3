@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import gameReducer from "@/lib/game/gameSlice";
 import upgradeReducer from "@/lib/game/upgradeSlice";
+import levelReducer from "@/lib/game/levelSlice";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       game: gameReducer,
       upgrade: upgradeReducer,
+      level: levelReducer,
     },
   });
 };

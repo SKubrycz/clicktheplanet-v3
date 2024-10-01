@@ -18,6 +18,7 @@ import {
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { CircularProgress } from "@mui/material";
+import { setLevel } from "@/lib/game/levelSlice";
 
 interface ActionMessage {
   action: string;
@@ -28,6 +29,7 @@ export default function Game() {
   const [loading, setLoading] = useState<boolean>(true);
   const gameData = useAppSelector((state) => state.game);
   const upgradeData = useAppSelector((state) => state.upgrade);
+  const levelData = useAppSelector((state) => state.level);
   const dispatch = useAppDispatch();
   //const [data, setData] = useState<Data | undefined>(gameObject);
   const socket = useRef<WebSocket | null>(null);
@@ -86,6 +88,13 @@ export default function Game() {
       if (socket.current) socket.current.send(JSON.stringify(upgradeData));
     }
   }, [upgradeData]);
+
+  useEffect(() => {
+    console.log(levelData);
+    if (levelData.action === "previous" || levelData.action === "next") {
+      if (socket.current) socket.current.send(levelData.action);
+    }
+  }, [levelData]);
 
   useEffect(() => {
     handleGetGame();

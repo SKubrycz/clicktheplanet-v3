@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 
-import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
 import type { DamageDone } from "@/lib/game/gameSlice";
 
 import "./GameMain.scss";
 import DamageText from "./DamageText";
+import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
+import { setLevel } from "@/lib/game/levelSlice";
 
 export interface Health {
   currentHealth: string;
@@ -26,6 +28,7 @@ interface DmgText {
 
 export default function GameMain({ planetClick }: GameMainProps) {
   const gameData = useAppSelector((state) => state.game);
+  const dispatch = useAppDispatch();
   const [health, setHealth] = useState<Health>({
     currentHealth: "10",
     maxHealth: "10",
@@ -86,11 +89,35 @@ export default function GameMain({ planetClick }: GameMainProps) {
       <div className="main-current-stage">{gameData?.currentStage}/10</div>
       <div className="main-planet-name-title">Planet name:</div>
       <div className="main-planet-name">{gameData?.planetName}</div>
-      <div
-        className="main-planet-image"
-        ref={planetRef}
-        onClick={(e) => handlePlanetClick(e)}
-      ></div>
+      <div className="main-planet-image-wrapper">
+        <KeyboardArrowLeft
+          onClick={() => dispatch(setLevel({ action: "previous" }))}
+          sx={{
+            marginRight: "3em",
+            cursor: "pointer",
+            fontSize: "30px",
+            "&:hover": {
+              filter: "drop-shadow(0px 0px 12px white)",
+            },
+          }}
+        ></KeyboardArrowLeft>
+        <div
+          className="main-planet-image"
+          ref={planetRef}
+          onClick={(e) => handlePlanetClick(e)}
+        ></div>
+        <KeyboardArrowRight
+          onClick={() => dispatch(setLevel({ action: "next" }))}
+          sx={{
+            marginLeft: "3em",
+            cursor: "pointer",
+            fontSize: "30px",
+            "&:hover": {
+              filter: "drop-shadow(0px 0px 12px white)",
+            },
+          }}
+        ></KeyboardArrowRight>
+      </div>
       {/* Temporary */}
       <div className="main-planet-health-title">Health</div>
       <div className="main-planet-healthbar">

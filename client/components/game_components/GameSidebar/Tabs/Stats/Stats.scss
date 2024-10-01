@@ -31,4 +31,17 @@
 
 .stats-element-right {
   font-weight: 600;
+
+  animation: 200ms flash 1;
+}
+
+@keyframes flash {
+  from {
+    transform: scale(120%, 120%);
+    color: adjust-color($color: $fontColor, $lightness: 50%);
+  }
+  to {
+    transform: scale(100%, 100%);
+    color: inherit;
+  }
 }

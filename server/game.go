@@ -83,6 +83,15 @@ type UpgradeDataMessageWrapper struct {
 	Ship     map[int]ShipDataMessage  `json:"ship"`
 }
 
+type LevelDataMessage struct {
+	CurrentLevel  int64  `json:"currentLevel"`
+	CurrentStage  uint8  `json:"currentStage"`
+	PlanetName    string `json:"planetName"`
+	CurrentHealth string `json:"currentHealth"`
+	HealthPercent int    `json:"healthPercent"`
+	MaxHealth     string `json:"maxHealth"`
+}
+
 type ErrorDataMessage struct {
 	Error string `json:"error"`
 }
@@ -93,8 +102,6 @@ func ActionHandler(g *Game, action string) []byte {
 	// adds additional quotes around the string,
 	// so "click" instead of plain click
 	if action == "click" {
-		// There needs to be sent a new information
-		// about whether the click was critical
 		g.ClickThePlanet(g.CurrentDamage, true)
 		damageDone := DamageDoneData{
 			Damage:   g.DisplayNumber(g.DamageDone.Damage),
@@ -200,6 +207,26 @@ func ActionHandler(g *Game, action string) []byte {
 		}
 		encoded, _ := json.Marshal(message)
 		return []byte(encoded)
+	} else if action == "previous" || action == "next" {
+		// Previous level or next
+		if action == "previous" {
+			g.PreviousLevel()
+		}
+		if action == "next" {
+			g.NextLevel()
+		}
+		percent := g.GetHealthPercent()
+
+		message := LevelDataMessage{
+			CurrentLevel:  g.CurrentLevel,
+			CurrentStage:  g.CurrentStage,
+			PlanetName:    g.Planet.Name,
+			CurrentHealth: g.DisplayNumber(g.Planet.CurrentHealth),
+			HealthPercent: percent,
+			MaxHealth:     g.DisplayNumber(g.Planet.MaxHealth),
+		}
+		enc, _ := json.Marshal(message)
+		return []byte(enc)
 	} else {
 		unmarshaled := new(UpgradeMessage)
 		if action != "dps" {

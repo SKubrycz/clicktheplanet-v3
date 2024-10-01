@@ -289,26 +289,48 @@ func (g *Game) CalculateShip(index int) {
 }
 
 func (g *Game) Advance() {
-	g.CurrentStage++
-	if g.CurrentStage > 10 {
-		g.CurrentLevel++
-		g.CurrentStage = 1
-	}
-	if g.CurrentLevel > g.MaxLevel {
-		g.MaxLevel = g.CurrentLevel
-	}
 	if g.CurrentLevel == g.MaxLevel {
-		g.MaxStage = g.CurrentStage
+		g.CurrentStage++
+		if g.CurrentStage > 10 {
+			g.CurrentLevel++
+			g.CurrentStage = 1
+		}
+		if g.CurrentLevel > g.MaxLevel {
+			g.MaxLevel = g.CurrentLevel
+		}
+		if g.CurrentLevel == g.MaxLevel {
+			g.MaxStage = g.CurrentStage
+		}
+		g.GeneratePlanetName()
 	}
-	g.GeneratePlanetName()
 }
 
 func (g *Game) PreviousLevel() {
-	// g.GeneratePlanetName()
+	if g.CurrentLevel > 1 {
+		g.CurrentLevel -= 1
+		g.CurrentStage = 10
+
+		g.CalculatePlanetHealth()
+		g.CalculateGoldEarned()
+
+		g.GeneratePlanetName()
+	}
 }
 
 func (g *Game) NextLevel() {
-	// g.GeneratePlanetName()
+	if g.CurrentLevel < g.MaxLevel {
+		g.CurrentLevel++
+		if g.CurrentLevel == g.MaxLevel {
+			g.CurrentStage = g.MaxStage
+		} else {
+			g.CurrentStage = 10
+		}
+
+		g.CalculatePlanetHealth()
+		g.CalculateGoldEarned()
+
+		g.GeneratePlanetName()
+	}
 }
 
 func (g *Game) CalculateGoldEarned() {

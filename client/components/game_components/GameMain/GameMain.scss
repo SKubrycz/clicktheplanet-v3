@@ -58,6 +58,13 @@ $levelBorderDist: 0.2em;
   }
 }
 
+.main-planet-image-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .main-planet-image {
   width: 250px;
   height: 250px;
