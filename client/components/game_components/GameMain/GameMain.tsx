@@ -26,9 +26,15 @@ interface DmgText {
   y: number;
 }
 
+interface Loaded {
+  isLoaded: boolean;
+  count: number;
+}
+
 export default function GameMain({ planetClick }: GameMainProps) {
   const gameData = useAppSelector((state) => state.game);
   const dispatch = useAppDispatch();
+  const [loaded, setLoaded] = useState<Loaded>({ isLoaded: false, count: 0 });
   const [health, setHealth] = useState<Health>({
     currentHealth: "10",
     maxHealth: "10",
@@ -60,8 +66,6 @@ export default function GameMain({ planetClick }: GameMainProps) {
   }, [dmgTextArr]);
 
   const handlePlanetClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // after WebSocket connection -> send click message to the server
-    // for now the click mechanic is as below: `for now` - that's funny :D
     planetClick("click");
     if (e.target === planetRef.current) {
       setDmgTextArr([
@@ -82,6 +86,43 @@ export default function GameMain({ planetClick }: GameMainProps) {
     width: `${width}%`,
   };
 
+  const animationStyle = {
+    previous: "200ms swipeLeft linear 1",
+    next: "200ms swipeRight linear 1",
+    destroyed: "250ms destroyed linear 1",
+  };
+
+  useEffect(() => {
+    if (planetRef.current && loaded.count > 1) {
+      planetRef.current.style.animation = "none";
+      planetRef.current.offsetHeight;
+      planetRef.current.style.animation = animationStyle.destroyed;
+    }
+
+    // To keep the animation from executing on initial component load
+    if (loaded.count < 2) {
+      setLoaded({ ...loaded, count: loaded.count + 1 });
+    } else if (loaded.count == 2) {
+      setLoaded({ ...loaded, isLoaded: true });
+    }
+  }, [gameData.planetsDestroyed]);
+
+  const animatePrevious = () => {
+    if (planetRef.current && gameData.currentLevel > 1) {
+      planetRef.current.style.animation = "none";
+      planetRef.current.offsetHeight;
+      planetRef.current.style.animation = animationStyle.previous;
+    }
+  };
+
+  const animateNext = () => {
+    if (planetRef.current && gameData.currentLevel !== gameData.maxLevel) {
+      planetRef.current.style.animation = "none";
+      planetRef.current.offsetHeight;
+      planetRef.current.style.animation = animationStyle.next;
+    }
+  };
+
   return (
     <main className="game-main">
       <div className="main-spacing"></div>
@@ -91,7 +132,10 @@ export default function GameMain({ planetClick }: GameMainProps) {
       <div className="main-planet-name">{gameData?.planetName}</div>
       <div className="main-planet-image-wrapper">
         <KeyboardArrowLeft
-          onClick={() => dispatch(setLevel({ action: "previous" }))}
+          onClick={() => {
+            dispatch(setLevel({ action: "previous" }));
+            animatePrevious();
+          }}
           sx={{
             marginRight: "3em",
             cursor: "pointer",
@@ -107,7 +151,10 @@ export default function GameMain({ planetClick }: GameMainProps) {
           onClick={(e) => handlePlanetClick(e)}
         ></div>
         <KeyboardArrowRight
-          onClick={() => dispatch(setLevel({ action: "next" }))}
+          onClick={() => {
+            dispatch(setLevel({ action: "next" }));
+            animateNext();
+          }}
           sx={{
             marginLeft: "3em",
             cursor: "pointer",
