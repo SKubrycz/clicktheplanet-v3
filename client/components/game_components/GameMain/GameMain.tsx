@@ -87,9 +87,11 @@ export default function GameMain({ planetClick }: GameMainProps) {
   };
 
   const animationStyle = {
-    previous: "200ms swipeLeft linear 1",
-    next: "200ms swipeRight linear 1",
-    destroyed: "250ms destroyed linear 1",
+    previous:
+      "200ms swipeRight linear 1, breathe 4s infinite, levitate 5.5s infinite",
+    next: "200ms swipeLeft linear 1, breathe 4s infinite, levitate 5.5s infinite",
+    destroyed:
+      "250ms destroyed linear 1, breathe 4s infinite, levitate 5.5s infinite",
   };
 
   useEffect(() => {
