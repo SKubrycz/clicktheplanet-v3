@@ -6,19 +6,10 @@ import { useRouter } from "next/navigation";
 import GameNavbar from "@/components/game_components/GameNavbar/GameNavbar";
 import GameSidebar from "@/components/game_components/GameSidebar/GameSidebar";
 import GameMain from "@/components/game_components/GameMain/GameMain";
-import {
-  Init,
-  Click,
-  Upgrade,
-  UpdateStore,
-  DealDps,
-  gameObject,
-  UpdateShip,
-} from "@/lib/game/gameSlice";
+import { Init, Click, Upgrade, DealDps } from "@/lib/game/gameSlice";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { CircularProgress } from "@mui/material";
-import { setLevel } from "@/lib/game/levelSlice";
 
 interface ActionMessage {
   action: string;
@@ -155,6 +146,11 @@ export default function Game() {
     };
   }, []);
 
+  const handleOnLogout = (): Promise<void> => {
+    if (socket.current) socket.current.close(1000);
+    return Promise.resolve();
+  };
+
   return (
     <div className="game-wrapper">
       {loading ? (
@@ -168,7 +164,7 @@ export default function Game() {
         ></CircularProgress>
       ) : (
         <>
-          <GameNavbar></GameNavbar>
+          <GameNavbar handleOnLogout={() => handleOnLogout()}></GameNavbar>
           <div className="game-content-wrapper">
             <GameSidebar></GameSidebar>
             <GameMain planetClick={handlePlanetClickData}></GameMain>

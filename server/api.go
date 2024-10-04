@@ -34,6 +34,7 @@ func (s *Server) Start() {
 	router.HandleFunc("/", s.handleHome)
 	router.HandleFunc("/login", s.handleLogin)
 	router.HandleFunc("/register", s.handleRegister)
+	router.HandleFunc("/logout", s.handleLogout)
 	router.HandleFunc("/game", checkAuth(s.handleGame))
 	router.HandleFunc("/ws_game", checkAuth(s.handleGetWsGame))
 
@@ -299,6 +300,54 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 		writeJSON(w, http.StatusMethodNotAllowed, "Method not allowed")
+		return
+	}
+}
+
+func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		_, err := r.Cookie("refresh_token")
+		if err != nil {
+			fmt.Println("Couldn't find a cookie")
+			error := Message{
+				Message: "Not authorized",
+			}
+			writeJSON(w, http.StatusUnauthorized, error)
+			return
+		}
+		_, err = r.Cookie("access_token")
+		if err != nil {
+			fmt.Println("Couldn't find a cookie")
+			error := Message{
+				Message: "Not authorized",
+			}
+			writeJSON(w, http.StatusUnauthorized, error)
+			return
+		}
+
+		refreshTokenCookie := http.Cookie{
+			Name:     "refresh_token",
+			Value:    "",
+			MaxAge:   -1,
+			HttpOnly: true,
+			SameSite: http.SameSiteStrictMode,
+		}
+
+		accessTokenCookie := http.Cookie{
+			Name:     "access_token",
+			Value:    "",
+			MaxAge:   -1,
+			HttpOnly: true,
+			SameSite: http.SameSiteStrictMode,
+		}
+
+		http.SetCookie(w, &refreshTokenCookie)
+		http.SetCookie(w, &accessTokenCookie)
+
+		writeJSON(w, 200, "Logged out")
+		return
+	} else {
+		writeJSON(w, 405, "Method not allowed")
 		return
 	}
 }
