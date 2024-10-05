@@ -49,6 +49,7 @@ export interface Data {
   currentHealth: string;
   healthPercent: number;
   maxHealth: string;
+  planetGold: string;
   currentLevel: number;
   maxLevel: number;
   currentStage: number;
@@ -76,6 +77,7 @@ export const gameObject: Data = {
   currentHealth: "10",
   healthPercent: 100,
   maxHealth: "10",
+  planetGold: "1",
   currentLevel: 1,
   maxLevel: 1,
   currentStage: 1,
@@ -167,6 +169,7 @@ export const gameSlice = createSlice({
         currentHealth: action.payload.currentHealth,
         healthPercent: action.payload.healthPercent,
         maxHealth: action.payload.maxHealth,
+        planetGold: action.payload.planetGold,
         currentLevel: action.payload.currentLevel,
         maxLevel: action.payload.maxLevel,
         currentStage: action.payload.currentStage,

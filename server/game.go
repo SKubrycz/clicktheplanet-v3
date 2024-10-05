@@ -24,6 +24,7 @@ type UserClick struct {
 	CurrentHealth    string                   `json:"currentHealth"`
 	HealthPercent    int                      `json:"healthPercent"`
 	MaxHealth        string                   `json:"maxHealth"`
+	PlanetGold       string                   `json:"planetGold"`
 	CurrentLevel     int64                    `json:"currentLevel"`
 	MaxLevel         int64                    `json:"maxLevel"`
 	CurrentStage     uint8                    `json:"currentStage"`
@@ -77,10 +78,11 @@ type ShipDataMessageWrapper struct {
 }
 
 type UpgradeDataMessageWrapper struct {
-	Gold     string                   `json:"gold"`
-	Diamonds int64                    `json:"diamonds"`
-	Store    map[int]StoreDataMessage `json:"store"`
-	Ship     map[int]ShipDataMessage  `json:"ship"`
+	Gold       string                   `json:"gold"`
+	Diamonds   int64                    `json:"diamonds"`
+	PlanetGold string                   `json:"planetGold"`
+	Store      map[int]StoreDataMessage `json:"store"`
+	Ship       map[int]ShipDataMessage  `json:"ship"`
 }
 
 type LevelDataMessage struct {
@@ -90,6 +92,7 @@ type LevelDataMessage struct {
 	CurrentHealth string `json:"currentHealth"`
 	HealthPercent int    `json:"healthPercent"`
 	MaxHealth     string `json:"maxHealth"`
+	PlanetGold    string `json:"planetGold"`
 }
 
 type ErrorDataMessage struct {
@@ -142,6 +145,7 @@ func ActionHandler(g *Game, action string) []byte {
 				CurrentHealth:    g.DisplayNumber(g.Planet.CurrentHealth),
 				HealthPercent:    percent,
 				MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
+				PlanetGold:       g.DisplayNumber(g.Planet.Gold),
 				CurrentLevel:     g.CurrentLevel,
 				MaxLevel:         g.MaxLevel,
 				CurrentStage:     g.CurrentStage,
@@ -196,6 +200,7 @@ func ActionHandler(g *Game, action string) []byte {
 				CurrentHealth:    g.DisplayNumber(g.Planet.CurrentHealth),
 				HealthPercent:    percent,
 				MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
+				PlanetGold:       g.DisplayNumber(g.Planet.Gold),
 				CurrentLevel:     g.CurrentLevel,
 				MaxLevel:         g.MaxLevel,
 				CurrentStage:     g.CurrentStage,
@@ -224,6 +229,7 @@ func ActionHandler(g *Game, action string) []byte {
 			CurrentHealth: g.DisplayNumber(g.Planet.CurrentHealth),
 			HealthPercent: percent,
 			MaxHealth:     g.DisplayNumber(g.Planet.MaxHealth),
+			PlanetGold:    g.DisplayNumber(g.Planet.Gold),
 		}
 		enc, _ := json.Marshal(message)
 		return []byte(enc)
@@ -290,10 +296,11 @@ func ActionHandler(g *Game, action string) []byte {
 			message := ActionMessage{
 				Action: "upgrade",
 				Data: UpgradeDataMessageWrapper{
-					Gold:     g.DisplayNumber(g.Gold),
-					Diamonds: g.Diamonds,
-					Store:    store,
-					Ship:     ship,
+					Gold:       g.DisplayNumber(g.Gold),
+					Diamonds:   g.Diamonds,
+					PlanetGold: g.DisplayNumber(g.Planet.Gold),
+					Store:      store,
+					Ship:       ship,
 				},
 			}
 			encoded, _ := json.Marshal(message)
@@ -344,6 +351,7 @@ func DealDps(g *Game) []byte {
 			CurrentHealth:    g.DisplayNumber(g.Planet.CurrentHealth),
 			HealthPercent:    percent,
 			MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
+			PlanetGold:       g.DisplayNumber(g.Planet.Gold),
 			CurrentLevel:     g.CurrentLevel,
 			MaxLevel:         g.MaxLevel,
 			CurrentStage:     g.CurrentStage,

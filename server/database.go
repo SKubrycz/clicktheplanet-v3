@@ -68,7 +68,7 @@ func (p *Postgres) CreateAccount(u *User) error {
 	}
 
 	var gameId int
-	err = p.db.QueryRow(queryGame, 100, 0, 1, 1, 1, 1, 1, 0, user.Id).Scan(&gameId)
+	err = p.db.QueryRow(queryGame, 0, 0, 1, 1, 1, 1, 1, 0, user.Id).Scan(&gameId)
 	if err != nil {
 		return err
 	}

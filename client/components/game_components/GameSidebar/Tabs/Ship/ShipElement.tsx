@@ -29,6 +29,7 @@ export default function ShipElement({
         <div className="ship-element-description">
           {description}{" "}
           {index !== 4 && index !== 3 ? gameData?.ship[index]?.damage : ""}
+          {gameData?.planetGold}
         </div>
         <div>Cost: {gameData?.ship[index]?.cost}</div>
       </div>

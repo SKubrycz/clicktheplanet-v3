@@ -243,6 +243,11 @@ func (g *Game) CalculateStore(index int) {
 
 func (g *Game) UpgradeShip(index int) string {
 	if g.Gold.Cmp(g.Ship[index].Cost) >= 0 {
+		if index == 3 {
+			if g.Ship[index].Multiplier == 0.5 {
+				return "max level reached"
+			}
+		}
 		if entry, ok := g.Ship[index]; ok {
 			entry.Level += 1
 			g.Ship[index] = entry
@@ -467,9 +472,11 @@ func (g *Game) CalculateShipFour() {
 	g.ConvertNumber(cost, g.Ship[4].Cost)
 
 	if entry, ok := g.Ship[4]; ok {
-		entry.Multiplier = toFixed((1.0 + 0.001*float64(g.Ship[4].Level)), 3)
+		entry.Multiplier = toFixed((1.0 + 0.01*float64(g.Ship[4].Level)), 3)
 		g.Ship[4] = entry
 	}
+
+	g.CalculateGoldEarned()
 }
 
 func toFixed(num float64, prec int) float64 {

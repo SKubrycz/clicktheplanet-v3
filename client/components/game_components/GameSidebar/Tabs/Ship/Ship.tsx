@@ -20,7 +20,7 @@ export default function Ship() {
     },
     {
       title: "Planet gold",
-      desc: "Gold gained from destroying planets",
+      desc: "Gold gained from destroying planets:",
     },
   ];
 
