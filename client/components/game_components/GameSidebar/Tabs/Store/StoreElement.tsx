@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo, useState } from "react";
+
 import type { Data } from "@/lib/game/gameSlice";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
 import { Add } from "@mui/icons-material";
@@ -24,6 +26,12 @@ export default function StoreElement({
   const upgradeData = useAppSelector((state) => state.upgrade);
   const dispatch = useAppDispatch();
 
+  const [levels, setLevels] = useState<number | undefined>(undefined);
+
+  const levelsAmount = useMemo(() => {
+    setLevels(upgradeData?.levels);
+  }, [upgradeData?.levels]); 
+
   return (
     <div className="store-element">
       <div className="store-element-left-wrapper">
@@ -42,6 +50,8 @@ export default function StoreElement({
           <div>Cost: {gameData?.store[index]?.cost}</div>
         </div>
       </div>
+      <div className="store-element-action-wrapper">
+      {(levels && levels > 1) ? <div>x{levels}</div> : undefined}
       <Add
         onClick={() =>
           dispatch(
@@ -54,6 +64,7 @@ export default function StoreElement({
         }
         sx={{ width: 50, height: 50, cursor: "pointer" }}
       ></Add>
+      </div>
     </div>
   );
 }

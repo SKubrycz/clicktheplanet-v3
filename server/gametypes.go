@@ -241,18 +241,39 @@ func (g *Game) CalculateStore(index int) {
 	g.CalculateCurrentDamage()
 }
 
-func (g *Game) UpgradeShip(index int) string {
+func (g *Game) UpgradeShip(index int, levels int) string {
 	if g.Gold.Cmp(g.Ship[index].Cost) >= 0 {
 		if index == 3 {
 			if g.Ship[index].Multiplier == 0.5 {
 				return "max level reached"
 			}
 		}
+
+		f := 1.5
+		bulkCost := new(big.Float)
+
+		for i := 1; i <= levels; i++ {
+			pow := math.Pow(f, float64(g.Ship[index].Level))
+			bigPow := big.NewFloat(pow)
+			cost := new(big.Float)
+
+			cost.Mul(g.Ship[index].BaseCost, bigPow)
+
+			bulkCost.Add(bulkCost, cost)
+		}
+		fmt.Println("   ---> bulkCost: ", bulkCost)
+
+		if bulkCost.Cmp(g.Gold) > 0 {
+			return "insufficient resources"
+		}
+
+		fmt.Printf("\n %v \n", bulkCost)
+
 		if entry, ok := g.Ship[index]; ok {
-			entry.Level += 1
+			entry.Level += int64(levels)
 			g.Ship[index] = entry
 			result := new(big.Float)
-			result.Sub(g.Gold, g.Ship[index].Cost)
+			result.Sub(g.Gold, bulkCost) // g.Ship[index].Cost * levels
 			g.ConvertNumber(result, g.Gold)
 		}
 		g.Ch <- "upgrade"

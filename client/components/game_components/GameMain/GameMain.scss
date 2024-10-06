@@ -72,6 +72,12 @@ $levelBorderDist: 0.2em;
   border-radius: 100%;
   background-color: gray;
 
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+
   animation: breathe 4s infinite, levitate 5.5s infinite;
 
   cursor: pointer;

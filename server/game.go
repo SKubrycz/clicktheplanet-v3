@@ -256,7 +256,7 @@ func ActionHandler(g *Game, action string) []byte {
 				}
 			}
 			if unmarshaled.Upgrade == "ship" {
-				err := g.UpgradeShip(unmarshaled.Index)
+				err := g.UpgradeShip(unmarshaled.Index, unmarshaled.Levels)
 				if err != "" {
 					message := ActionMessage{
 						Action: "error",
