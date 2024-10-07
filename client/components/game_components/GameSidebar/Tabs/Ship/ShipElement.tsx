@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
-import { SetError } from "@/lib/game/errorSlice";
+import { SetErrorMessage, SetError } from "@/lib/game/errorSlice";
 
 import { ArrowUpward } from "@mui/icons-material";
 
@@ -26,7 +26,7 @@ export default function ShipElement({
 
   const [levels, setLevels] = useState<number | undefined>(undefined);
 
-  const timeout = useRef<NodeJS.Timeout>();
+  const timeout = useRef<NodeJS.Timeout | null>(null);
 
   const levelsAmount = useMemo(() => {
     setLevels(upgradeData?.levels);
@@ -49,9 +49,13 @@ export default function ShipElement({
         },
       })
     );
+  };
 
-    clearTimeout(timeout.current);
-
+  useEffect(() => {
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+    timeout.current = null;
     timeout.current = setTimeout(() => {
       dispatch(
         SetError({
@@ -63,7 +67,11 @@ export default function ShipElement({
         })
       );
     }, 1500);
-  };
+
+    return () => {
+      if (timeout.current) clearTimeout(timeout.current);
+    };
+  }, [errorData?.isVisible]);
 
   return (
     <div className="ship-element">
