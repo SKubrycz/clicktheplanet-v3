@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAppSelector } from "@/lib/hooks";
+import ErrorMessage from "@/components/game_components/ErrorMessage/ErrorMessage";
 
 import Tabs from "./Tabs/Tabs";
 
@@ -9,6 +10,7 @@ import "./GameSidebar.scss";
 
 export default function GameSidebar() {
   const gameData = useAppSelector((state) => state.game);
+  const errorData = useAppSelector((state) => state.error);
   const tabs: Array<string> = ["Store", "Ship", "Stats"];
 
   const [tabTitle, setTabTitle] = useState<string>(tabs[0]);
@@ -19,6 +21,12 @@ export default function GameSidebar() {
 
   return (
     <aside className="game-sidebar">
+      {errorData?.isVisible && (
+        <ErrorMessage
+          message={errorData?.message}
+          pos={errorData?.pos}
+        ></ErrorMessage>
+      )}
       <div className="game-sidebar-currency">
         <div style={{ display: "flex" }}>
           <div className="test-yellow">Gold"icon"</div>: {gameData?.gold}

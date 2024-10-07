@@ -8,6 +8,7 @@ import GameSidebar from "@/components/game_components/GameSidebar/GameSidebar";
 import GameMain from "@/components/game_components/GameMain/GameMain";
 import { Init, Click, Upgrade, DealDps } from "@/lib/game/gameSlice";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
+import { SetErrorMessage, SetError } from "@/lib/game/errorSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { CircularProgress } from "@mui/material";
 
@@ -22,7 +23,6 @@ export default function Game() {
   const upgradeData = useAppSelector((state) => state.upgrade);
   const levelData = useAppSelector((state) => state.level);
   const dispatch = useAppDispatch();
-  //const [data, setData] = useState<Data | undefined>(gameObject);
   const socket = useRef<WebSocket | null>(null);
   const router = useRouter();
 
@@ -47,7 +47,7 @@ export default function Game() {
         } else {
           console.error("Error: ", String(err));
         }
-        //router.push("/"); //if token is not valid
+        router.push("/"); //if token is not valid
       });
 
     console.log(res);
@@ -103,7 +103,6 @@ export default function Game() {
 
     socket.current.onmessage = (e: MessageEvent) => {
       let message: ActionMessage = JSON.parse(e.data);
-      //console.log("From the server: ", message);
       if (message.action === "init") {
         dispatch(Init(message.data));
         console.log(message.data);
@@ -117,15 +116,9 @@ export default function Game() {
       }
 
       if (message.action === "error") {
+        dispatch(SetErrorMessage(message.data.error));
         console.log(message.data);
       }
-      // if (message.action === "store") {
-      //   dispatch(UpdateStore(message.data));
-      //   console.log(gameData);
-      // }
-      // if (message.action === "ship") {
-      //   dispatch(UpdateShip(message.data));
-      // }
       if (message.action === "dps") {
         dispatch(DealDps(message.data));
       }

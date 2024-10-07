@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
+import { SetError } from "@/lib/game/errorSlice";
 
 import { ArrowUpward } from "@mui/icons-material";
 
@@ -20,13 +21,49 @@ export default function ShipElement({
 }: ShipElementProps) {
   const gameData = useAppSelector((state) => state.game);
   const upgradeData = useAppSelector((state) => state.upgrade);
+  const errorData = useAppSelector((state) => state.error);
   const dispatch = useAppDispatch();
 
   const [levels, setLevels] = useState<number | undefined>(undefined);
 
+  const timeout = useRef<NodeJS.Timeout>();
+
   const levelsAmount = useMemo(() => {
     setLevels(upgradeData?.levels);
-  }, [upgradeData?.levels]); 
+  }, [upgradeData?.levels]);
+
+  const handleUpgradeClick = (e: React.MouseEvent) => {
+    dispatch(
+      UpgradeElement({
+        upgrade: "ship",
+        index: index,
+        levels: upgradeData?.levels,
+      })
+    );
+    dispatch(
+      SetError({
+        isVisible: true,
+        pos: {
+          x: e.clientX,
+          y: e.clientY,
+        },
+      })
+    );
+
+    clearTimeout(timeout.current);
+
+    timeout.current = setTimeout(() => {
+      dispatch(
+        SetError({
+          isVisible: false,
+          pos: {
+            x: 0,
+            y: 0,
+          },
+        })
+      );
+    }, 1500);
+  };
 
   return (
     <div className="ship-element">
@@ -42,13 +79,11 @@ export default function ShipElement({
         </div>
         <div>Cost: {gameData?.ship[index]?.cost}</div>
       </div>
-      
+
       <div className="ship-element-action-wrapper">
-      {(levels && levels > 1) ? <div>x{levels}</div> : undefined}
+        {levels && levels > 1 ? <div>x{levels}</div> : undefined}
         <ArrowUpward
-          onClick={() =>
-            dispatch(UpgradeElement({ upgrade: "ship", index: index, levels: upgradeData?.levels }))
-          }
+          onClick={(e) => handleUpgradeClick(e)}
           sx={{ width: 40, height: 40, cursor: "pointer" }}
         ></ArrowUpward>
       </div>
