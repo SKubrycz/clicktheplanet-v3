@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { Popover, PopoverProps } from "@mui/material";
+import { Box, Modal, Typography } from "@mui/material";
 
 import "./GameNavbar.scss";
 
@@ -13,15 +13,13 @@ interface GameNavbarProps {
 
 export default function GameNavbar({ handleOnLogout }: GameNavbarProps) {
   const [open, setOpen] = useState<boolean>(false);
-  const [anchorEl, setAnchorEl] = useState<PopoverProps["anchorEl"]>(null);
   const router = useRouter();
 
-  const handlePopoverOpen = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(e.currentTarget);
+  const handleModalOpen = () => {
     setOpen(true);
   };
 
-  const handlePopoverClose = () => {
+  const handleModalClose = () => {
     setOpen(false);
   };
 
@@ -56,27 +54,55 @@ export default function GameNavbar({ handleOnLogout }: GameNavbarProps) {
       <div className="game-navbar-content">
         <div>Settings</div>
         <div
-          aria-describedby={id}
-          aria-haspopup="true"
-          onClick={(e) => handlePopoverOpen(e)}
+          aria-labelledby="modal-modal-title"
+          onClick={() => handleModalOpen()}
         >
           Profile
         </div>
-        <Popover
-          open={open}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "center",
-          }}
-          onClose={handlePopoverClose}
-          anchorEl={anchorEl}
-        >
-          <button onClick={(e) => handleLogout(e)}>Logout</button>
-        </Popover>
+        <Modal open={open} onClose={() => handleModalClose()}>
+          <Box
+            sx={{
+              minWidth: 300,
+              p: "0.5em",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              border: "1px solid gray",
+              borderRadius: "5px",
+              boxShadow: "0px 0px 15px black",
+              backgroundColor: "rgba(10, 10, 10, 0.9)",
+            }}
+          >
+            <Typography id="modal-modal-title" variant="h5">
+              Profile
+            </Typography>
+            <Box
+              sx={{
+                width: "100%",
+                p: "0.7em",
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+              }}
+            >
+              <div className="profile-img-lg">Image</div>
+              <Box>
+                <Typography variant="h6">Nickname</Typography>
+                <button
+                  className="profile-logout-btn"
+                  onClick={(e) => handleLogout(e)}
+                >
+                  Logout
+                </button>
+              </Box>
+            </Box>
+          </Box>
+        </Modal>
       </div>
     </nav>
   );

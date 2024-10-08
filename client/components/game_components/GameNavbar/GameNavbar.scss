@@ -32,3 +32,34 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+.profile-img-lg {
+  width: 128px;
+  height: 128px;
+
+  margin: 0.5em;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid white;
+}
+
+.profile-logout-btn {
+  padding: 0.5em;
+
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+
+  color: white;
+  background-color: rgba(50, 50, 50, 0.9);
+
+  transition: 0.1s background linear;
+
+  cursor: pointer;
+}
+
+.profile-logout-btn:hover {
+  background-color: rgba(90, 90, 90, 0.8);
+}

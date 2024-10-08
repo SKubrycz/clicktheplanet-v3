@@ -68,6 +68,8 @@ export default function ShipElement({
       );
     }, 1500);
 
+    dispatch(SetErrorMessage(""));
+
     return () => {
       if (timeout.current) clearTimeout(timeout.current);
     };
