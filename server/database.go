@@ -8,6 +8,7 @@ import (
 
 type Database interface {
 	CreateAccount(*User) error
+	DeleteAccountById(id int) error
 	GetAccountByLogin(string) (*User, error)
 	GetGameByUserId(id int) (*GameData, error)
 	SaveGameProgress(userId int, g *Game) error
@@ -99,6 +100,46 @@ func (p *Postgres) CreateAccount(u *User) error {
 			return err
 		}
 	}
+
+	return nil
+}
+
+func (p *Postgres) DeleteAccountById(id int) error {
+	querySelect := `SELECT id FROM games WHERE user_id = $1`
+
+	deleteFromGameStore := `DELETE FROM game_store WHERE game_id = $1`
+	deleteFromGameShip := `DELETE FROM game_ship WHERE game_id = $1`
+	deleteFromGames := `DELETE FROM games WHERE user_id = $1`
+	deleteFromUsers := `DELETE FROM users WHERE id = $1`
+
+	var gameId int
+
+	err := p.db.QueryRow(querySelect, id).Scan(&gameId)
+	if err != nil {
+		return err
+	}
+
+	_, err = p.db.Exec(deleteFromGameStore, gameId)
+	if err != nil {
+		return err
+	}
+
+	_, err = p.db.Exec(deleteFromGameShip, gameId)
+	if err != nil {
+		return err
+	}
+
+	_, err = p.db.Exec(deleteFromGames, id)
+	if err != nil {
+		return err
+	}
+
+	_, err = p.db.Exec(deleteFromUsers, id)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("\nUser %v deleted\n", id)
 
 	return nil
 }

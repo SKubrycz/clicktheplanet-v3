@@ -35,6 +35,7 @@ func (s *Server) Start() {
 	router.HandleFunc("/login", s.handleLogin)
 	router.HandleFunc("/register", s.handleRegister)
 	router.HandleFunc("/logout", s.handleLogout)
+	router.HandleFunc("/delete-account", checkAuth(s.handleDeleteAccount))
 	router.HandleFunc("/game", checkAuth(s.handleGame))
 	router.HandleFunc("/ws_game", checkAuth(s.handleGetWsGame))
 
@@ -345,6 +346,70 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &accessTokenCookie)
 
 		writeJSON(w, 200, "Logged out")
+		return
+	} else {
+		writeJSON(w, 405, "Method not allowed")
+		return
+	}
+}
+
+func (s *Server) handleDeleteAccount(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		const userId UserId = "userid" // key of type UserId - it has to stay here
+		id, ok := r.Context().Value(userId).(int)
+		if !ok {
+			fmt.Println(id)
+			fmt.Println(ok)
+			writeJSON(w, http.StatusForbidden, "Not authorized")
+			return
+		}
+
+		err := s.db.DeleteAccountById(id)
+		if err != nil {
+			fmt.Println(err)
+			writeJSON(w, 500, "Error deleting account")
+			return
+		}
+
+		_, err = r.Cookie("refresh_token")
+		if err != nil {
+			fmt.Println("Couldn't find a cookie")
+			error := Message{
+				Message: "Not authorized",
+			}
+			writeJSON(w, http.StatusUnauthorized, error)
+			return
+		}
+		_, err = r.Cookie("access_token")
+		if err != nil {
+			fmt.Println("Couldn't find a cookie")
+			error := Message{
+				Message: "Not authorized",
+			}
+			writeJSON(w, http.StatusUnauthorized, error)
+			return
+		}
+
+		refreshTokenCookie := http.Cookie{
+			Name:     "refresh_token",
+			Value:    "",
+			MaxAge:   -1,
+			HttpOnly: true,
+			SameSite: http.SameSiteStrictMode,
+		}
+
+		accessTokenCookie := http.Cookie{
+			Name:     "access_token",
+			Value:    "",
+			MaxAge:   -1,
+			HttpOnly: true,
+			SameSite: http.SameSiteStrictMode,
+		}
+
+		http.SetCookie(w, &refreshTokenCookie)
+		http.SetCookie(w, &accessTokenCookie)
+
+		writeJSON(w, 200, "Account deleted")
 		return
 	} else {
 		writeJSON(w, 405, "Method not allowed")

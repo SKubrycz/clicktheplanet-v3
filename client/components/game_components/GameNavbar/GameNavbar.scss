@@ -63,3 +63,36 @@
 .profile-logout-btn:hover {
   background-color: rgba(90, 90, 90, 0.8);
 }
+
+.profile-delete-account-modal-btn {
+  margin: 0.5em;
+  padding: 0.5em;
+
+  border: none;
+  border-radius: 2px;
+
+  color: white;
+  background-color: rgb(182, 0, 0);
+}
+
+.profile-delete-account-confirm {
+  margin: 0.3em;
+  padding: 0.5em;
+
+  border: none;
+  border-radius: 1px;
+
+  color: white;
+  background-color: rgb(216, 0, 0);
+}
+
+.profile-delete-account-cancel {
+  margin: 0.3em;
+  padding: 0.5em;
+
+  border: none;
+  border-radius: 1px;
+
+  color: white;
+  background-color: rgb(100, 100, 100);
+}

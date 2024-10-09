@@ -139,7 +139,7 @@ export default function Game() {
     };
   }, []);
 
-  const handleOnLogout = (): Promise<void> => {
+  const handleSocketClose = (): Promise<void> => {
     if (socket.current) socket.current.close(1000);
     return Promise.resolve();
   };
@@ -157,7 +157,9 @@ export default function Game() {
         ></CircularProgress>
       ) : (
         <>
-          <GameNavbar handleOnLogout={() => handleOnLogout()}></GameNavbar>
+          <GameNavbar
+            handleSocketClose={() => handleSocketClose()}
+          ></GameNavbar>
           <div className="game-content-wrapper">
             <GameSidebar></GameSidebar>
             <GameMain planetClick={handlePlanetClickData}></GameMain>
