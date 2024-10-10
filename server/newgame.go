@@ -74,25 +74,47 @@ func NewGame(gameData *GameData) *Game {
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
 		},
+		5: {
+			Level:      gameData.Store[5].Level,
+			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
+			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
+		},
+		6: {
+			Level:      gameData.Store[6].Level,
+			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
+			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
+		},
 	}
 
 	store[1].BaseCost.SetString("10")
 	store[2].BaseCost.SetString("500")
 	store[3].BaseCost.SetString("10000")
 	store[4].BaseCost.SetString("1000000")
+	store[5].BaseCost.SetString("1.0e+9")
+	store[6].BaseCost.SetString("1.0e+12")
 	store[1].Cost.SetString("10")
 	store[2].Cost.SetString("500")
 	store[3].Cost.SetString("10000")
 	store[4].Cost.SetString("1000000")
+	store[5].Cost.SetString("1.0e+9")
+	store[6].Cost.SetString("1.0e+12")
 
 	store[1].BaseDamage.SetString("1")
 	store[2].BaseDamage.SetString("100")
 	store[3].BaseDamage.SetString("5000")
 	store[4].BaseDamage.SetString("50000")
+	store[5].BaseDamage.SetString("1000000")
+	store[6].BaseDamage.SetString("1.0e+9")
 	store[1].Damage.SetString("1")
 	store[2].Damage.SetString("100")
 	store[3].Damage.SetString("5000")
 	store[4].Damage.SetString("50000")
+	store[5].Damage.SetString("1000000")
+	store[6].Damage.SetString("1.0e+9")
 
 	ship := map[int]ShipUpgrade{
 		1: {

@@ -37,6 +37,8 @@ func NewDatabase() (*Postgres, error) {
 // Function for /register route
 // Inserts into every table for game initialization
 func (p *Postgres) CreateAccount(u *User) error {
+	fmt.Println("Creating account...")
+
 	queryUser := `INSERT INTO users (login, email, password, created_at) VALUES ($1, $2, $3, $4)`
 	queryGame := `
 	INSERT INTO games (gold, diamonds, max_damage, current_level, max_level, current_stage, max_stage, planets_destroyed, user_id)

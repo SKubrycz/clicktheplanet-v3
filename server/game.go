@@ -329,7 +329,7 @@ func DealDps(g *Game) []byte {
 		store[k] = *s
 	}
 	ship := map[int]ShipDataMessage{}
-	for k := range g.Store {
+	for k := range g.Ship {
 		s := new(ShipDataMessage)
 		s.Level = g.Ship[k].Level
 		s.Cost = g.DisplayNumber(g.Ship[k].Cost)
