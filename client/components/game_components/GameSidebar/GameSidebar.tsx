@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
+import Image from "next/image";
 import { useAppSelector } from "@/lib/hooks";
 import ErrorMessage from "@/components/game_components/ErrorMessage/ErrorMessage";
+
+import Gold from "@/assets/svg/gold.svg";
+import Diamond from "@/assets/svg/diamond.svg";
 
 import Tabs from "./Tabs/Tabs";
 
@@ -28,11 +32,13 @@ export default function GameSidebar() {
         ></ErrorMessage>
       )}
       <div className="game-sidebar-currency">
-        <div style={{ display: "flex" }}>
-          <div className="test-yellow">Gold"icon"</div>: {gameData?.gold}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Image src={Gold} alt="gold" width={15} height={15}></Image>&nbsp;{" "}
+          {gameData?.gold}
         </div>
-        <div style={{ display: "flex" }}>
-          <div className="test-blue">Diamond"icon"</div>: {gameData?.diamonds}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Image src={Diamond} alt="diamond" width={15} height={15}></Image>
+          &nbsp; {gameData?.diamonds}
         </div>
       </div>
       <div className="game-sidebar-options">
