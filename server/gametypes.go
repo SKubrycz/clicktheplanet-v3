@@ -164,7 +164,7 @@ func (g *Game) UpgradeStore(index int, levels int) string {
 		bulkCost := new(big.Float)
 
 		for i := 1; i <= levels; i++ {
-			pow := math.Pow(f, float64(g.Store[index].Level+int64(i)))
+			pow := math.Pow(f, float64(g.Store[index].Level+int64(i-1)))
 			bigPow := big.NewFloat(pow)
 			cost := new(big.Float)
 
@@ -253,7 +253,7 @@ func (g *Game) UpgradeShip(index int, levels int) string {
 		bulkCost := new(big.Float)
 
 		for i := 1; i <= levels; i++ {
-			pow := math.Pow(f, float64(g.Ship[index].Level+int64(i)))
+			pow := math.Pow(f, float64(g.Ship[index].Level+int64(i-1)))
 			bigPow := big.NewFloat(pow)
 			cost := new(big.Float)
 
@@ -308,10 +308,6 @@ func (g *Game) CalculateShip(index int) {
 	}
 
 	g.CalculateCurrentDamage()
-
-	// fmt.Printf("\n %v <- currentDamage inside ship \n", g.CurrentDamage)
-	// fmt.Printf("\nship1damage: %v\n", g.Ship[1].Damage)
-	// fmt.Printf("\nDPS: %v\n", g.Dps)
 }
 
 func (g *Game) Advance() {
