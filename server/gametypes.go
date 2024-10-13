@@ -249,10 +249,10 @@ func (g *Game) CalculateStore(index int) {
 }
 
 func (g *Game) CheckStoreLock(index int) {
-	if !g.Store[index].Locked {
-		return
-	}
 	if index != -1 {
+		if !g.Store[index].Locked {
+			return
+		}
 		if g.Store[index].Level > 0 {
 			if entry, ok := g.Store[index]; ok {
 				entry.Locked = false
@@ -269,6 +269,9 @@ func (g *Game) CheckStoreLock(index int) {
 		}
 	} else if index == -1 {
 		for k := range g.Store {
+			if !g.Store[k].Locked {
+				continue
+			}
 			if g.Store[k].Level > 0 {
 				if entry, ok := g.Store[k]; ok {
 					entry.Locked = false
@@ -279,7 +282,7 @@ func (g *Game) CheckStoreLock(index int) {
 				if cmp >= 0 {
 					if entry, ok := g.Store[k]; ok {
 						entry.Locked = false
-						g.Store[index] = entry
+						g.Store[k] = entry
 					}
 				}
 			}
@@ -573,6 +576,9 @@ func (g *Game) CheckShipLock(index int) {
 		}
 	} else if index == -1 {
 		for k := range g.Ship {
+			if !g.Ship[k].Locked {
+				continue
+			}
 			if g.Ship[k].Level > 0 {
 				if entry, ok := g.Ship[k]; ok {
 					entry.Locked = false
