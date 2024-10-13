@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
 import { SetErrorMessage, SetError } from "@/lib/game/errorSlice";
 
+import { IconButton } from "@mui/material";
 import { ArrowUpward } from "@mui/icons-material";
 
 interface ShipElementProps {
@@ -77,6 +78,11 @@ export default function ShipElement({
 
   return (
     <div className="ship-element">
+      {gameData?.ship[index]?.locked ? (
+        <div className="element-locked"></div>
+      ) : (
+        ""
+      )}
       <div className="ship-element-info-wrapper">
         <div className="ship-element-title">
           {title} - Level: {gameData?.ship[index]?.level} | Multiplier: x
@@ -92,10 +98,12 @@ export default function ShipElement({
 
       <div className="ship-element-action-wrapper">
         {levels && levels > 1 ? <div>x{levels}</div> : undefined}
-        <ArrowUpward
-          onClick={(e) => handleUpgradeClick(e)}
-          sx={{ width: 40, height: 40, cursor: "pointer" }}
-        ></ArrowUpward>
+        <IconButton sx={{ margin: 0, color: "white" }}>
+          <ArrowUpward
+            onClick={(e) => handleUpgradeClick(e)}
+            sx={{ width: 40, height: 40, cursor: "pointer" }}
+          ></ArrowUpward>
+        </IconButton>
       </div>
     </div>
   );

@@ -104,12 +104,12 @@ export default function Game() {
     socket.current.onmessage = (e: MessageEvent) => {
       let message: ActionMessage = JSON.parse(e.data);
       if (message.action === "init") {
-        dispatch(Init(message.data));
         console.log(message.data);
+        dispatch(Init(message.data));
       }
       if (message.action === "click") {
-        dispatch(Click(message.data));
         console.log(message.data);
+        dispatch(Click(message.data));
       }
       if (message.action === "upgrade") {
         dispatch(Upgrade(message.data));

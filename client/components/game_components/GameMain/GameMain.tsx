@@ -72,8 +72,8 @@ export default function GameMain({ planetClick }: GameMainProps) {
         ...dmgTextArr,
         {
           damageDone: {
-            damage: gameData?.damageDone?.damage,
-            critical: gameData?.damageDone?.critical,
+            damage: gameData?.damageDone.damage,
+            critical: gameData?.damageDone.critical,
           },
           x: e.clientX,
           y: e.clientY,

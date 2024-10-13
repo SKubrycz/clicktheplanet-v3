@@ -14,3 +14,19 @@
   grid-template-columns: 1fr 1fr;
   text-align: center;
 }
+
+.element-locked {
+  width: 100%;
+  height: 100%;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  border: none;
+  border-radius: inherit;
+
+  background-color: rgba(0, 0, 0, 0.5);
+
+  z-index: 1;
+}

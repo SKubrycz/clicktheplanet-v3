@@ -16,6 +16,7 @@ type ShipUpgrade struct {
 	Multiplier float64
 	Damage     *big.Float
 	BaseDamage *big.Float
+	Locked     bool
 }
 
 type StoreUpgrade struct {
@@ -24,6 +25,7 @@ type StoreUpgrade struct {
 	BaseCost   *big.Float
 	Damage     *big.Float
 	BaseDamage *big.Float
+	Locked     bool
 }
 
 type Planet struct {
@@ -81,6 +83,8 @@ func (g *Game) ClickThePlanet(dmg *big.Float, isClick bool) {
 		g.AddPlanetDestroyed()
 		g.CalculateGoldEarned()
 		g.AddCurrentGold()
+		g.CheckStoreLock(-1)
+		g.CheckShipLock(-1)
 		g.Ch <- "click"
 	}
 }
@@ -217,6 +221,8 @@ func (g *Game) CalculateStore(index int) {
 			//damage = baseDmg * level
 			bigLevel := big.NewFloat(float64(g.Store[index].Level))
 			g.Store[index].Damage.Mul(g.Store[index].BaseDamage, bigLevel)
+
+			g.CheckStoreLock(index)
 		}
 	} else if index == -1 {
 		for k := range g.Store {
@@ -232,6 +238,7 @@ func (g *Game) CalculateStore(index int) {
 				bigLevel := big.NewFloat(float64(g.Store[k].Level))
 				g.Store[k].Damage.Mul(g.Store[k].BaseDamage, bigLevel)
 			}
+			g.CheckStoreLock(k)
 		}
 	} else {
 		return
@@ -239,6 +246,45 @@ func (g *Game) CalculateStore(index int) {
 
 	g.CalculateShip(-1)
 	g.CalculateCurrentDamage()
+}
+
+func (g *Game) CheckStoreLock(index int) {
+	if !g.Store[index].Locked {
+		return
+	}
+	if index != -1 {
+		if g.Store[index].Level > 0 {
+			if entry, ok := g.Store[index]; ok {
+				entry.Locked = false
+				g.Store[index] = entry
+			}
+		} else if g.Store[index].Level == 0 {
+			cmp := g.Gold.Cmp(g.Store[index].BaseCost)
+			if cmp >= 0 {
+				if entry, ok := g.Store[index]; ok {
+					entry.Locked = false
+					g.Store[index] = entry
+				}
+			}
+		}
+	} else if index == -1 {
+		for k := range g.Store {
+			if g.Store[k].Level > 0 {
+				if entry, ok := g.Store[k]; ok {
+					entry.Locked = false
+					g.Store[k] = entry
+				}
+			} else if g.Store[k].Level == 0 {
+				cmp := g.Gold.Cmp(g.Store[k].BaseCost)
+				if cmp >= 0 {
+					if entry, ok := g.Store[k]; ok {
+						entry.Locked = false
+						g.Store[index] = entry
+					}
+				}
+			}
+		}
+	}
 }
 
 func (g *Game) UpgradeShip(index int, levels int) string {
@@ -427,6 +473,8 @@ func (g *Game) CalculateShipOne() {
 	//damage = currentDamage * multiplier
 	bigMultiplier := big.NewFloat(g.Ship[1].Multiplier)
 	g.Ship[1].Damage.Mul(g.CurrentDamage, bigMultiplier) // per 100ms
+
+	g.CheckShipLock(1)
 }
 
 // Second index of ship map (2: Click damage)
@@ -449,6 +497,9 @@ func (g *Game) CalculateShipTwo() {
 	//damage = currentDamage * multiplier
 	bigMultiplier := big.NewFloat(g.Ship[2].Multiplier)
 	g.Ship[2].Damage.Mul(g.CurrentDamage, bigMultiplier)
+
+	g.CheckShipLock(2)
+
 }
 
 // Third index of ship map (3: Critical Click)
@@ -474,6 +525,9 @@ func (g *Game) CalculateShipThree() {
 	//critical damage = currentDamage * 5 <-- for now
 	bigMultiplier := big.NewFloat(5.0)
 	g.Ship[3].Damage.Mul(g.CurrentDamage, bigMultiplier)
+
+	g.CheckShipLock(3)
+
 }
 
 // Fourth index of ship map (4: Planet gold)
@@ -494,6 +548,49 @@ func (g *Game) CalculateShipFour() {
 	}
 
 	g.CalculateGoldEarned()
+
+	g.CheckShipLock(4)
+}
+
+func (g *Game) CheckShipLock(index int) {
+	if index != -1 {
+		if !g.Ship[index].Locked {
+			return
+		}
+		if g.Ship[index].Level == 0 {
+			cmp := g.Gold.Cmp(g.Ship[index].BaseCost)
+			if cmp >= 0 {
+				if entry, ok := g.Ship[index]; ok {
+					entry.Locked = false
+					g.Ship[index] = entry
+				}
+			}
+		} else if g.Ship[index].Level > 0 {
+			if entry, ok := g.Ship[index]; ok {
+				entry.Locked = false
+				g.Ship[index] = entry
+			}
+		}
+	} else if index == -1 {
+		for k := range g.Ship {
+			if g.Ship[k].Level > 0 {
+				if entry, ok := g.Ship[k]; ok {
+					entry.Locked = false
+					g.Ship[k] = entry
+				}
+			}
+
+			if g.Ship[k].Level == 0 {
+				cmp := g.Gold.Cmp(g.Ship[k].BaseCost)
+				if cmp >= 0 {
+					if entry, ok := g.Ship[k]; ok {
+						entry.Locked = false
+						g.Ship[k] = entry
+					}
+				}
+			}
+		}
+	}
 }
 
 func toFixed(num float64, prec int) float64 {

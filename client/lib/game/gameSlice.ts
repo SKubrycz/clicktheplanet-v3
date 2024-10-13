@@ -1,10 +1,16 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  PayloadAction,
+  GetState,
+  current,
+} from "@reduxjs/toolkit";
 
 export interface Store {
   index: number;
   level: number;
   cost: string;
   damage: string;
+  locked: boolean;
 }
 
 interface StoreMessage {
@@ -19,6 +25,7 @@ export interface Ship {
   cost: string;
   multiplier: number;
   damage: string;
+  locked: boolean;
 }
 
 interface ShipMessage {
@@ -30,6 +37,8 @@ interface ShipMessage {
 interface UpgradeMessage {
   gold: string;
   diamonds: number;
+  currentDamage: string;
+  maxDamage: string;
   store: Store[];
   ship: Ship[];
 }
@@ -89,6 +98,7 @@ export const gameObject: Data = {
       level: 0,
       cost: "0",
       damage: "0",
+      locked: true,
     },
   ],
   ship: [
@@ -98,6 +108,7 @@ export const gameObject: Data = {
       cost: "0",
       multiplier: 0.0,
       damage: "0",
+      locked: true,
     },
   ],
 };
@@ -113,7 +124,7 @@ export const gameSlice = createSlice({
     },
     Click: (state, action: PayloadAction<Data>) => {
       console.log("Click reducer");
-      console.log(state);
+      console.log(current(state));
       return { ...action.payload };
     },
     Upgrade: (state, action: PayloadAction<UpgradeMessage>) => {
@@ -121,6 +132,8 @@ export const gameSlice = createSlice({
         ...state,
         gold: action.payload.gold,
         diamonds: action.payload.diamonds,
+        currentDamage: action.payload.currentDamage,
+        maxDamage: action.payload.maxDamage,
         store: action.payload.store,
         ship: action.payload.ship,
       };
@@ -137,6 +150,7 @@ export const gameSlice = createSlice({
             level: action.payload.store.level,
             cost: action.payload.store.cost,
             damage: action.payload.store.damage,
+            locked: action.payload.store.locked,
           },
         },
       };
@@ -154,6 +168,7 @@ export const gameSlice = createSlice({
             cost: action.payload.ship.cost,
             multiplier: action.payload.ship.multiplier,
             damage: action.payload.ship.damage,
+            locked: action.payload.ship.locked,
           },
         },
       };

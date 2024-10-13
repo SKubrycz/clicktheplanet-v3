@@ -55,6 +55,7 @@ type StoreDataMessage struct {
 	Level  int64  `json:"level"`
 	Cost   string `json:"cost"`
 	Damage string `json:"damage"`
+	Locked bool   `json:"locked"`
 }
 
 type StoreDataMessageWrapper struct {
@@ -69,6 +70,7 @@ type ShipDataMessage struct {
 	Cost       string  `json:"cost"`
 	Multiplier float64 `json:"multiplier"`
 	Damage     string  `json:"damage"`
+	Locked     bool    `json:"locked"`
 }
 
 type ShipDataMessageWrapper struct {
@@ -78,11 +80,13 @@ type ShipDataMessageWrapper struct {
 }
 
 type UpgradeDataMessageWrapper struct {
-	Gold       string                   `json:"gold"`
-	Diamonds   int64                    `json:"diamonds"`
-	PlanetGold string                   `json:"planetGold"`
-	Store      map[int]StoreDataMessage `json:"store"`
-	Ship       map[int]ShipDataMessage  `json:"ship"`
+	Gold          string                   `json:"gold"`
+	Diamonds      int64                    `json:"diamonds"`
+	CurrentDamage string                   `json:"currentDamage"`
+	MaxDamage     string                   `json:"maxDamage"`
+	PlanetGold    string                   `json:"planetGold"`
+	Store         map[int]StoreDataMessage `json:"store"`
+	Ship          map[int]ShipDataMessage  `json:"ship"`
 }
 
 type LevelDataMessage struct {
@@ -117,6 +121,7 @@ func ActionHandler(g *Game, action string) []byte {
 			s.Level = g.Store[k].Level
 			s.Cost = g.DisplayNumber(g.Store[k].Cost)
 			s.Damage = g.DisplayNumber(g.Store[k].Damage)
+			s.Locked = g.Store[k].Locked
 			store[k] = *s
 		}
 		ship := map[int]ShipDataMessage{}
@@ -125,6 +130,7 @@ func ActionHandler(g *Game, action string) []byte {
 			s.Level = g.Ship[k].Level
 			s.Cost = g.DisplayNumber(g.Ship[k].Cost)
 			s.Multiplier = g.Ship[k].Multiplier
+			s.Locked = g.Ship[k].Locked
 			if k == 1 {
 				s.Damage = g.DisplayNumber(g.Dps)
 			} else {
@@ -171,6 +177,7 @@ func ActionHandler(g *Game, action string) []byte {
 			s.Level = g.Store[k].Level
 			s.Cost = g.DisplayNumber(g.Store[k].Cost)
 			s.Damage = g.DisplayNumber(g.Store[k].Damage)
+			s.Locked = g.Store[k].Locked
 			store[k] = *s
 		}
 		ship := map[int]ShipDataMessage{}
@@ -180,6 +187,7 @@ func ActionHandler(g *Game, action string) []byte {
 			s.Level = g.Ship[k].Level
 			s.Cost = g.DisplayNumber(g.Ship[k].Cost)
 			s.Multiplier = g.Ship[k].Multiplier
+			s.Locked = g.Ship[k].Locked
 			if k == 1 {
 				s.Damage = g.DisplayNumber(g.Dps)
 			} else {
@@ -277,6 +285,7 @@ func ActionHandler(g *Game, action string) []byte {
 				s.Level = g.Store[k].Level
 				s.Cost = g.DisplayNumber(g.Store[k].Cost)
 				s.Damage = g.DisplayNumber(g.Store[k].Damage)
+				s.Locked = g.Store[k].Locked
 				store[k] = *s
 			}
 			ship := map[int]ShipDataMessage{}
@@ -286,6 +295,7 @@ func ActionHandler(g *Game, action string) []byte {
 				s.Level = g.Ship[k].Level
 				s.Cost = g.DisplayNumber(g.Ship[k].Cost)
 				s.Multiplier = g.Ship[k].Multiplier
+				s.Locked = g.Ship[k].Locked
 				if k == 1 {
 					s.Damage = g.DisplayNumber(g.Dps)
 				} else {
@@ -296,11 +306,13 @@ func ActionHandler(g *Game, action string) []byte {
 			message := ActionMessage{
 				Action: "upgrade",
 				Data: UpgradeDataMessageWrapper{
-					Gold:       g.DisplayNumber(g.Gold),
-					Diamonds:   g.Diamonds,
-					PlanetGold: g.DisplayNumber(g.Planet.Gold),
-					Store:      store,
-					Ship:       ship,
+					Gold:          g.DisplayNumber(g.Gold),
+					Diamonds:      g.Diamonds,
+					CurrentDamage: g.DisplayNumber(g.CurrentDamage),
+					MaxDamage:     g.DisplayNumber(g.MaxDamage),
+					PlanetGold:    g.DisplayNumber(g.Planet.Gold),
+					Store:         store,
+					Ship:          ship,
 				},
 			}
 			encoded, _ := json.Marshal(message)
@@ -326,6 +338,7 @@ func DealDps(g *Game) []byte {
 		s.Level = g.Store[k].Level
 		s.Cost = g.DisplayNumber(g.Store[k].Cost)
 		s.Damage = g.DisplayNumber(g.Store[k].Damage)
+		s.Locked = g.Store[k].Locked
 		store[k] = *s
 	}
 	ship := map[int]ShipDataMessage{}
@@ -333,6 +346,7 @@ func DealDps(g *Game) []byte {
 		s := new(ShipDataMessage)
 		s.Level = g.Ship[k].Level
 		s.Cost = g.DisplayNumber(g.Ship[k].Cost)
+		s.Locked = g.Ship[k].Locked
 		if k == 1 {
 			s.Damage = g.DisplayNumber(g.Dps)
 		} else {

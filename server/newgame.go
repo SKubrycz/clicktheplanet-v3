@@ -52,6 +52,7 @@ func NewGame(gameData *GameData) *Game {
 			BaseCost:   new(big.Float),
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
+			Locked:     true,
 		},
 		2: {
 			Level:      gameData.Store[2].Level,
@@ -59,6 +60,7 @@ func NewGame(gameData *GameData) *Game {
 			BaseCost:   new(big.Float),
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
+			Locked:     true,
 		},
 		3: {
 			Level:      gameData.Store[3].Level,
@@ -66,6 +68,7 @@ func NewGame(gameData *GameData) *Game {
 			BaseCost:   new(big.Float),
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
+			Locked:     true,
 		},
 		4: {
 			Level:      gameData.Store[4].Level,
@@ -73,6 +76,7 @@ func NewGame(gameData *GameData) *Game {
 			BaseCost:   new(big.Float),
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
+			Locked:     true,
 		},
 		5: {
 			Level:      gameData.Store[5].Level,
@@ -80,6 +84,7 @@ func NewGame(gameData *GameData) *Game {
 			BaseCost:   new(big.Float),
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
+			Locked:     true,
 		},
 		6: {
 			Level:      gameData.Store[6].Level,
@@ -87,6 +92,7 @@ func NewGame(gameData *GameData) *Game {
 			BaseCost:   new(big.Float),
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
+			Locked:     true,
 		},
 	}
 
@@ -124,6 +130,7 @@ func NewGame(gameData *GameData) *Game {
 			Multiplier: 0.0,
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
+			Locked:     true,
 		},
 		2: {
 			Level:      gameData.Ship[2].Level,
@@ -132,6 +139,7 @@ func NewGame(gameData *GameData) *Game {
 			Multiplier: 1.0,
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
+			Locked:     true,
 		},
 		3: {
 			Level:      gameData.Ship[3].Level,
@@ -140,6 +148,7 @@ func NewGame(gameData *GameData) *Game {
 			Multiplier: 0.0,
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
+			Locked:     true,
 		},
 		4: {
 			Level:      gameData.Ship[4].Level,
@@ -148,6 +157,7 @@ func NewGame(gameData *GameData) *Game {
 			Multiplier: 1.0,
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
+			Locked:     true,
 		},
 	}
 

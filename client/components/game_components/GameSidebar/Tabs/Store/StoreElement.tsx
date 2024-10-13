@@ -5,6 +5,7 @@ import { useMemo, useRef, useState, useEffect } from "react";
 import type { Data } from "@/lib/game/gameSlice";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
 import { SetError, SetErrorMessage } from "@/lib/game/errorSlice";
+import { IconButton } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
@@ -81,6 +82,11 @@ export default function StoreElement({
 
   return (
     <div className="store-element">
+      {gameData?.store[index]?.locked ? (
+        <div className="element-locked"></div>
+      ) : (
+        ""
+      )}
       <div className="store-element-left-wrapper">
         {image ? (
           <img src={image} className="store-element-image"></img>
@@ -99,10 +105,12 @@ export default function StoreElement({
       </div>
       <div className="store-element-action-wrapper">
         {levels && levels > 1 ? <div>x{levels}</div> : undefined}
-        <Add
-          onClick={(e) => handleUpgradeClick(e)}
-          sx={{ width: 50, height: 50, cursor: "pointer" }}
-        ></Add>
+        <IconButton sx={{ margin: 0, color: "white" }}>
+          <Add
+            onClick={(e) => handleUpgradeClick(e)}
+            sx={{ width: 50, height: 50, cursor: "pointer" }}
+          ></Add>
+        </IconButton>
       </div>
     </div>
   );
