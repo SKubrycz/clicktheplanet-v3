@@ -15,15 +15,24 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type Session struct {
+	Value   string
+	Expires time.Time
+}
+
 type Server struct {
-	addr string
-	db   Database
+	addr     string
+	db       Database
+	sessions []Session
 }
 
 func NewServer(addr string, db Database) *Server {
+	sessions := []Session{}
+
 	return &Server{
-		addr: addr,
-		db:   db,
+		addr:     addr,
+		db:       db,
+		sessions: sessions,
 	}
 }
 
@@ -31,7 +40,7 @@ func (s *Server) Start() {
 	router := mux.NewRouter()
 	router.Use(setCors)
 
-	router.HandleFunc("/", s.handleHome)
+	router.HandleFunc("/", setSessionID(s.handleHome, s.sessions))
 	router.HandleFunc("/login", s.handleLogin)
 	router.HandleFunc("/register", s.handleRegister)
 	router.HandleFunc("/logout", s.handleLogout)

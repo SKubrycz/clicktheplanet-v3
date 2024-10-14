@@ -2,13 +2,77 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
+
+func setSessionID(handlerFunc http.HandlerFunc, sessions []Session) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sessionClientCookie, err := r.Cookie("session")
+		if err != nil {
+			fmt.Println("Cookie doesn't exist")
+
+			b := make([]byte, 32)
+			if _, err := io.ReadFull(rand.Reader, b); err != nil {
+				fmt.Println("Error session id reader")
+			}
+
+			value := base64.URLEncoding.EncodeToString(b)
+			expires := time.Now().Add(time.Minute * 15)
+
+			sessions = append(sessions, Session{
+				Value:   value,
+				Expires: expires,
+			})
+			fmt.Println(sessions)
+
+			sessionCookie := http.Cookie{
+				Name:     "session",
+				Value:    value,
+				SameSite: http.SameSiteStrictMode,
+			}
+
+			http.SetCookie(w, &sessionCookie)
+			fmt.Println("session cookie set")
+		}
+
+		if err == nil {
+			fmt.Println(sessionClientCookie.Value)
+
+			exists := false
+			index := -1
+			for i, s := range sessions {
+				if s.Value == sessionClientCookie.Value {
+					exists = true
+					index = i
+					break
+				}
+			}
+
+			if !exists {
+				fmt.Println("SesssionId value from client doesn't exist on the server")
+			} else {
+				// Check for expiry
+				currentTime := time.Now()
+				verifyExpiry := currentTime.Compare(sessions[index].Expires)
+				if verifyExpiry == -1 {
+					fmt.Println("Not expired yet")
+					fmt.Println(currentTime)
+					fmt.Println(sessions[index].Expires)
+				}
+			}
+		}
+
+		handlerFunc(w, r)
+	}
+}
 
 func assignJWT(w http.ResponseWriter, userId uint64) {
 	fmt.Println("Assigning JWT...")
