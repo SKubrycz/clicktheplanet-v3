@@ -494,12 +494,16 @@ func (g *Game) CalculateShipTwo() {
 
 	if entry, ok := g.Ship[2]; ok {
 		entry.Multiplier = toFixed((1.0 + 0.01*float64(g.Ship[2].Level)), 3)
+		entry.Damage = g.CurrentDamage
 		g.Ship[2] = entry
 	}
 
 	//damage = currentDamage * multiplier
-	bigMultiplier := big.NewFloat(g.Ship[2].Multiplier)
-	g.Ship[2].Damage.Mul(g.CurrentDamage, bigMultiplier)
+	//bigMultiplier := big.NewFloat(g.Ship[2].Multiplier)
+	//g.Ship[2].Damage.Mul(g.CurrentDamage, bigMultiplier)
+	// Since g.CurrentDamage is calculated in the other function
+	// the g.Ship[2].Damage is going to be = g.CurrentDamage
+	// in the if statement written above ^
 
 	g.CheckShipLock(2)
 
