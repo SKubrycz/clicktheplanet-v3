@@ -17,6 +17,7 @@ type ShipUpgrade struct {
 	Damage     *big.Float
 	BaseDamage *big.Float
 	Locked     bool
+	Constant   float64 // for Cost formula
 }
 
 type StoreUpgrade struct {
@@ -298,11 +299,11 @@ func (g *Game) UpgradeShip(index int, levels int) string {
 			}
 		}
 
-		f := 1.5
+		//f := 1.5
 		bulkCost := new(big.Float)
 
 		for i := 1; i <= levels; i++ {
-			pow := math.Pow(f, float64(g.Ship[index].Level+int64(i-1)))
+			pow := math.Pow(g.Ship[index].Constant, float64(g.Ship[index].Level+int64(i-1)))
 			bigPow := big.NewFloat(pow)
 			cost := new(big.Float)
 
@@ -457,10 +458,10 @@ func (g *Game) DisplayNumber(num *big.Float) string {
 
 // First index of ship map (1: dps)
 func (g *Game) CalculateShipOne() {
-	f := 1.5
+	// f := 1.5
 
 	// cost = baseCost * 1.5 ** (level - 1)
-	pow := math.Pow(f, float64(g.Ship[1].Level))
+	pow := math.Pow(g.Ship[1].Constant, float64(g.Ship[1].Level))
 	bigPow := big.NewFloat(pow)
 
 	cost := new(big.Float)
@@ -469,7 +470,7 @@ func (g *Game) CalculateShipOne() {
 
 	if entry, ok := g.Ship[1]; ok {
 		// every 100ms
-		entry.Multiplier = toFixed((0.005 * float64(g.Ship[1].Level)), 3) // 10
+		entry.Multiplier = toFixed((0.01 * float64(g.Ship[1].Level)), 3) // 10
 		g.Ship[1] = entry
 	}
 
@@ -482,10 +483,10 @@ func (g *Game) CalculateShipOne() {
 
 // Second index of ship map (2: Click damage)
 func (g *Game) CalculateShipTwo() {
-	f := 1.5
+	// f := 1.5
 
 	// cost = baseCost * 1.5 ** (level - 1)
-	pow := math.Pow(f, float64(g.Ship[2].Level))
+	pow := math.Pow(g.Ship[2].Constant, float64(g.Ship[2].Level))
 	bigPow := big.NewFloat(pow)
 
 	cost := new(big.Float)
@@ -493,7 +494,7 @@ func (g *Game) CalculateShipTwo() {
 	g.ConvertNumber(cost, g.Ship[2].Cost)
 
 	if entry, ok := g.Ship[2]; ok {
-		entry.Multiplier = toFixed((1.0 + 0.01*float64(g.Ship[2].Level)), 3)
+		entry.Multiplier = toFixed((1.0 + 0.02*float64(g.Ship[2].Level)), 3)
 		entry.Damage = g.CurrentDamage
 		g.Ship[2] = entry
 	}
@@ -511,10 +512,10 @@ func (g *Game) CalculateShipTwo() {
 
 // Third index of ship map (3: Critical Click)
 func (g *Game) CalculateShipThree() {
-	f := 1.5
+	// f := 1.5
 
 	// cost = baseCost * 1.5 ** (level - 1)
-	pow := math.Pow(f, float64(g.Ship[3].Level))
+	pow := math.Pow(g.Ship[3].Constant, float64(g.Ship[3].Level))
 	bigPow := big.NewFloat(pow)
 
 	cost := new(big.Float)
@@ -539,10 +540,10 @@ func (g *Game) CalculateShipThree() {
 
 // Fourth index of ship map (4: Planet gold)
 func (g *Game) CalculateShipFour() {
-	f := 1.5
+	// f := 1.5
 
 	// cost = baseCost * 1.5 ** (level - 1)
-	pow := math.Pow(f, float64(g.Ship[4].Level))
+	pow := math.Pow(g.Ship[4].Constant, float64(g.Ship[4].Level))
 	bigPow := big.NewFloat(pow)
 
 	cost := new(big.Float)
@@ -550,7 +551,7 @@ func (g *Game) CalculateShipFour() {
 	g.ConvertNumber(cost, g.Ship[4].Cost)
 
 	if entry, ok := g.Ship[4]; ok {
-		entry.Multiplier = toFixed((1.0 + 0.02*float64(g.Ship[4].Level)), 3)
+		entry.Multiplier = toFixed((1.0 + 0.05*float64(g.Ship[4].Level)), 3)
 		g.Ship[4] = entry
 	}
 

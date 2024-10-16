@@ -131,6 +131,7 @@ func NewGame(gameData *GameData) *Game {
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
 			Locked:     true,
+			Constant:   1.3,
 		},
 		2: {
 			Level:      gameData.Ship[2].Level,
@@ -140,6 +141,7 @@ func NewGame(gameData *GameData) *Game {
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
 			Locked:     true,
+			Constant:   1.2,
 		},
 		3: {
 			Level:      gameData.Ship[3].Level,
@@ -149,6 +151,7 @@ func NewGame(gameData *GameData) *Game {
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
 			Locked:     true,
+			Constant:   1.5,
 		},
 		4: {
 			Level:      gameData.Ship[4].Level,
@@ -158,6 +161,7 @@ func NewGame(gameData *GameData) *Game {
 			Damage:     new(big.Float),
 			BaseDamage: new(big.Float),
 			Locked:     true,
+			Constant:   1.1,
 		},
 	}
 
