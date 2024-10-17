@@ -94,6 +94,22 @@ func NewGame(gameData *GameData) *Game {
 			BaseDamage: new(big.Float),
 			Locked:     true,
 		},
+		7: {
+			Level:      gameData.Store[7].Level,
+			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
+			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
+			Locked:     true,
+		},
+		8: {
+			Level:      gameData.Store[8].Level,
+			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
+			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
+			Locked:     true,
+		},
 	}
 
 	store[1].BaseCost.SetString("10")
@@ -102,12 +118,17 @@ func NewGame(gameData *GameData) *Game {
 	store[4].BaseCost.SetString("1000000")
 	store[5].BaseCost.SetString("1.0e+9")
 	store[6].BaseCost.SetString("1.0e+12")
+	store[7].BaseCost.SetString("1.0e+15")
+	store[8].BaseCost.SetString("1.0e+18")
+
 	store[1].Cost.SetString("10")
 	store[2].Cost.SetString("500")
 	store[3].Cost.SetString("10000")
 	store[4].Cost.SetString("1000000")
 	store[5].Cost.SetString("1.0e+9")
 	store[6].Cost.SetString("1.0e+12")
+	store[7].Cost.SetString("1.0e+15")
+	store[8].Cost.SetString("1.0e+18")
 
 	store[1].BaseDamage.SetString("1")
 	store[2].BaseDamage.SetString("100")
@@ -115,13 +136,19 @@ func NewGame(gameData *GameData) *Game {
 	store[4].BaseDamage.SetString("50000")
 	store[5].BaseDamage.SetString("1000000")
 	store[6].BaseDamage.SetString("1.0e+9")
+	store[7].BaseDamage.SetString("1.0e+12")
+	store[8].BaseDamage.SetString("1.0e+15")
+
 	store[1].Damage.SetString("1")
 	store[2].Damage.SetString("100")
 	store[3].Damage.SetString("5000")
 	store[4].Damage.SetString("50000")
 	store[5].Damage.SetString("1000000")
 	store[6].Damage.SetString("1.0e+9")
+	store[7].Damage.SetString("1.0e+12")
+	store[8].Damage.SetString("1.0e+15")
 
+	// Constant field is needed to calculate cost
 	ship := map[int]ShipUpgrade{
 		1: {
 			Level:      gameData.Ship[1].Level,
@@ -167,14 +194,14 @@ func NewGame(gameData *GameData) *Game {
 
 	// These bases costs are later to be changed
 	// Depending on what function will the upgrade provide
-	ship[1].BaseCost.SetString("10")
+	ship[1].BaseCost.SetString("1000")
 	ship[2].BaseCost.SetString("100")
 	ship[3].BaseCost.SetString("1000")
-	ship[4].BaseCost.SetString("10000")
-	ship[1].Cost.SetString("10")
+	ship[4].BaseCost.SetString("1000")
+	ship[1].Cost.SetString("1000")
 	ship[2].Cost.SetString("100")
 	ship[3].Cost.SetString("1000")
-	ship[4].Cost.SetString("10000")
+	ship[4].Cost.SetString("1000")
 
 	ship[1].BaseDamage.SetString("10")
 	ship[2].BaseDamage.SetString("50")
