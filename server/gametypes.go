@@ -120,7 +120,7 @@ func (g *Game) GetHealthPercent() int {
 }
 
 func (g *Game) CalculatePlanetHealth() {
-	f := 1.1
+	f := 1.5
 
 	exp := float64(g.CurrentLevel - 1)
 	pow := math.Pow(f, exp)
@@ -406,13 +406,13 @@ func (g *Game) NextLevel() {
 }
 
 func (g *Game) CalculateGoldEarned() {
-	f := 1.1
+	f := 1.3
 
 	exp := float64(g.CurrentLevel)
 	pow := math.Pow(f, exp)
 
 	result := new(big.Float).SetFloat64(pow)
-	result.Mul(result, big.NewFloat(10))
+	//result.Mul(result, big.NewFloat(10))
 
 	bigMultiplier := big.NewFloat(g.Ship[4].Multiplier)
 	result.Mul(result, bigMultiplier)
