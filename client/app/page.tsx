@@ -1,12 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
-
-import Navbar from "@/components/Navbar/Navbar";
+import { useEffect, useState } from "react";
 
 import Link from "next/link";
+import { Alert, Snackbar } from "@mui/material";
+
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { SetGlobalError } from "@/lib/game/globalErrorSlice";
 
 export default function Home() {
+  const globalErrorData = useAppSelector((state) => state.globalError);
+  const dispatch = useAppDispatch();
+
+  const [open, setOpen] = useState<boolean>(false);
+
   const fetchHome = async () => {
     try {
       const res = await fetch("http://localhost:8000/", {
@@ -19,8 +26,20 @@ export default function Home() {
       });
       const data = await res.json();
       console.log(data);
-    } catch (err) {
-      console.error(err);
+      if (!res.ok) {
+        throw res;
+      }
+    } catch (err: unknown) {
+      if (err instanceof Response) {
+        console.error(err);
+        dispatch(
+          SetGlobalError({
+            message: String(err.statusText),
+            statusCode: err.status,
+          })
+        );
+        setOpen(true);
+      }
     }
   };
 
@@ -28,10 +47,24 @@ export default function Home() {
     fetchHome();
   }, []);
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
-      {/* <Navbar></Navbar> */}
       <main className="main-home side-anim center-wrapper">
+        <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+          <Alert
+            onClose={handleClose}
+            severity="error"
+            variant="filled"
+            sx={{ width: "100%" }}
+          >
+            <b>{globalErrorData.message}</b> - Status code:{" "}
+            {globalErrorData.statusCode}
+          </Alert>
+        </Snackbar>
         <h2 className="main-title">Click the planet</h2>
         <article className="main-subtitle">Simple clicker game</article>
         <article className="home-article">
