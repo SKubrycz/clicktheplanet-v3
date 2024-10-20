@@ -194,12 +194,12 @@ func NewGame(gameData *GameData) *Game {
 
 	// These bases costs are later to be changed
 	// Depending on what function will the upgrade provide
-	ship[1].BaseCost.SetString("1000")
-	ship[2].BaseCost.SetString("100")
+	ship[1].BaseCost.SetString("100")
+	ship[2].BaseCost.SetString("500")
 	ship[3].BaseCost.SetString("1000")
 	ship[4].BaseCost.SetString("1000")
-	ship[1].Cost.SetString("1000")
-	ship[2].Cost.SetString("100")
+	ship[1].Cost.SetString("100")
+	ship[2].Cost.SetString("500")
 	ship[3].Cost.SetString("1000")
 	ship[4].Cost.SetString("1000")
 

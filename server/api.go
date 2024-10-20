@@ -231,6 +231,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		}
 
 		assignJWT(w, user.Id)
+		writeJSON(w, 200, "Logged in")
 		return
 	}
 }

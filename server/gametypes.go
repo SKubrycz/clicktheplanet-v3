@@ -120,7 +120,7 @@ func (g *Game) GetHealthPercent() int {
 }
 
 func (g *Game) CalculatePlanetHealth() {
-	f := 1.5
+	f := 1.4
 
 	exp := float64(g.CurrentLevel - 1)
 	pow := math.Pow(f, exp)

@@ -8,9 +8,10 @@ import GameSidebar from "@/components/game_components/GameSidebar/GameSidebar";
 import GameMain from "@/components/game_components/GameMain/GameMain";
 import { Init, Click, Upgrade, DealDps } from "@/lib/game/gameSlice";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
-import { SetErrorMessage, SetError } from "@/lib/game/errorSlice";
+import { SetErrorMessage } from "@/lib/game/errorSlice";
+import { SetGlobalError } from "@/lib/game/globalErrorSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { CircularProgress } from "@mui/material";
+import { Alert, CircularProgress, Snackbar } from "@mui/material";
 
 interface ActionMessage {
   action: string;
@@ -19,38 +20,46 @@ interface ActionMessage {
 
 export default function Game() {
   const [loading, setLoading] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
   const gameData = useAppSelector((state) => state.game);
   const upgradeData = useAppSelector((state) => state.upgrade);
   const levelData = useAppSelector((state) => state.level);
+  const globalErrorData = useAppSelector((state) => state.globalError);
   const dispatch = useAppDispatch();
   const socket = useRef<WebSocket | null>(null);
   const router = useRouter();
 
   const handleGetGame = async () => {
-    let res = await fetch("http://localhost:8000/game", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      mode: "cors",
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText);
-        }
-        return res.json();
-      })
-      .catch((err) => {
-        if (err instanceof Error) {
-          console.error("Error: ", err.message);
-        } else {
-          console.error("Error: ", String(err));
-        }
-        router.push("/"); //if token is not valid
+    try {
+      let res = await fetch("http://localhost:8000/game", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+        credentials: "include",
       });
+      if (!res.ok) {
+        throw res;
+      }
+      let data = await res.json();
+      console.log(data);
+    } catch (err: unknown) {
+      if (err instanceof Response) {
+        console.error("Error: ", err);
+        dispatch(
+          SetGlobalError({
+            message: String(err.statusText),
+            statusCode: err.status,
+          })
+        );
+        setOpen(true);
+      }
+    }
+  };
 
-    console.log(res);
+  const handleClose = () => {
+    setOpen(false);
   };
 
   const handlePlanetClickData = (data: string) => {
@@ -157,6 +166,17 @@ export default function Game() {
         ></CircularProgress>
       ) : (
         <>
+          <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+            <Alert
+              onClose={handleClose}
+              severity="error"
+              variant="filled"
+              sx={{ width: "100%" }}
+            >
+              <b>{globalErrorData.message}</b> - Status code:{" "}
+              {globalErrorData.statusCode}
+            </Alert>
+          </Snackbar>
           <GameNavbar
             handleSocketClose={() => handleSocketClose()}
           ></GameNavbar>

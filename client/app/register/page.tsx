@@ -11,13 +11,21 @@ import {
   InputAdornment,
   IconButton,
   ThemeProvider,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import { defaultTheme } from "../../assets/defaultTheme";
 import { useRouter } from "next/navigation";
+import { SetGlobalError } from "@/lib/game/globalErrorSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
 export default function Register() {
+  const globalErrorData = useAppSelector((state) => state.globalError);
+  const dispatch = useAppDispatch();
+
+  const [open, setOpen] = useState<boolean>(false);
   const [login, setLogin] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -39,37 +47,58 @@ export default function Register() {
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
 
-    await fetch("http://localhost:8000/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        login: login,
-        email: email,
-        password: password,
-        againPassword: passwordAgain,
-      }),
-      mode: "cors",
-      credentials: "include",
-    })
-      .then(async (req) => {
-        if (!req.ok) {
-          const res = await req.json();
-          console.error("Error: ", res);
-        } else {
-          const res = await req.json();
-          console.log(res);
-          router.push("/");
-        }
-      })
-      .catch((err) => {
-        console.error(err);
+    try {
+      let res = await fetch("http://localhost:8000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          login: login,
+          email: email,
+          password: password,
+          againPassword: passwordAgain,
+        }),
+        mode: "cors",
+        credentials: "include",
       });
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log(data);
+        router.push("/");
+      } else throw res;
+    } catch (err: unknown) {
+      if (err instanceof Response) {
+        console.error(err);
+        dispatch(
+          SetGlobalError({
+            message: err.statusText,
+            statusCode: err.status,
+          })
+        );
+        setOpen(true);
+      }
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          <b>{globalErrorData.message}</b> - Status code:{" "}
+          {globalErrorData.statusCode}
+        </Alert>
+      </Snackbar>
       <main className="center-wrapper">
         <article className="form-panel">
           <h3 className="form-title">Register</h3>
