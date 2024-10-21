@@ -470,7 +470,7 @@ func (g *Game) CalculateShipOne() {
 
 	if entry, ok := g.Ship[1]; ok {
 		// every 100ms
-		entry.Multiplier = toFixed((0.01 * float64(g.Ship[1].Level)), 3) // 10
+		entry.Multiplier = toFixed((0.05 * float64(g.Ship[1].Level)), 3) // 10
 		g.Ship[1] = entry
 	}
 
@@ -494,7 +494,7 @@ func (g *Game) CalculateShipTwo() {
 	g.ConvertNumber(cost, g.Ship[2].Cost)
 
 	if entry, ok := g.Ship[2]; ok {
-		entry.Multiplier = toFixed((1.0 + 0.02*float64(g.Ship[2].Level)), 3)
+		entry.Multiplier = toFixed((1.0 + 0.05*float64(g.Ship[2].Level)), 3)
 		entry.Damage = g.CurrentDamage
 		g.Ship[2] = entry
 	}
