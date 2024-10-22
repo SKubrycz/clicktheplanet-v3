@@ -456,7 +456,7 @@ func (g *Game) DisplayNumber(num *big.Float) string {
 	}
 }
 
-// First index of ship map (1: dps)
+// First index of ship map (1: DPS)
 func (g *Game) CalculateShipOne() {
 	// f := 1.5
 
@@ -470,7 +470,7 @@ func (g *Game) CalculateShipOne() {
 
 	if entry, ok := g.Ship[1]; ok {
 		// every 100ms
-		entry.Multiplier = toFixed((0.05 * float64(g.Ship[1].Level)), 3) // 10
+		entry.Multiplier = toFixed((0.1 * float64(g.Ship[1].Level)), 3) // 10
 		g.Ship[1] = entry
 	}
 
