@@ -406,7 +406,7 @@ func (g *Game) NextLevel() {
 }
 
 func (g *Game) CalculateGoldEarned() {
-	f := 1.3
+	f := 1.35
 
 	exp := float64(g.CurrentLevel)
 	pow := math.Pow(f, exp)
@@ -551,7 +551,7 @@ func (g *Game) CalculateShipFour() {
 	g.ConvertNumber(cost, g.Ship[4].Cost)
 
 	if entry, ok := g.Ship[4]; ok {
-		entry.Multiplier = toFixed((1.0 + 0.05*float64(g.Ship[4].Level)), 3)
+		entry.Multiplier = toFixed((1.0 + 0.1*float64(g.Ship[4].Level)), 3)
 		g.Ship[4] = entry
 	}
 
