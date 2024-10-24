@@ -247,7 +247,7 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Println("Beginning the validation process...")
 
-		if req.Login == "" || len([]rune(req.Login)) < 3 {
+		if req.Login == "" || len([]rune(req.Login)) < 3 || len([]rune(req.Login)) >= 30 {
 			writeJSON(w, http.StatusBadRequest, "Login is incorrect")
 			return
 		}
@@ -264,7 +264,7 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, http.StatusBadRequest, "Passwords are not the same")
 			return
 		}
-		if len([]rune(req.Password)) < 8 {
+		if len([]rune(req.Password)) < 8 || len([]rune(req.Password)) >= 50 {
 			writeJSON(w, http.StatusBadRequest, "Password has to be at least 8 characters long")
 			return
 		}
