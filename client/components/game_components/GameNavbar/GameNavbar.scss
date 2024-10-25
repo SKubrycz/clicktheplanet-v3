@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 
   border-bottom: 1px solid rgb(50, 50, 50);
 
@@ -17,7 +18,9 @@
   align-items: center;
 
   div {
+    display: flex;
     margin: 0 0.5em;
+    padding: 0;
     cursor: pointer;
   }
 }
@@ -36,6 +39,9 @@
 .profile-img-lg {
   width: 128px;
   height: 128px;
+
+  min-width: 128px;
+  min-height: 128px;
 
   margin: 0.5em;
 

@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 
 import { Box, Modal, Typography } from "@mui/material";
+import { Settings as SettingsIcon } from "@mui/icons-material";
 
 export default function Settings() {
   const [open, setOpen] = useState<boolean>(false);
@@ -25,7 +26,7 @@ export default function Settings() {
         aria-labelledby="modal-modal-title"
         onClick={() => handleModalOpen()}
       >
-        Settings
+        <SettingsIcon></SettingsIcon>
       </div>
       <Modal open={open} onClose={() => handleModalClose()}>
         <Box
@@ -40,8 +41,9 @@ export default function Settings() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            border: "1px solid gray",
+            border: "1px solid rgb(100, 100, 100)",
             borderRadius: "5px",
+            outline: 0,
             boxShadow: "0px 0px 15px black",
             backgroundColor: "rgba(10, 10, 10, 0.9)",
           }}

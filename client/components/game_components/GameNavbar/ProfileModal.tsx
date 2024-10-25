@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Box, Modal, Typography } from "@mui/material";
+import { Person } from "@mui/icons-material";
 
 interface ProfileModalProps {
   handleSocketClose: () => Promise<void>;
@@ -79,7 +80,7 @@ export default function ProfileModal({ handleSocketClose }: ProfileModalProps) {
         aria-labelledby="modal-modal-title"
         onClick={() => handleModalOpen()}
       >
-        Profile
+        <Person></Person>
       </div>
       <Modal open={open} onClose={() => handleModalClose()}>
         <Box
@@ -96,6 +97,7 @@ export default function ProfileModal({ handleSocketClose }: ProfileModalProps) {
             transform: "translate(-50%, -50%)",
             border: "1px solid gray",
             borderRadius: "5px",
+            outline: 0,
             boxShadow: "0px 0px 15px black",
             backgroundColor: "rgba(10, 10, 10, 0.9)",
           }}
@@ -114,7 +116,15 @@ export default function ProfileModal({ handleSocketClose }: ProfileModalProps) {
             }}
           >
             <div className="profile-img-lg">Image</div>
-            <Box>
+            <Box
+              sx={{
+                minWidth: 150,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <Typography variant="h6">Nickname</Typography>
               <button
                 className="profile-logout-btn"
