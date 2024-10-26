@@ -43,6 +43,7 @@ func NewGame(gameData *GameData) *Game {
 		CurrentHealth: new(big.Float),
 		MaxHealth:     new(big.Float),
 		Gold:          new(big.Float),
+		IsBoss:        false,
 	}
 
 	store := map[int]StoreUpgrade{

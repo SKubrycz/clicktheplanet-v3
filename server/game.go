@@ -25,6 +25,7 @@ type UserClick struct {
 	HealthPercent    int                      `json:"healthPercent"`
 	MaxHealth        string                   `json:"maxHealth"`
 	PlanetGold       string                   `json:"planetGold"`
+	IsBoss           bool                     `json:"isBoss"`
 	CurrentLevel     int64                    `json:"currentLevel"`
 	MaxLevel         int64                    `json:"maxLevel"`
 	CurrentStage     uint8                    `json:"currentStage"`
@@ -97,6 +98,7 @@ type LevelDataMessage struct {
 	HealthPercent int    `json:"healthPercent"`
 	MaxHealth     string `json:"maxHealth"`
 	PlanetGold    string `json:"planetGold"`
+	IsBoss        bool   `json:"isBoss"`
 }
 
 type ErrorDataMessage struct {
@@ -152,6 +154,7 @@ func ActionHandler(g *Game, action string) []byte {
 				HealthPercent:    percent,
 				MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
 				PlanetGold:       g.DisplayNumber(g.Planet.Gold),
+				IsBoss:           g.Planet.IsBoss,
 				CurrentLevel:     g.CurrentLevel,
 				MaxLevel:         g.MaxLevel,
 				CurrentStage:     g.CurrentStage,
@@ -209,6 +212,7 @@ func ActionHandler(g *Game, action string) []byte {
 				HealthPercent:    percent,
 				MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
 				PlanetGold:       g.DisplayNumber(g.Planet.Gold),
+				IsBoss:           g.Planet.IsBoss,
 				CurrentLevel:     g.CurrentLevel,
 				MaxLevel:         g.MaxLevel,
 				CurrentStage:     g.CurrentStage,
@@ -238,6 +242,7 @@ func ActionHandler(g *Game, action string) []byte {
 			HealthPercent: percent,
 			MaxHealth:     g.DisplayNumber(g.Planet.MaxHealth),
 			PlanetGold:    g.DisplayNumber(g.Planet.Gold),
+			IsBoss:        g.Planet.IsBoss,
 		}
 		enc, _ := json.Marshal(message)
 		return []byte(enc)
@@ -366,6 +371,7 @@ func DealDps(g *Game) []byte {
 			HealthPercent:    percent,
 			MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
 			PlanetGold:       g.DisplayNumber(g.Planet.Gold),
+			IsBoss:           g.Planet.IsBoss,
 			CurrentLevel:     g.CurrentLevel,
 			MaxLevel:         g.MaxLevel,
 			CurrentStage:     g.CurrentStage,

@@ -34,6 +34,7 @@ type Planet struct {
 	CurrentHealth *big.Float
 	MaxHealth     *big.Float
 	Gold          *big.Float
+	IsBoss        bool
 }
 
 type DamageDone struct {
@@ -363,6 +364,11 @@ func (g *Game) CalculateShip(index int) {
 func (g *Game) Advance() {
 	if g.CurrentLevel == g.MaxLevel {
 		g.CurrentStage++
+		if g.CurrentStage == 10 {
+			g.Planet.IsBoss = true
+		} else {
+			g.Planet.IsBoss = false
+		}
 		if g.CurrentStage > 10 {
 			g.CurrentLevel++
 			g.CurrentStage = 1
