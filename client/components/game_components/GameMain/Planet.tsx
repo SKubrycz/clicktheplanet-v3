@@ -101,12 +101,11 @@ export default function Planet({ planetRef, click }: PlanetProps) {
         }
       }
 
-      // something went wrong with the weights, so no weights for now or at all
-      //   let w = [
-      //     ((5578 * seed + 6785464) % 1739013789) / 1739013789,
-      //     ((1117 * seed + 4649587) % 998391231) / 998391231,
-      //     ((71238 * seed + 8956870) % 691270398) / 691270398,
-      //   ];
+      let w = [
+        ((5578 * seed * 99999 + 6785464) % 1739013789) / 1739013789,
+        ((1117 * seed * 99999 + 4649587) % 998391231) / 998391231,
+        ((71238 * seed * 99999 + 8956870) % 691270398) / 691270398,
+      ];
 
       let k = 0;
 
@@ -116,18 +115,32 @@ export default function Planet({ planetRef, click }: PlanetProps) {
 
         //if (i === 1800) console.log(255 * w[0]);
 
+        // if (val <= 255 && val > 220) {
+        //   color(i, 255, 255, 255, norm);
+        // } else if (val <= 220 && val > 160) {
+        //   color(i, 240, 240, 240, norm);
+        // } else if (val <= 160 && val > 150) {
+        //   color(i, 180, 180, 180, norm);
+        // } else if (val <= 150 && val > 90) {
+        //   color(i, 40, 40, 40, norm);
+        // } else if (val <= 90 && val > 70) {
+        //   color(i, 30, 30, 30, norm);
+        // } else {
+        //   color(i, 20, 20, 20, norm);
+        // }
+
         if (val <= 255 && val > 220) {
-          color(i, 255, 255, 255, norm);
+          color(i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
         } else if (val <= 220 && val > 160) {
-          color(i, 240, 240, 240, norm);
+          color(i, 240 * w[0], 240 * w[1], 240 * w[2], norm);
         } else if (val <= 160 && val > 150) {
-          color(i, 180, 180, 180, norm);
+          color(i, 180 * w[0], 180 * w[1], 180 * w[2], norm);
         } else if (val <= 150 && val > 90) {
-          color(i, 40, 40, 40, norm);
+          color(i, 40 * w[0], 40 * w[1], 40 * w[2], norm);
         } else if (val <= 90 && val > 70) {
-          color(i, 30, 30, 30, norm);
+          color(i, 30 * w[0], 30 * w[1], 30 * w[2], norm);
         } else {
-          color(i, 20, 20, 20, norm);
+          color(i, 20 * w[0], 20 * w[1], 20 * w[2], norm);
         }
 
         k++;
