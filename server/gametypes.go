@@ -134,7 +134,7 @@ func (g *Game) CalculatePlanetHealth() {
 }
 
 func (g *Game) GeneratePlanetName() {
-	lns := g.CurrentLevel + int64(g.CurrentStage)
+	lns := (g.CurrentLevel * g.CurrentLevel) + int64(g.CurrentStage*g.CurrentStage)
 
 	rand := (123*lns + 123768173) % 7847681738
 	stringLength := int((rand % 5) + 4)
@@ -364,11 +364,7 @@ func (g *Game) CalculateShip(index int) {
 func (g *Game) Advance() {
 	if g.CurrentLevel == g.MaxLevel {
 		g.CurrentStage++
-		if g.CurrentStage == 10 {
-			g.Planet.IsBoss = true
-		} else {
-			g.Planet.IsBoss = false
-		}
+		g.CheckBoss()
 		if g.CurrentStage > 10 {
 			g.CurrentLevel++
 			g.CurrentStage = 1
@@ -388,6 +384,8 @@ func (g *Game) PreviousLevel() {
 		g.CurrentLevel -= 1
 		g.CurrentStage = 10
 
+		g.CheckBoss()
+
 		g.CalculatePlanetHealth()
 		g.CalculateGoldEarned()
 
@@ -403,6 +401,8 @@ func (g *Game) NextLevel() {
 		} else {
 			g.CurrentStage = 10
 		}
+
+		g.CheckBoss()
 
 		g.CalculatePlanetHealth()
 		g.CalculateGoldEarned()
@@ -607,6 +607,14 @@ func (g *Game) CheckShipLock(index int) {
 				}
 			}
 		}
+	}
+}
+
+func (g *Game) CheckBoss() {
+	if g.CurrentStage == 10 && g.CurrentLevel%10 == 0 {
+		g.Planet.IsBoss = true
+	} else {
+		g.Planet.IsBoss = false
 	}
 }
 

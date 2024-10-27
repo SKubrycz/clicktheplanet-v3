@@ -66,11 +66,10 @@ $levelBorderDist: 0.2em;
 }
 
 .main-planet-image {
-  width: 250px;
-  height: 250px;
+  // width: 250px;
+  // height: 250px;
 
   border-radius: 100%;
-  background-color: gray;
 
   -webkit-user-drag: none;
   user-select: none;

@@ -167,6 +167,7 @@ func ActionHandler(g *Game, action string) []byte {
 		encoded, _ := json.Marshal(message)
 		return []byte(encoded)
 	} else if action == "init" {
+		g.CheckBoss()
 		g.CalculatePlanetHealth()
 		g.GeneratePlanetName()
 		g.CalculateCurrentDamage()

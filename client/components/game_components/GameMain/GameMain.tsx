@@ -8,6 +8,7 @@ import type { DamageDone } from "@/lib/game/gameSlice";
 
 import "./GameMain.scss";
 import DamageText from "./DamageText";
+import Planet from "./Planet";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { setLevel } from "@/lib/game/levelSlice";
 
@@ -41,7 +42,7 @@ export default function GameMain({ planetClick }: GameMainProps) {
   });
   const [width, setWidth] = useState<number>(100);
   const [dmgTextArr, setDmgTextArr] = useState<DmgText[]>([]);
-  const planetRef = useRef<HTMLDivElement>(null);
+  const planetRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     if (gameData) {
@@ -65,7 +66,7 @@ export default function GameMain({ planetClick }: GameMainProps) {
     return () => clearTimeout(timeout);
   }, [dmgTextArr]);
 
-  const handlePlanetClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handlePlanetClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     planetClick("click");
     if (e.target === planetRef.current) {
       setDmgTextArr([
@@ -147,11 +148,10 @@ export default function GameMain({ planetClick }: GameMainProps) {
             },
           }}
         ></KeyboardArrowLeft>
-        <div
-          className="main-planet-image"
-          ref={planetRef}
-          onClick={(e) => handlePlanetClick(e)}
-        ></div>
+        <Planet
+          planetRef={planetRef}
+          click={(e) => handlePlanetClick(e)}
+        ></Planet>
         <KeyboardArrowRight
           onClick={() => {
             dispatch(setLevel({ action: "next" }));
