@@ -7,10 +7,9 @@ import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { setLevel } from "@/lib/game/levelSlice";
 
-import {
-  generateGradients,
-  simplexNoise,
-} from "@/utilities/simplexNoise/simplexNoise";
+import { generateGradients } from "@/utilities/simplexNoise/simplexNoise";
+
+import patternSelect from "@/utilities/simplexNoise/patternSelect";
 
 interface Loaded {
   isLoaded: boolean;
@@ -20,6 +19,28 @@ interface Loaded {
 interface PlanetProps {
   planetRef: React.RefObject<HTMLCanvasElement>;
   click: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+}
+
+function avg(a: number, b: number) {
+  return (a + b) / 2;
+}
+
+export function color(
+  imageData: ImageData,
+  i: number,
+  r: number,
+  g: number,
+  b: number,
+  val = 1
+) {
+  let rAvg = avg(r, r * val);
+  let gAvg = avg(g, g * val);
+  let bAvg = avg(b, b * val);
+
+  imageData.data[i] = rAvg;
+  imageData.data[i + 1] = gAvg;
+  imageData.data[i + 2] = bAvg;
+  imageData.data[i + 3] = 255;
 }
 
 export default function Planet({ planetRef, click }: PlanetProps) {
@@ -69,21 +90,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   if (planetRef.current)
     size = planetRef.current.width * planetRef.current.height;
 
-  function avg(a: number, b: number) {
-    return (a + b) / 2;
-  }
-
-  function color(i: number, r: number, g: number, b: number, val = 1) {
-    let rAvg = avg(r, r * val);
-    let gAvg = avg(g, g * val);
-    let bAvg = avg(b, b * val);
-
-    imageData.data[i] = rAvg;
-    imageData.data[i + 1] = gAvg;
-    imageData.data[i + 2] = bAvg;
-    imageData.data[i + 3] = 255;
-  }
-
   function draw() {
     if (planetRef.current && ctx) {
       const s = [];
@@ -105,6 +111,9 @@ export default function Planet({ planetRef, click }: PlanetProps) {
 
       //console.log(imageData);
 
+      let planetPattern = (89213 * seed + 32894789) % 5346785487;
+      planetPattern = (89213 * planetPattern + 32894789) % 5346785487;
+
       for (let i = 0; i < planetRef.current.height * 1; i++) {
         for (let j = 0; j < planetRef.current.width * 1; j++) {
           if (
@@ -122,20 +131,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
             // interpolate = interpolate + (value3 - interpolate) * 0.05;
             // interpolate = interpolate + (value4 - interpolate) * 0.15;
 
-            const value1 = simplexNoise(0.005 * j, 0.005 * i, gradients, size);
-            const value2 = simplexNoise(0.01 * j, 0.01 * i, gradients, size);
-            const value3 = simplexNoise(0.015 * j, 0.015 * i, gradients, size);
-            const value4 = simplexNoise(0.05 * j, 0.05 * i, gradients, size);
-            const value5 = simplexNoise(0.1 * j, 0.1 * i, gradients, size);
-            const value6 = simplexNoise(0.25 * j, 0.25 * i, gradients, size);
-
-            let interpolate = value1 + (value2 - value1) * 0.5;
-            interpolate = interpolate + (value3 - interpolate) * 0.25;
-            interpolate = interpolate + (value4 - interpolate) * 0.1;
-            interpolate = interpolate + (value5 - interpolate) * 0.05;
-            interpolate = interpolate + (value6 - interpolate) * 0.04;
-
-            let final = interpolate;
+            let final = patternSelect(planetPattern, j, i, gradients, size);
 
             if (final > max) max = final;
             if (final < min) min = final;
@@ -178,17 +174,17 @@ export default function Planet({ planetRef, click }: PlanetProps) {
         // }
 
         if (val <= 255 && val > 220) {
-          color(i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
+          color(imageData, i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
         } else if (val <= 220 && val > 150) {
-          color(i, 240 * w[0], 240 * w[1], 240 * w[2], norm);
+          color(imageData, i, 245 * w[0], 245 * w[1], 245 * w[2], norm);
         } else if (val <= 150 && val > 100) {
-          color(i, 180 * w[0], 180 * w[1], 180 * w[2], norm);
+          color(imageData, i, 195 * w[0], 195 * w[1], 195 * w[2], norm);
         } else if (val <= 100 && val > 80) {
-          color(i, 170 * w[1], 170 * w[2], 170 * w[0], norm);
+          color(imageData, i, 190 * w[1], 190 * w[2], 190 * w[0], norm);
         } else if (val <= 80 && val > 60) {
-          color(i, 150 * w[1], 150 * w[2], 150 * w[0], norm);
+          color(imageData, i, 170 * w[1], 170 * w[2], 170 * w[0], norm);
         } else {
-          color(i, 130 * w[1], 130 * w[2], 130 * w[0], norm);
+          color(imageData, i, 150 * w[1], 150 * w[2], 150 * w[0], norm);
         }
 
         k++;
