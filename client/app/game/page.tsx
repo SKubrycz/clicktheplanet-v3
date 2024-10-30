@@ -27,6 +27,7 @@ export default function Game() {
   const globalErrorData = useAppSelector((state) => state.globalError);
   const dispatch = useAppDispatch();
   const socket = useRef<WebSocket | null>(null);
+  const pressedKeys = useRef<boolean[]>([false, false, false]);
   const router = useRouter();
 
   const handleGetGame = async () => {
@@ -70,17 +71,23 @@ export default function Game() {
 
   const handleBulkUpgrade = (e: KeyboardEvent, pressed: boolean) => {
     if (pressed) {
-      if (e.key === "z") {
+      if (e.key === "z" && !pressedKeys.current[0]) {
         dispatch(UpgradeElement({ upgrade: "", index: -1, levels: 10 }));
+        pressedKeys.current[0] = true;
       }
-      if (e.key === "x") {
+      if (e.key === "x" && !pressedKeys.current[1]) {
         dispatch(UpgradeElement({ upgrade: "", index: -1, levels: 100 }));
+        pressedKeys.current[1] = true;
       }
-      if (e.key === "c") {
+      if (e.key === "c" && !pressedKeys.current[2]) {
         dispatch(UpgradeElement({ upgrade: "", index: -1, levels: 1000 }));
+        pressedKeys.current[2] = true;
       }
     } else if (!pressed) {
       dispatch(UpgradeElement({ upgrade: "", index: -1, levels: 1 }));
+      pressedKeys.current[0] = false;
+      pressedKeys.current[1] = false;
+      pressedKeys.current[2] = false;
     }
   };
 
