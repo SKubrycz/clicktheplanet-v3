@@ -54,6 +54,7 @@ export default function Game() {
           })
         );
         setOpen(true);
+        router.push("/");
       }
     }
   };
@@ -135,6 +136,15 @@ export default function Game() {
 
     socket.current.onclose = () => {
       console.log("Disconnected");
+      if (socket.current && socket.current.readyState === 3) {
+        dispatch(
+          SetGlobalError({
+            message: "You've been disconnected from Websockets",
+            statusCode: `(${socket.current.readyState}) CLOSED`,
+          })
+        );
+        setOpen(true);
+      }
     };
 
     document.addEventListener("keydown", (e) => handleBulkUpgrade(e, true));

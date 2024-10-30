@@ -2,15 +2,17 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface GlobalErrorState {
   message: string;
-  statusCode: number;
+  statusCode: number | string;
 }
+
+const initialState: GlobalErrorState = {
+  message: "",
+  statusCode: 0,
+};
 
 export const globalErrorSlice = createSlice({
   name: "globalerror",
-  initialState: {
-    message: "",
-    statusCode: 0,
-  },
+  initialState,
   reducers: {
     SetGlobalError: (state, action: PayloadAction<GlobalErrorState>) => {
       return {

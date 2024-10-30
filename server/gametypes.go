@@ -127,7 +127,11 @@ func (g *Game) CalculatePlanetHealth() {
 	pow := math.Pow(f, exp)
 
 	result := new(big.Float).SetFloat64(pow)
-	result.Mul(result, big.NewFloat(10))
+	if g.Planet.IsBoss {
+		result.Mul(result, big.NewFloat(50))
+	} else {
+		result.Mul(result, big.NewFloat(10))
+	}
 
 	g.ConvertNumber(result, g.Planet.MaxHealth)
 	g.ConvertNumber(result, g.Planet.CurrentHealth)
@@ -364,7 +368,6 @@ func (g *Game) CalculateShip(index int) {
 func (g *Game) Advance() {
 	if g.CurrentLevel == g.MaxLevel {
 		g.CurrentStage++
-		g.CheckBoss()
 		if g.CurrentStage > 10 {
 			g.CurrentLevel++
 			g.CurrentStage = 1
@@ -375,6 +378,7 @@ func (g *Game) Advance() {
 		if g.CurrentLevel == g.MaxLevel {
 			g.MaxStage = g.CurrentStage
 		}
+		g.CheckBoss()
 		g.GeneratePlanetName()
 	}
 }
@@ -418,7 +422,9 @@ func (g *Game) CalculateGoldEarned() {
 	pow := math.Pow(f, exp)
 
 	result := new(big.Float).SetFloat64(pow)
-	//result.Mul(result, big.NewFloat(10))
+	if g.Planet.IsBoss {
+		result.Mul(result, big.NewFloat(10))
+	}
 
 	bigMultiplier := big.NewFloat(g.Ship[4].Multiplier)
 	result.Mul(result, bigMultiplier)

@@ -64,8 +64,8 @@ export default function Register() {
       });
 
       if (res.ok) {
-        const data = await res.json();
-        console.log(data);
+        // const data = await res.json();
+        // console.log(data);
         router.push("/");
       } else throw res;
     } catch (err: unknown) {

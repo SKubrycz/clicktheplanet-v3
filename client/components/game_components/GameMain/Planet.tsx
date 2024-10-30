@@ -173,18 +173,22 @@ export default function Planet({ planetRef, click }: PlanetProps) {
         //   color(i, 20, 20, 20, norm);
         // }
 
-        if (val <= 255 && val > 220) {
-          color(imageData, i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
-        } else if (val <= 220 && val > 150) {
-          color(imageData, i, 245 * w[0], 245 * w[1], 245 * w[2], norm);
-        } else if (val <= 150 && val > 100) {
-          color(imageData, i, 195 * w[0], 195 * w[1], 195 * w[2], norm);
-        } else if (val <= 100 && val > 80) {
-          color(imageData, i, 190 * w[1], 190 * w[2], 190 * w[0], norm);
-        } else if (val <= 80 && val > 60) {
-          color(imageData, i, 170 * w[1], 170 * w[2], 170 * w[0], norm);
+        if (!gameData?.isBoss) {
+          if (val <= 255 && val > 220) {
+            color(imageData, i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
+          } else if (val <= 220 && val > 150) {
+            color(imageData, i, 245 * w[0], 245 * w[1], 245 * w[2], norm);
+          } else if (val <= 150 && val > 100) {
+            color(imageData, i, 195 * w[0], 195 * w[1], 195 * w[2], norm);
+          } else if (val <= 100 && val > 80) {
+            color(imageData, i, 190 * w[1], 190 * w[2], 190 * w[0], norm);
+          } else if (val <= 80 && val > 60) {
+            color(imageData, i, 170 * w[1], 170 * w[2], 170 * w[0], norm);
+          } else {
+            color(imageData, i, 150 * w[1], 150 * w[2], 150 * w[0], norm);
+          }
         } else {
-          color(imageData, i, 150 * w[1], 150 * w[2], 150 * w[0], norm);
+          color(imageData, i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
         }
 
         k++;
