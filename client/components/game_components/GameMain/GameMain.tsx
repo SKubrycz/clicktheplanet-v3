@@ -91,7 +91,6 @@ export default function GameMain({ planetClick }: GameMainProps) {
           click={(e) => handlePlanetClick(e)}
         ></Planet>
       </div>
-      {/* Temporary */}
       <div className="main-planet-health-title">Health</div>
       <div className="main-planet-healthbar">
         <div className="main-planet-healthbar-amount">

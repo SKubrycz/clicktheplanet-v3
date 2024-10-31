@@ -109,8 +109,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
         planetRef?.current.height
       );
 
-      //console.log(imageData);
-
       let planetPattern = (89213 * seed + 32894789) % 5346785487;
       planetPattern = (89213 * planetPattern + 32894789) % 5346785487;
 
@@ -122,15 +120,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
             ) <=
             cRadius + 2
           ) {
-            // const value1 = simplexNoise(0.005 * j, 0.005 * i, gradients, size);
-            // const value2 = simplexNoise(0.01 * j, 0.01 * i, gradients, size);
-            // const value3 = simplexNoise(0.05 * j, 0.05 * i, gradients, size);
-            // const value4 = simplexNoise(0.025 * j, 0.025 * i, gradients, size);
-
-            // let interpolate = value1 + (value2 - value1) * 0.25;
-            // interpolate = interpolate + (value3 - interpolate) * 0.05;
-            // interpolate = interpolate + (value4 - interpolate) * 0.15;
-
             let final = patternSelect(planetPattern, j, i, gradients, size);
 
             if (final > max) max = final;
@@ -148,6 +137,15 @@ export default function Planet({ planetRef, click }: PlanetProps) {
         ((1117 * seed * 99999 + 4649587) % 998391231) / 998391231,
         ((71238 * seed * 99999 + 8956870) % 691270398) / 691270398,
       ];
+      if (
+        weights.current[0] < 0.4 &&
+        weights.current[1] < 0.4 &&
+        weights.current[2] < 0.4
+      ) {
+        weights.current[0] += 0.2;
+        weights.current[1] += 0.2;
+        weights.current[2] += 0.2;
+      }
 
       let w = weights.current;
 
@@ -156,8 +154,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       for (let i = 0; i < imageData.data.length; i += 4) {
         let val = ((s[k] - min) / (max - min)) * 255;
         let norm = (s[k] - min) / (max - min);
-
-        //if (i === 1800) console.log(255 * w[0]);
 
         // if (val <= 255 && val > 220) {
         //   color(i, 255, 255, 255, norm);
@@ -236,7 +232,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   }, [gameData.planetName]);
 
   const animationStyle = {
-    // breathe 4s infinite
     previous: "200ms swipeRight linear 1, levitate 5.5s infinite",
     next: "200ms swipeLeft linear 1, levitate 5.5s infinite",
     destroyed: "250ms destroyed linear 1, levitate 5.5s infinite",
