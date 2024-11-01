@@ -49,6 +49,10 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   const dispatch = useAppDispatch();
   const [loaded, setLoaded] = useState<Loaded>({ isLoaded: false, count: 0 });
 
+  // Timeout for level change arrows
+  const timeout = useRef<NodeJS.Timeout | null>(null);
+  const block = useRef<boolean>(false);
+
   let seed =
     gameData?.currentLevel * gameData?.currentLevel +
     gameData?.currentStage * gameData?.currentStage;
@@ -90,6 +94,8 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   if (planetRef.current)
     size = planetRef.current.width * planetRef.current.height;
 
+
+  // TODO: Move this to Web Worker
   function draw() {
     if (planetRef.current && ctx) {
       const s = [];
@@ -253,18 +259,29 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   }, [gameData.planetsDestroyed]);
 
   const animatePrevious = () => {
-    if (planetRef.current && gameData.currentLevel > 1) {
+    if (planetRef.current && gameData.currentLevel > 1 && !block.current) {
+      block.current = true;
+      dispatch(setLevel({ action: "previous" }));
       planetRef.current.style.animation = "none";
       planetRef.current.offsetHeight;
       planetRef.current.style.animation = animationStyle.previous;
+      timeout.current = setTimeout(() => {
+        block.current = false;
+      }, 400);
     }
   };
 
   const animateNext = () => {
-    if (planetRef.current && gameData.currentLevel !== gameData.maxLevel) {
+    if (planetRef.current && gameData.currentLevel !== gameData.maxLevel && !block.current) {
+      console.log(`block: ${block}`);
+      block.current = true;
+      dispatch(setLevel({ action: "next" }));
       planetRef.current.style.animation = "none";
       planetRef.current.offsetHeight;
       planetRef.current.style.animation = animationStyle.next;
+      timeout.current = setTimeout(() => {
+        block.current = false;
+      }, 400);
     }
   };
 
@@ -272,7 +289,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
     <>
       <KeyboardArrowLeft
         onClick={() => {
-          dispatch(setLevel({ action: "previous" }));
           animatePrevious();
         }}
         sx={{
@@ -293,7 +309,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       ></canvas>
       <KeyboardArrowRight
         onClick={() => {
-          dispatch(setLevel({ action: "next" }));
           animateNext();
         }}
         sx={{
