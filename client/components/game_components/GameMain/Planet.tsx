@@ -99,36 +99,41 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       workerRef.current.onmessage = (e) => {
         imageData = e.data[0];
         weights.current = e.data[1];
+
         draw();
+
+        breatheAnimationKeyframes.current = [
+          {
+            filter: `drop-shadow(0px 0px 2px rgb(${rgb * weights.current[0]}, ${
+              rgb * weights.current[1]
+            }, ${rgb * weights.current[1]}))`,
+            offset: 0.0,
+          },
+          {
+            filter: `drop-shadow(0px 0px 15px rgb(${
+              rgb * weights.current[0]
+            }, ${rgb * weights.current[1]}, ${rgb * weights.current[1]}))`,
+            offset: 0.5,
+          },
+          {
+            filter: `drop-shadow(0px 0px 2px rgb(${rgb * weights.current[0]}, ${
+              rgb * weights.current[1]
+            }, ${rgb * weights.current[1]}))`,
+            offset: 1.0,
+          },
+        ];
+
+        if (
+          weights.current.length > 1 &&
+          typeof weights.current[0] == "number"
+        ) {
+          if (planetRef.current)
+            planetRef.current.animate(breatheAnimationKeyframes.current, {
+              duration: 4000,
+              iterations: Infinity,
+            });
+        }
       };
-
-      breatheAnimationKeyframes.current = [
-        {
-          filter: `drop-shadow(0px 0px 2px rgb(${rgb * weights.current[0]}, ${
-            rgb * weights.current[1]
-          }, ${rgb * weights.current[1]}))`,
-          offset: 0.0,
-        },
-        {
-          filter: `drop-shadow(0px 0px 15px rgb(${rgb * weights.current[0]}, ${
-            rgb * weights.current[1]
-          }, ${rgb * weights.current[1]}))`,
-          offset: 0.5,
-        },
-        {
-          filter: `drop-shadow(0px 0px 2px rgb(${rgb * weights.current[0]}, ${
-            rgb * weights.current[1]
-          }, ${rgb * weights.current[1]}))`,
-          offset: 1.0,
-        },
-      ];
-
-      if (weights.current.length > 1 && typeof weights.current[0] == "number") {
-        planetRef.current.animate(breatheAnimationKeyframes.current, {
-          duration: 4000,
-          iterations: Infinity,
-        });
-      }
     }
 
     return () => {
