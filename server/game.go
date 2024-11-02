@@ -338,6 +338,7 @@ func ActionHandler(g *Game, action string) []byte {
 func DealDps(g *Game) []byte {
 	g.ClickThePlanet(g.Ship[1].Damage, false)
 	percent := g.GetHealthPercent()
+
 	store := map[int]StoreDataMessage{}
 	for k := range g.Store {
 		s := new(StoreDataMessage)
