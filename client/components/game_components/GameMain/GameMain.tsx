@@ -44,7 +44,7 @@ export default function GameMain({ planetClick }: GameMainProps) {
       });
       setWidth(gameData.healthPercent);
     }
-  }, [gameData]);
+  }, [gameData?.currentHealth]);
 
   const duration: number = 700;
 

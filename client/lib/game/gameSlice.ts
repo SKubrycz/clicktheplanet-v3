@@ -176,24 +176,7 @@ export const gameSlice = createSlice({
       };
     },
     DealDps: (state, action: PayloadAction<Data>) => {
-      return {
-        ...state,
-        gold: action.payload.gold,
-        diamonds: action.payload.diamonds,
-        currentDamage: action.payload.currentDamage,
-        maxDamage: action.payload.maxDamage,
-        planetName: action.payload.planetName,
-        currentHealth: action.payload.currentHealth,
-        healthPercent: action.payload.healthPercent,
-        maxHealth: action.payload.maxHealth,
-        planetGold: action.payload.planetGold,
-        isBoss: action.payload.isBoss,
-        currentLevel: action.payload.currentLevel,
-        maxLevel: action.payload.maxLevel,
-        currentStage: action.payload.currentStage,
-        maxStage: action.payload.maxStage,
-        planetsDestroyed: action.payload.planetsDestroyed,
-      };
+      return { ...action.payload };
     },
   },
 });

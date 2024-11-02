@@ -31,6 +31,7 @@ export default function StoreElement({
   const dispatch = useAppDispatch();
 
   const [levels, setLevels] = useState<number | undefined>(undefined);
+  const [locked, setLocked] = useState<boolean>(true);
 
   const timeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -81,9 +82,14 @@ export default function StoreElement({
     };
   }, [errorData?.isVisible]);
 
+  useEffect(() => {
+    if (gameData?.store[index]?.locked) setLocked(true);
+    else if (!gameData?.store[index]?.locked) setLocked(false);
+  }, [gameData?.store[index]?.locked]);
+
   return (
     <div className="store-element">
-      {gameData?.store[index]?.locked ? (
+      {locked ? (
         <div className="element-locked"></div>
       ) : (
         ""
