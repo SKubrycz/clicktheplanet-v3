@@ -15,7 +15,6 @@ interface StoreElementProps {
   title: string;
   description: string;
   image?: string;
-  data: Data | undefined;
 }
 
 export default function StoreElement({
@@ -23,7 +22,6 @@ export default function StoreElement({
   title,
   description,
   image,
-  data,
 }: StoreElementProps) {
   const gameData = useAppSelector((state) => state.game);
   const upgradeData = useAppSelector((state) => state.upgrade);
@@ -89,14 +87,14 @@ export default function StoreElement({
 
   return (
     <div className="store-element">
-      {locked ? (
-        <div className="element-locked"></div>
-      ) : (
-        ""
-      )}
+      {locked ? <div className="element-locked"></div> : ""}
       <div className="store-element-left-wrapper">
         {image ? (
-          <Image src={image} alt={`store-${index}-image`} className="store-element-image"></Image>
+          <Image
+            src={image}
+            alt={`store-${index}-image`}
+            className="store-element-image"
+          ></Image>
         ) : (
           <div className="store-element-image-div">Image</div>
         )}

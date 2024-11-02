@@ -38,7 +38,6 @@ export default function Store() {
             index={i + 1}
             title={el.title}
             description={el.desc}
-            data={gameData}
           ></StoreElement>
         );
       })}

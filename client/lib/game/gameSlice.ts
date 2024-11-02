@@ -120,12 +120,10 @@ export const gameSlice = createSlice({
   initialState: gameObject,
   reducers: {
     Init: (state, action: PayloadAction<Data>) => {
-      console.log("Init reducer");
       console.log(state);
       return { ...action.payload };
     },
     Click: (state, action: PayloadAction<Data>) => {
-      console.log("Click reducer");
       console.log(current(state));
       return { ...action.payload };
     },
