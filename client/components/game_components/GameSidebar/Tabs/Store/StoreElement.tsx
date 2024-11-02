@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState, useEffect } from "react";
+import Image from "next/image";
 
 import type { Data } from "@/lib/game/gameSlice";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
@@ -89,7 +90,7 @@ export default function StoreElement({
       )}
       <div className="store-element-left-wrapper">
         {image ? (
-          <img src={image} className="store-element-image"></img>
+          <Image src={image} alt={`store-${index}-image`} className="store-element-image"></Image>
         ) : (
           <div className="store-element-image-div">Image</div>
         )}

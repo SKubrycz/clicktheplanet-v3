@@ -115,7 +115,7 @@ export default function Login() {
                 />
               </FormControl>
               <p className="form-prompt">
-                Don't have an account yet?{" "}
+                Don&apos;t have an account yet?{" "}
                 <Link href="register">Register here</Link>
               </p>
               <button

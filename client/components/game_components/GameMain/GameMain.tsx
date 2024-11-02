@@ -76,6 +76,7 @@ export default function GameMain({ planetClick }: GameMainProps) {
 
   const healthbarStyle = {
     width: `${width}%`,
+    background: (gameData?.isBoss) ? "radial-gradient(ellipse at bottom, rgba(124, 29, 179, 0.6), rgba(188, 0, 255, 0.5))" : "radial-gradient(ellipse at bottom, rgba(0, 106, 192, 0.6), rgba(42, 127, 202, 0.5))",
   };
 
   return (
