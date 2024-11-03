@@ -98,10 +98,10 @@ export default function ShipElement({
 
       <div className="ship-element-action-wrapper">
         {levels && levels > 1 ? <div>x{levels}</div> : undefined}
-        <IconButton sx={{ margin: 0, color: "white" }}>
+        <IconButton sx={{ margin: 0, padding: 0, color: "white" }}>
           <ArrowUpward
             onClick={(e) => handleUpgradeClick(e)}
-            sx={{ width: 40, height: 40, cursor: "pointer" }}
+            sx={{ width: 40, height: 40, padding: "0.4em", cursor: "pointer" }}
           ></ArrowUpward>
         </IconButton>
       </div>

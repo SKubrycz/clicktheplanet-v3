@@ -94,11 +94,11 @@ export default function Game() {
 
   useEffect(() => {
     console.log(gameData?.isBoss);
-      if (!gameData?.isBoss) {
-        setBgColor("unset");
-      } else if (gameData?.isBoss) {
-        setBgColor("rgba(255, 0, 0, 0.3)");
-      }
+    if (!gameData?.isBoss) {
+      setBgColor("unset");
+    } else if (gameData?.isBoss) {
+      setBgColor("rgba(255, 0, 0, 0.3)");
+    }
   }, [gameData?.isBoss]);
 
   useEffect(() => {
@@ -181,7 +181,7 @@ export default function Game() {
   };
 
   return (
-    <div className="game-wrapper" style={{backgroundColor: bgColor}}>
+    <div className="game-wrapper" style={{ backgroundColor: bgColor }}>
       {loading ? (
         <CircularProgress
           sx={{

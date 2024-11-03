@@ -112,11 +112,11 @@ export default function StoreElement({
         {levels && levels > 1 ? <div>x{levels}</div> : undefined}
         <IconButton
           aria-label={`store-upgrade-button-${index}`}
-          sx={{ margin: 0, color: "white" }}
+          sx={{ margin: 0, padding: 0, color: "white" }}
         >
           <Add
             onClick={(e) => handleUpgradeClick(e)}
-            sx={{ width: 50, height: 50, cursor: "pointer" }}
+            sx={{ width: 50, height: 50, padding: "0.4em", cursor: "pointer" }}
           ></Add>
         </IconButton>
       </div>

@@ -342,6 +342,7 @@ func DealDps(g *Game) []byte {
 	store := map[int]StoreDataMessage{}
 	for k := range g.Store {
 		s := new(StoreDataMessage)
+		s.Index = k
 		s.Level = g.Store[k].Level
 		s.Cost = g.DisplayNumber(g.Store[k].Cost)
 		s.Damage = g.DisplayNumber(g.Store[k].Damage)
@@ -351,8 +352,10 @@ func DealDps(g *Game) []byte {
 	ship := map[int]ShipDataMessage{}
 	for k := range g.Ship {
 		s := new(ShipDataMessage)
+		s.Index = k
 		s.Level = g.Ship[k].Level
 		s.Cost = g.DisplayNumber(g.Ship[k].Cost)
+		s.Multiplier = g.Ship[k].Multiplier
 		s.Locked = g.Ship[k].Locked
 		if k == 1 {
 			s.Damage = g.DisplayNumber(g.Dps)
@@ -361,6 +364,7 @@ func DealDps(g *Game) []byte {
 		}
 		ship[k] = *s
 	}
+
 	message := ActionMessage{
 		Action: "dps",
 		Data: UserClick{
