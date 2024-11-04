@@ -15,6 +15,7 @@ import "./GameSidebar.scss";
 export default function GameSidebar() {
   const gameData = useAppSelector((state) => state.game);
   const errorData = useAppSelector((state) => state.error);
+
   const tabs: Array<string> = ["Store", "Ship", "Stats"];
 
   const [tabTitle, setTabTitle] = useState<string>(tabs[0]);

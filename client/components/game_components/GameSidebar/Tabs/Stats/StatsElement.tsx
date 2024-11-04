@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 interface StatsElementProps {
-  title: string; // maybe set title and description
+  title: string;
   data: number | string | undefined;
 }
 

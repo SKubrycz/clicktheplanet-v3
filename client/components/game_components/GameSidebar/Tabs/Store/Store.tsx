@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import StoreElement from "./StoreElement";
 
 import "./Store.scss";
-import { useAppSelector } from "@/lib/hooks";
 
 interface IStoreElement {
   title: string;
@@ -13,7 +12,6 @@ interface IStoreElement {
 }
 
 export default function Store() {
-  const gameData = useAppSelector((state) => state.game);
   const [storeElementsArr, setStoreElementsArr] = useState<IStoreElement[]>([
     { title: `Element 1`, desc: `Element 1 description` },
     { title: `Element 2`, desc: `Element 2 description` },

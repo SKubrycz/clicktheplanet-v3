@@ -19,8 +19,8 @@ interface PlanetProps {
 
 export default function Planet({ planetRef, click }: PlanetProps) {
   const gameData = useAppSelector((state) => state.game);
-
   const dispatch = useAppDispatch();
+
   const [loaded, setLoaded] = useState<Loaded>({ isLoaded: false, count: 0 });
 
   const workerRef = useRef<Worker>();
@@ -70,7 +70,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   if (planetRef.current)
     size = planetRef.current.width * planetRef.current.height;
 
-  // TODO: Move this to Web Worker
   function draw() {
     if (planetRef.current && ctx) {
       ctx.putImageData(imageData, 0, 0);
@@ -171,7 +170,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       planetRef.current.style.animation = animationStyle.previous;
       timeout.current = setTimeout(() => {
         block.current = false;
-      }, 400);
+      }, 200);
     }
   };
 
@@ -188,7 +187,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       planetRef.current.style.animation = animationStyle.next;
       timeout.current = setTimeout(() => {
         block.current = false;
-      }, 400);
+      }, 200);
     }
   };
 
