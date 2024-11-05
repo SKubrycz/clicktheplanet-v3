@@ -66,9 +66,6 @@ $levelBorderDist: 0.2em;
 }
 
 .main-planet-image {
-  // width: 250px;
-  // height: 250px;
-
   border-radius: 100%;
 
   -webkit-user-drag: none;
@@ -76,8 +73,6 @@ $levelBorderDist: 0.2em;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-
-  //animation: breathe 4s infinite, levitate 5.5s infinite;
 
   cursor: pointer;
 }

@@ -81,7 +81,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       seed =
         gameData?.currentLevel * gameData?.currentLevel +
         gameData?.currentStage * gameData?.currentStage;
-      //draw();
 
       workerRef.current = new Worker(
         new URL("../../../utilities/workers/drawWorker.ts", import.meta.url)
