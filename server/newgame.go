@@ -20,7 +20,7 @@ func NewGame(gameData *GameData) *Game {
 	maxDamage.SetString(gameData.MaxDamage)
 
 	damageDone := DamageDone{
-		Damage:   big.NewFloat(0),
+		Damage:   currentDamage,
 		Critical: false,
 	}
 

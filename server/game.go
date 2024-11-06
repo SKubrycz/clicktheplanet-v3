@@ -174,6 +174,14 @@ func ActionHandler(g *Game, action string) []byte {
 		g.CalculateStore(-1)
 		g.CalculateShip(-1)
 
+		g.DamageDone.Damage = g.CurrentDamage
+		g.DamageDone.Critical = false
+
+		damageDone := DamageDoneData{
+			Damage:   g.DisplayNumber(g.DamageDone.Damage),
+			Critical: g.DamageDone.Critical,
+		}
+
 		store := map[int]StoreDataMessage{}
 		for k := range g.Store {
 			s := new(StoreDataMessage)
@@ -208,6 +216,7 @@ func ActionHandler(g *Game, action string) []byte {
 				Diamonds:         g.Diamonds,
 				CurrentDamage:    g.DisplayNumber(g.CurrentDamage),
 				MaxDamage:        g.DisplayNumber(g.MaxDamage),
+				DamageDone:       damageDone,
 				PlanetName:       g.Planet.Name,
 				CurrentHealth:    g.DisplayNumber(g.Planet.CurrentHealth),
 				HealthPercent:    percent,
