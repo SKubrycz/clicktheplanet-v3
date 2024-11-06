@@ -179,9 +179,6 @@ export default function Game() {
     let settings = localStorage.getItem("settings");
     if (settings) {
       const parsedSettings: SettingsState = JSON.parse(settings);
-
-      console.log(settings);
-
       if (settingsExist(parsedSettings)) dispatch(SetSettings(parsedSettings));
     }
 

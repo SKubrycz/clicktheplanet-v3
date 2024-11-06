@@ -32,7 +32,6 @@ export default function Settings() {
     dispatch(
       SetSettings({ [`option${option}`]: !settingsData[`option${option}`] })
     );
-    localStorage.setItem(`settings`, JSON.stringify(settingsData));
   };
 
   return (
