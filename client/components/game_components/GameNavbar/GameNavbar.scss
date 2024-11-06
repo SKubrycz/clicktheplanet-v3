@@ -102,3 +102,31 @@
   color: white;
   background-color: rgb(100, 100, 100);
 }
+
+.settings-checkbox {
+  -webkit-appearance: initial;
+  appearance: initial;
+  width: 20px;
+  height: 20px;
+
+  margin-left: 2em;
+
+  border: 3px solid white;
+  border-radius: 100%;
+
+  background: white;
+  position: relative;
+
+  cursor: pointer;
+
+  &:checked {
+    background: white;
+    background-color: $buttonColor;
+  }
+
+  &:checked::after {
+    position: absolute;
+
+    content: "";
+  }
+}

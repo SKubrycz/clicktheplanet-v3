@@ -193,6 +193,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   return (
     <>
       <KeyboardArrowLeft
+        aria-label="previous-level-button"
         onClick={() => {
           animatePrevious();
         }}
@@ -213,6 +214,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
         onClick={click}
       ></canvas>
       <KeyboardArrowRight
+        aria-label="next-level-button"
         onClick={() => {
           animateNext();
         }}

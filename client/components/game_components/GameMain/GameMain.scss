@@ -85,6 +85,9 @@ $levelBorderDist: 0.2em;
     weight: 400;
   }
 
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 

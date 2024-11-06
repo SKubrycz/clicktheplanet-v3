@@ -10,6 +10,8 @@ import { Init, Click, Upgrade, DealDps } from "@/lib/game/gameSlice";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
 import { SetErrorMessage } from "@/lib/game/errorSlice";
 import { SetGlobalError } from "@/lib/game/globalErrorSlice";
+import { SetSettings } from "@/lib/game/settingsSlice";
+import type { SettingsState } from "@/lib/game/settingsSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Alert, CircularProgress, Snackbar } from "@mui/material";
 
@@ -26,6 +28,7 @@ export default function Game() {
   const upgradeData = useAppSelector((state) => state.upgrade);
   const levelData = useAppSelector((state) => state.level);
   const globalErrorData = useAppSelector((state) => state.globalError);
+  const settingsData = useAppSelector((state) => state.settings);
   const dispatch = useAppDispatch();
   const socket = useRef<WebSocket | null>(null);
   const pressedKeys = useRef<boolean[]>([false, false, false]);
@@ -163,6 +166,24 @@ export default function Game() {
         setOpen(true);
       }
     };
+
+    function settingsExist(settings: SettingsState) {
+      for (let option in settings) {
+        if (settings[option] == null) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    let settings = localStorage.getItem("settings");
+    if (settings) {
+      const parsedSettings: SettingsState = JSON.parse(settings);
+
+      console.log(settings);
+
+      if (settingsExist(parsedSettings)) dispatch(SetSettings(parsedSettings));
+    }
 
     document.addEventListener("keydown", (e) => handleBulkUpgrade(e, true));
     document.addEventListener("keyup", (e) => handleBulkUpgrade(e, false));

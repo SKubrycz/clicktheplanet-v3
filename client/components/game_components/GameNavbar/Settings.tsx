@@ -1,16 +1,24 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 import { Box, Modal, Typography } from "@mui/material";
 import { Settings as SettingsIcon } from "@mui/icons-material";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { SetSettings } from "@/lib/game/settingsSlice";
 
 export default function Settings() {
+  const settingsData = useAppSelector((state) => state.settings);
+  const dispatch = useAppDispatch();
+
   const [open, setOpen] = useState<boolean>(false);
 
-  const option1Ref = useRef<HTMLInputElement>(null);
-  const option2Ref = useRef<HTMLInputElement>(null);
-  const option3Ref = useRef<HTMLInputElement>(null);
+  const descriptions = [
+    "Toggle Planet idle animation",
+    "Toggle Planet destroy animation",
+    "Toggle previous & next level animation",
+    "Toggle all animations",
+  ];
 
   const handleModalOpen = () => {
     setOpen(true);
@@ -18,6 +26,13 @@ export default function Settings() {
 
   const handleModalClose = () => {
     setOpen(false);
+  };
+
+  const handleOptionToggle = (option: number) => {
+    dispatch(
+      SetSettings({ [`option${option}`]: !settingsData[`option${option}`] })
+    );
+    localStorage.setItem(`settings`, JSON.stringify(settingsData));
   };
 
   return (
@@ -65,20 +80,26 @@ export default function Settings() {
               },
             }}
           >
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="body1">Setting 1 example</Typography>
-              <input ref={option1Ref} type="checkbox"></input>
-            </Box>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="body1">Setting 2 example</Typography>
-              <input ref={option2Ref} type="checkbox"></input>
-            </Box>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="body1">
-                Lorem ipsum dolor sit amet
-              </Typography>
-              <input ref={option3Ref} type="checkbox"></input>
-            </Box>
+            {descriptions.map((el, i) => {
+              return (
+                <Box
+                  key={i}
+                  sx={{
+                    margin: "0.3em 0",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography variant="body1">{String(el)}</Typography>
+                  <input
+                    type="checkbox"
+                    className="settings-checkbox"
+                    defaultChecked={settingsData[`option${i + 1}`]}
+                    onClick={() => handleOptionToggle(i + 1)}
+                  ></input>
+                </Box>
+              );
+            })}
           </Box>
         </Box>
       </Modal>
