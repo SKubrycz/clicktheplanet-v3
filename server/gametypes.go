@@ -80,6 +80,9 @@ func (g *Game) ClickThePlanet(dmg *big.Float, isClick bool) {
 	}
 	x := big.NewFloat(0)
 	if g.Planet.CurrentHealth.Cmp(x) <= 0 {
+		if g.Planet.IsBoss && g.MaxLevel > 99 {
+			g.Diamonds++
+		}
 		g.Advance()
 		g.CalculatePlanetHealth()
 		g.AddPlanetDestroyed()

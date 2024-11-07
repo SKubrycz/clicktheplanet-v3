@@ -5,19 +5,21 @@ import { useState } from "react";
 import { Box, Modal, Typography } from "@mui/material";
 import { Settings as SettingsIcon } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { SetSettings } from "@/lib/game/settingsSlice";
+import { SetSettings, SettingsState } from "@/lib/game/settingsSlice";
 
 export default function Settings() {
   const settingsData = useAppSelector((state) => state.settings);
   const dispatch = useAppDispatch();
 
   const [open, setOpen] = useState<boolean>(false);
+  const [settings, setSettings] = useState<SettingsState>(settingsData);
 
   const descriptions = [
     "Toggle Planet idle animation",
     "Toggle Planet destroy animation",
     "Toggle previous & next level animation",
     "Toggle all animations",
+    // Maybe later think about DamageText to be toggled
   ];
 
   const handleModalOpen = () => {
@@ -29,9 +31,31 @@ export default function Settings() {
   };
 
   const handleOptionToggle = (option: number) => {
-    dispatch(
-      SetSettings({ [`option${option}`]: !settingsData[`option${option}`] })
-    );
+    // Toggle all animations
+    if (option != 4) {
+      dispatch(
+        SetSettings({ [`option${option}`]: !settingsData[`option${option}`] })
+      );
+      setSettings({
+        ...settings,
+        [`option${option}`]: !settingsData[`option${option}`],
+      });
+    } else {
+      dispatch(
+        SetSettings({
+          option1: !settingsData.option4,
+          option2: !settingsData.option4,
+          option3: !settingsData.option4,
+          option4: !settingsData.option4,
+        })
+      );
+      setSettings({
+        option1: !settingsData.option4,
+        option2: !settingsData.option4,
+        option3: !settingsData.option4,
+        option4: !settingsData.option4,
+      });
+    }
   };
 
   return (
@@ -93,8 +117,8 @@ export default function Settings() {
                   <input
                     type="checkbox"
                     className="settings-checkbox"
-                    defaultChecked={settingsData[`option${i + 1}`]}
-                    onClick={() => handleOptionToggle(i + 1)}
+                    checked={settingsData[`option${i + 1}`]}
+                    onChange={() => handleOptionToggle(i + 1)}
                   ></input>
                 </Box>
               );

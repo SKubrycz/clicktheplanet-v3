@@ -19,6 +19,7 @@ interface PlanetProps {
 
 export default function Planet({ planetRef, click }: PlanetProps) {
   const gameData = useAppSelector((state) => state.game);
+  const settingsData = useAppSelector((state) => state.settings);
   const dispatch = useAppDispatch();
 
   const [loaded, setLoaded] = useState<Loaded>({ isLoaded: false, count: 0 });
@@ -120,17 +121,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
             offset: 1.0,
           },
         ];
-
-        if (
-          weights.current.length > 1 &&
-          typeof weights.current[0] == "number"
-        ) {
-          if (planetRef.current)
-            planetRef.current.animate(breatheAnimationKeyframes.current, {
-              duration: 4000,
-              iterations: Infinity,
-            });
-        }
       };
     }
 
@@ -139,6 +129,28 @@ export default function Planet({ planetRef, click }: PlanetProps) {
     };
   }, [gameData.planetName]);
 
+  useEffect(() => {
+    if (weights.current.length > 1 && typeof weights.current[0] == "number") {
+      if (settingsData.option1) {
+        if (planetRef.current)
+          planetRef.current.animate(breatheAnimationKeyframes.current, {
+            duration: 4000,
+            iterations: Infinity,
+          });
+      } else {
+        if (planetRef.current) {
+          const animations = planetRef.current.getAnimations();
+          if (animations.length > 0) {
+            console.log(animations);
+            animations.forEach((anim, i) => {
+              animations[i].cancel();
+            });
+          }
+        }
+      }
+    }
+  }, [breatheAnimationKeyframes.current, settingsData.option1]);
+
   const animationStyle = {
     previous: "200ms swipeRight linear 1, levitate 5.5s infinite",
     next: "200ms swipeLeft linear 1, levitate 5.5s infinite",
@@ -146,47 +158,53 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   };
 
   useEffect(() => {
-    if (planetRef.current && loaded.count > 1) {
-      planetRef.current.style.animation = "none";
-      planetRef.current.offsetHeight;
-      planetRef.current.style.animation = animationStyle.destroyed;
-    }
+    if (settingsData.option2) {
+      if (planetRef.current && loaded.count > 1) {
+        planetRef.current.style.animation = "none";
+        planetRef.current.offsetHeight;
+        planetRef.current.style.animation = animationStyle.destroyed;
+      }
 
-    // To keep the animation from executing on initial component load
-    if (loaded.count < 2) {
-      setLoaded({ ...loaded, count: loaded.count + 1 });
-    } else if (loaded.count == 2) {
-      setLoaded({ ...loaded, isLoaded: true });
+      // To keep the animation from executing on initial component load
+      if (loaded.count < 2) {
+        setLoaded({ ...loaded, count: loaded.count + 1 });
+      } else if (loaded.count == 2) {
+        setLoaded({ ...loaded, isLoaded: true });
+      }
     }
   }, [gameData.planetsDestroyed]);
 
   const animatePrevious = () => {
-    if (planetRef.current && gameData.currentLevel > 1 && !block.current) {
-      block.current = true;
-      dispatch(setLevel({ action: "previous" }));
-      planetRef.current.style.animation = "none";
-      planetRef.current.offsetHeight;
-      planetRef.current.style.animation = animationStyle.previous;
-      timeout.current = setTimeout(() => {
-        block.current = false;
-      }, 200);
+    dispatch(setLevel({ action: "previous" }));
+    if (settingsData.option3) {
+      if (planetRef.current && gameData.currentLevel > 1 && !block.current) {
+        block.current = true;
+        planetRef.current.style.animation = "none";
+        planetRef.current.offsetHeight;
+        planetRef.current.style.animation = animationStyle.previous;
+        timeout.current = setTimeout(() => {
+          block.current = false;
+        }, 200);
+      }
     }
   };
 
   const animateNext = () => {
-    if (
-      planetRef.current &&
-      gameData.currentLevel !== gameData.maxLevel &&
-      !block.current
-    ) {
-      block.current = true;
-      dispatch(setLevel({ action: "next" }));
-      planetRef.current.style.animation = "none";
-      planetRef.current.offsetHeight;
-      planetRef.current.style.animation = animationStyle.next;
-      timeout.current = setTimeout(() => {
-        block.current = false;
-      }, 200);
+    dispatch(setLevel({ action: "next" }));
+    if (settingsData.option3) {
+      if (
+        planetRef.current &&
+        gameData.currentLevel !== gameData.maxLevel &&
+        !block.current
+      ) {
+        block.current = true;
+        planetRef.current.style.animation = "none";
+        planetRef.current.offsetHeight;
+        planetRef.current.style.animation = animationStyle.next;
+        timeout.current = setTimeout(() => {
+          block.current = false;
+        }, 200);
+      }
     }
   };
 
