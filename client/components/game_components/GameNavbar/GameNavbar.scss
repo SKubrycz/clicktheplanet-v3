@@ -111,16 +111,19 @@
 
   margin-left: 2em;
 
-  border: 3px solid white;
+  border: 3px solid $fontColor;
   border-radius: 100%;
 
-  background: white;
+  background: $fontColor;
   position: relative;
 
   cursor: pointer;
 
+  &:hover {
+    border-color: adjust-color($color: $fontColor, $blackness: 50%);
+  }
+
   &:checked {
-    background: white;
     background-color: $buttonColor;
   }
 
