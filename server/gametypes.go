@@ -80,7 +80,7 @@ func (g *Game) ClickThePlanet(dmg *big.Float, isClick bool) {
 	}
 	x := big.NewFloat(0)
 	if g.Planet.CurrentHealth.Cmp(x) <= 0 {
-		if g.Planet.IsBoss && g.MaxLevel > 99 {
+		if g.Planet.IsBoss && g.MaxLevel > 99 && g.MaxLevel == g.CurrentLevel {
 			g.Diamonds++
 		}
 		g.Advance()
