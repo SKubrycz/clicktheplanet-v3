@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 
@@ -17,6 +17,35 @@ interface PlanetProps {
   click: (e: React.MouseEvent<HTMLCanvasElement>) => void;
 }
 
+const applyBreathe = (
+  planetRef: HTMLCanvasElement,
+  breatheAnimationKeyframes: Keyframe[]
+): Animation => {
+  const breatheAnim = planetRef.animate(breatheAnimationKeyframes, {
+    duration: 4000,
+    iterations: Infinity,
+  });
+
+  return breatheAnim;
+};
+
+const applyLevitate = (planetRef: HTMLCanvasElement): Animation => {
+  const levitateAnim = planetRef.animate(
+    [
+      {
+        transform: "translateY(3%)",
+        offset: 0.5,
+      },
+    ],
+    {
+      id: "levitate",
+      duration: 5500,
+      iterations: Infinity,
+    }
+  );
+  return levitateAnim;
+};
+
 export default function Planet({ planetRef, click }: PlanetProps) {
   const gameData = useAppSelector((state) => state.game);
   const settingsData = useAppSelector((state) => state.settings);
@@ -29,6 +58,8 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   const timeout = useRef<NodeJS.Timeout | null>(null);
   // Blocks the level choice when the timeout hasn't ran yet
   const block = useRef<boolean>(false);
+  const breatheAnim = useRef<Animation | null>(null);
+  const levitateAnim = useRef<Animation | null>(null);
 
   let seed =
     gameData?.currentLevel * gameData?.currentLevel +
@@ -132,11 +163,15 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   useEffect(() => {
     if (weights.current.length > 1 && typeof weights.current[0] == "number") {
       if (settingsData.option1) {
-        if (planetRef.current)
-          planetRef.current.animate(breatheAnimationKeyframes.current, {
-            duration: 4000,
-            iterations: Infinity,
-          });
+        if (planetRef.current) {
+          breatheAnim.current = planetRef.current.animate(
+            breatheAnimationKeyframes.current,
+            {
+              duration: 4000,
+              iterations: Infinity,
+            }
+          );
+        }
       } else {
         if (planetRef.current) {
           const animations = planetRef.current.getAnimations();
@@ -145,24 +180,35 @@ export default function Planet({ planetRef, click }: PlanetProps) {
             animations.forEach((anim, i) => {
               animations[i].cancel();
             });
+            console.log(
+              `animations after cancel(): ${animations[0]} - l: ${animations.length}`
+            );
           }
         }
       }
     }
   }, [breatheAnimationKeyframes.current, settingsData.option1]);
 
+  useEffect(() => {
+    if (planetRef.current) {
+      levitateAnim.current = applyLevitate(planetRef.current);
+    }
+  }, []);
+
   const animationStyle = {
-    previous: "200ms swipeRight linear 1, levitate 5.5s infinite",
-    next: "200ms swipeLeft linear 1, levitate 5.5s infinite",
-    destroyed: "250ms destroyed linear 1, levitate 5.5s infinite",
+    previous: "200ms swipeRight linear 1",
+    next: "200ms swipeLeft linear 1",
+    destroyed: "250ms destroyed linear 1",
   };
 
   useEffect(() => {
     if (settingsData.option2) {
       if (planetRef.current && loaded.count > 1) {
+        levitateAnim.current?.cancel();
         planetRef.current.style.animation = "none";
         planetRef.current.offsetHeight;
         planetRef.current.style.animation = animationStyle.destroyed;
+        levitateAnim.current = applyLevitate(planetRef.current);
       }
 
       // To keep the animation from executing on initial component load
@@ -175,13 +221,15 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   }, [gameData.planetsDestroyed]);
 
   const animatePrevious = () => {
-    dispatch(setLevel({ action: "previous" }));
     if (settingsData.option3) {
       if (planetRef.current && gameData.currentLevel > 1 && !block.current) {
+        dispatch(setLevel({ action: "previous" }));
         block.current = true;
+        levitateAnim.current?.cancel();
         planetRef.current.style.animation = "none";
         planetRef.current.offsetHeight;
         planetRef.current.style.animation = animationStyle.previous;
+        levitateAnim.current = applyLevitate(planetRef.current);
         timeout.current = setTimeout(() => {
           block.current = false;
         }, 200);
@@ -190,17 +238,19 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   };
 
   const animateNext = () => {
-    dispatch(setLevel({ action: "next" }));
     if (settingsData.option3) {
       if (
         planetRef.current &&
         gameData.currentLevel !== gameData.maxLevel &&
         !block.current
       ) {
+        dispatch(setLevel({ action: "next" }));
         block.current = true;
+        levitateAnim.current?.cancel();
         planetRef.current.style.animation = "none";
         planetRef.current.offsetHeight;
         planetRef.current.style.animation = animationStyle.next;
+        levitateAnim.current = applyLevitate(planetRef.current);
         timeout.current = setTimeout(() => {
           block.current = false;
         }, 200);
@@ -212,9 +262,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
     <>
       <KeyboardArrowLeft
         aria-label="previous-level-button"
-        onClick={() => {
-          animatePrevious();
-        }}
+        onClick={() => animatePrevious()}
         sx={{
           marginRight: "3em",
           cursor: "pointer",
@@ -233,9 +281,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       ></canvas>
       <KeyboardArrowRight
         aria-label="next-level-button"
-        onClick={() => {
-          animateNext();
-        }}
+        onClick={() => animateNext()}
         sx={{
           marginLeft: "3em",
           cursor: "pointer",
