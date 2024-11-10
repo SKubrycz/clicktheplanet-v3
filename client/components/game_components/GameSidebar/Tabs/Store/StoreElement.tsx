@@ -10,6 +10,8 @@ import { IconButton } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
+import Gold from "@/assets/svg/gold.svg";
+
 interface StoreElementProps {
   index: number;
   title: string;
@@ -105,7 +107,10 @@ export default function StoreElement({
           <div className="store-element-description">
             {description} - Damage: {gameData?.store[index]?.damage}
           </div>
-          <div>Cost: {gameData?.store[index]?.cost}</div>
+          <div>
+            Cost: {gameData?.store[index]?.cost}{" "}
+            <Image src={Gold} alt="gold" width={15} height={15}></Image>
+          </div>
         </div>
       </div>
       <div className="store-element-action-wrapper">

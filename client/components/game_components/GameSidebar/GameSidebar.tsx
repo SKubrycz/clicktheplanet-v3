@@ -11,6 +11,7 @@ import Diamond from "@/assets/svg/diamond.svg";
 import Tabs from "./Tabs/Tabs";
 
 import "./GameSidebar.scss";
+import ShipDiamondUpgrade from "./Tabs/Ship/ShipDiamondUpgrade";
 
 export default function GameSidebar() {
   const gameData = useAppSelector((state) => state.game);
@@ -19,9 +20,18 @@ export default function GameSidebar() {
   const tabs: Array<string> = ["Store", "Ship", "Stats"];
 
   const [tabTitle, setTabTitle] = useState<string>(tabs[0]);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const handleTabTitle = (el: string) => {
     setTabTitle(el);
+  };
+
+  const openDiamondUpgrade = () => {
+    setIsVisible(true);
+  };
+
+  const closeDiamondUpgrade = () => {
+    setIsVisible(false);
   };
 
   return (
@@ -59,11 +69,18 @@ export default function GameSidebar() {
         <div className="game-sidebar-options-content">
           <div style={{ position: "relative" }}>
             {tabTitle === "Ship" ? (
-              <div className="game-sidebar-upgrade-dot"></div>
+              <div
+                className="game-sidebar-upgrade-dot"
+                onClick={() => openDiamondUpgrade()}
+              ></div>
             ) : undefined}
             <div className="game-sidebar-options-content-title">{tabTitle}</div>
           </div>
           <Tabs tabTitle={tabTitle}></Tabs>
+          <ShipDiamondUpgrade
+            open={isVisible}
+            handleModalClose={closeDiamondUpgrade}
+          ></ShipDiamondUpgrade>
         </div>
       </div>
     </aside>

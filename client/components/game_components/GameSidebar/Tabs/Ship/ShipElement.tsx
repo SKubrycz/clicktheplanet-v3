@@ -9,6 +9,9 @@ import { SetErrorMessage, SetError } from "@/lib/game/errorSlice";
 import { IconButton } from "@mui/material";
 import { ArrowUpward } from "@mui/icons-material";
 
+import Gold from "@/assets/svg/gold.svg";
+import Image from "next/image";
+
 interface ShipElementProps {
   index: number;
   title: string;
@@ -93,7 +96,10 @@ export default function ShipElement({
           {index !== 4 && index !== 3 ? gameData?.ship[index]?.damage : ""}
           {index == 4 ? gameData?.planetGold : ""}
         </div>
-        <div>Cost: {gameData?.ship[index]?.cost}</div>
+        <div>
+          Cost: {gameData?.ship[index]?.cost}{" "}
+          <Image src={Gold} alt="gold" width={15} height={15}></Image>
+        </div>
       </div>
 
       <div className="ship-element-action-wrapper">

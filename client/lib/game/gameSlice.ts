@@ -1,9 +1,4 @@
-import {
-  createSlice,
-  PayloadAction,
-  GetState,
-  current,
-} from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, current } from "@reduxjs/toolkit";
 
 export interface Store {
   index: number;
@@ -11,6 +6,10 @@ export interface Store {
   cost: string;
   damage: string;
   locked: boolean;
+}
+
+export interface StoreWrapper {
+  [key: number]: Store;
 }
 
 interface StoreMessage {
@@ -28,6 +27,10 @@ export interface Ship {
   locked: boolean;
 }
 
+export interface ShipWrapper {
+  [key: number]: Ship;
+}
+
 interface ShipMessage {
   gold: string;
   diamonds: number;
@@ -39,8 +42,8 @@ interface UpgradeMessage {
   diamonds: number;
   currentDamage: string;
   maxDamage: string;
-  store: Store[];
-  ship: Ship[];
+  store: StoreWrapper;
+  ship: ShipWrapper;
 }
 
 export interface DamageDone {
@@ -65,8 +68,8 @@ export interface Data {
   currentStage: number;
   maxStage: number;
   planetsDestroyed: string;
-  store: Store[];
-  ship: Ship[];
+  store: StoreWrapper;
+  ship: ShipWrapper;
 }
 
 // export interface UpgradeMessage {
@@ -94,17 +97,17 @@ export const gameObject: Data = {
   currentStage: 1,
   maxStage: 1,
   planetsDestroyed: "0",
-  store: [
-    {
+  store: {
+    1: {
       index: 1,
       level: 0,
       cost: "0",
       damage: "0",
       locked: true,
     },
-  ],
-  ship: [
-    {
+  },
+  ship: {
+    1: {
       index: 1,
       level: 0,
       cost: "0",
@@ -112,7 +115,7 @@ export const gameObject: Data = {
       damage: "0",
       locked: true,
     },
-  ],
+  },
 };
 
 export const gameSlice = createSlice({
