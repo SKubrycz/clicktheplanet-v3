@@ -51,6 +51,8 @@
   flex-grow: 1;
   padding: 1em;
 
+  position: relative;
+
   border: 0px solid rgb(50, 50, 50);
   border-left-width: 1px;
   border-right-width: 1px;
@@ -58,6 +60,35 @@
   border-radius: 0px 0px 5px 5px;
 
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.game-sidebar-upgrade-dot {
+  width: 15px;
+  height: 15px;
+
+  position: absolute;
+  top: 20%;
+  left: 95%;
+
+  border: 2px solid rgba(0, 0, 50, 0.9);
+  border-radius: 100%;
+
+  background: radial-gradient(
+    adjust-color($color: $buttonColor, $hue: 330, $lightness: 10%),
+    $buttonColor
+  );
+
+  filter: drop-shadow(0px 0px 0px $buttonColor);
+
+  cursor: pointer;
+
+  &:hover {
+    background: radial-gradient(
+      adjust-color($color: $buttonColor, $hue: 320, $lightness: 25%),
+      $buttonColor
+    );
+    filter: drop-shadow(0px 0px 8px $buttonColor);
+  }
 }
 
 .game-sidebar-options-content-title {

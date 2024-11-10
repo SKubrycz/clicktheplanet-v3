@@ -57,7 +57,12 @@ export default function GameSidebar() {
           })}
         </div>
         <div className="game-sidebar-options-content">
-          <div className="game-sidebar-options-content-title">{tabTitle}</div>
+          <div style={{ position: "relative" }}>
+            {tabTitle === "Ship" ? (
+              <div className="game-sidebar-upgrade-dot"></div>
+            ) : undefined}
+            <div className="game-sidebar-options-content-title">{tabTitle}</div>
+          </div>
           <Tabs tabTitle={tabTitle}></Tabs>
         </div>
       </div>
