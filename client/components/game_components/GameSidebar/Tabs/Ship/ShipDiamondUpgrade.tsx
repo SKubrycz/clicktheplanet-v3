@@ -1,8 +1,9 @@
 "use client";
 
-import { Modal } from "@mui/material";
+import { Box, Dialog, Typography } from "@mui/material";
 
 import { useAppSelector } from "@/lib/hooks";
+import DiamondUpgrade from "./DiamondUpgrade";
 
 interface ShipDiamondUpgradeProps {
   open: boolean;
@@ -16,14 +17,23 @@ export default function ShipDiamondUpgrade({
   const gameData = useAppSelector((state) => state.game);
 
   return (
-    <Modal open={open} onClose={() => handleModalClose()}>
+    <Dialog
+      open={open}
+      onClose={() => handleModalClose()}
+      sx={{
+        ".MuiPaper-root": {
+          background: "none",
+        },
+      }}
+    >
       <div className="ship-diamond-upgrade-wrapper">
-        <div>
-          {Object.entries(gameData.ship).map(([key, ship]) => {
-            return <div key={key}>{ship.multiplier}</div>;
-          })}
-        </div>
+        <Typography variant="h6">Diamond Upgrades</Typography>
+        <Box sx={{ width: "100%" }}>
+          <DiamondUpgrade title={"Dps"} index={1}></DiamondUpgrade>
+          <DiamondUpgrade title={"Click damage"} index={2}></DiamondUpgrade>
+          <DiamondUpgrade title={"Planet gold"} index={4}></DiamondUpgrade>
+        </Box>
       </div>
-    </Modal>
+    </Dialog>
   );
 }
