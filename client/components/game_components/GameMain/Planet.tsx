@@ -220,41 +220,39 @@ export default function Planet({ planetRef, click }: PlanetProps) {
     }
   }, [gameData.planetsDestroyed]);
 
-  const animatePrevious = () => {
-    if (settingsData.option3) {
-      if (planetRef.current && gameData.currentLevel > 1 && !block.current) {
-        dispatch(setLevel({ action: "previous" }));
-        block.current = true;
-        levitateAnim.current?.cancel();
-        planetRef.current.style.animation = "none";
-        planetRef.current.offsetHeight;
+  const goToPrevious = () => {
+    if (planetRef.current && gameData.currentLevel > 1 && !block.current) {
+      dispatch(setLevel({ action: "previous" }));
+      block.current = true;
+      levitateAnim.current?.cancel();
+      planetRef.current.style.animation = "none";
+      planetRef.current.offsetHeight;
+      if (settingsData.option3)
         planetRef.current.style.animation = animationStyle.previous;
-        levitateAnim.current = applyLevitate(planetRef.current);
-        timeout.current = setTimeout(() => {
-          block.current = false;
-        }, 200);
-      }
+      levitateAnim.current = applyLevitate(planetRef.current);
+      timeout.current = setTimeout(() => {
+        block.current = false;
+      }, 200);
     }
   };
 
-  const animateNext = () => {
-    if (settingsData.option3) {
-      if (
-        planetRef.current &&
-        gameData.currentLevel !== gameData.maxLevel &&
-        !block.current
-      ) {
-        dispatch(setLevel({ action: "next" }));
-        block.current = true;
-        levitateAnim.current?.cancel();
-        planetRef.current.style.animation = "none";
-        planetRef.current.offsetHeight;
+  const goToNext = () => {
+    if (
+      planetRef.current &&
+      gameData.currentLevel !== gameData.maxLevel &&
+      !block.current
+    ) {
+      dispatch(setLevel({ action: "next" }));
+      block.current = true;
+      levitateAnim.current?.cancel();
+      planetRef.current.style.animation = "none";
+      planetRef.current.offsetHeight;
+      if (settingsData.option3)
         planetRef.current.style.animation = animationStyle.next;
-        levitateAnim.current = applyLevitate(planetRef.current);
-        timeout.current = setTimeout(() => {
-          block.current = false;
-        }, 200);
-      }
+      levitateAnim.current = applyLevitate(planetRef.current);
+      timeout.current = setTimeout(() => {
+        block.current = false;
+      }, 200);
     }
   };
 
@@ -262,7 +260,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
     <>
       <KeyboardArrowLeft
         aria-label="previous-level-button"
-        onClick={() => animatePrevious()}
+        onClick={() => goToPrevious()}
         sx={{
           marginRight: "3em",
           cursor: "pointer",
@@ -281,7 +279,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       ></canvas>
       <KeyboardArrowRight
         aria-label="next-level-button"
-        onClick={() => animateNext()}
+        onClick={() => goToNext()}
         sx={{
           marginLeft: "3em",
           cursor: "pointer",
