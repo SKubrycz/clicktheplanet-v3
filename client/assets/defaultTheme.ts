@@ -19,5 +19,12 @@ export const defaultTheme = createTheme({
         },
       },
     },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontFamily: '"Space Grotesk", sans-serif',
+        },
+      },
+    },
   },
 });
