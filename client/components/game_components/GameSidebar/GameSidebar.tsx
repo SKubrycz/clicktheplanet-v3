@@ -68,7 +68,7 @@ export default function GameSidebar() {
         </div>
         <div className="game-sidebar-options-content">
           <div style={{ position: "relative" }}>
-            {tabTitle === "Ship" ? (
+            {tabTitle === "Ship" && gameData?.diamondUpgradesUnlocked ? (
               <div
                 className="game-sidebar-upgrade-dot"
                 onClick={() => openDiamondUpgrade()}
@@ -77,10 +77,12 @@ export default function GameSidebar() {
             <div className="game-sidebar-options-content-title">{tabTitle}</div>
           </div>
           <Tabs tabTitle={tabTitle}></Tabs>
-          <ShipDiamondUpgrade
-            open={isVisible}
-            handleModalClose={closeDiamondUpgrade}
-          ></ShipDiamondUpgrade>
+          {gameData?.diamondUpgradesUnlocked && (
+            <ShipDiamondUpgrade
+              open={isVisible}
+              handleModalClose={closeDiamondUpgrade}
+            ></ShipDiamondUpgrade>
+          )}
         </div>
       </div>
     </aside>

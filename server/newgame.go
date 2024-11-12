@@ -35,6 +35,8 @@ func NewGame(gameData *GameData) *Game {
 
 	maxStage := gameData.MaxStage
 
+	diamondUpgradesUnlocked := false
+
 	planetsDestroyed := new(big.Float)
 	planetsDestroyed.SetString(gameData.PlanetsDestroyed)
 
@@ -208,6 +210,13 @@ func NewGame(gameData *GameData) *Game {
 			BaseDamage: new(big.Float),
 			Locked:     true,
 			Constant:   1.3,
+			DiamondUpgrade: DiamondUpgrade{
+				Level:      gameData.Ship[1].DiamondLevel,
+				Multiplier: 1.0,
+				BaseCost:   1,
+				Cost:       1,
+				Constant:   1.5,
+			},
 		},
 		2: {
 			Level:      gameData.Ship[2].Level,
@@ -218,6 +227,13 @@ func NewGame(gameData *GameData) *Game {
 			BaseDamage: new(big.Float),
 			Locked:     true,
 			Constant:   1.2,
+			DiamondUpgrade: DiamondUpgrade{
+				Level:      gameData.Ship[2].DiamondLevel,
+				Multiplier: 1.0,
+				BaseCost:   1,
+				Cost:       1,
+				Constant:   1.5,
+			},
 		},
 		3: {
 			Level:      gameData.Ship[3].Level,
@@ -228,6 +244,13 @@ func NewGame(gameData *GameData) *Game {
 			BaseDamage: new(big.Float),
 			Locked:     true,
 			Constant:   1.5,
+			DiamondUpgrade: DiamondUpgrade{
+				Level:      gameData.Ship[3].DiamondLevel,
+				Multiplier: 1.0,
+				BaseCost:   1,
+				Cost:       1,
+				Constant:   1.5,
+			},
 		},
 		4: {
 			Level:      gameData.Ship[4].Level,
@@ -238,6 +261,13 @@ func NewGame(gameData *GameData) *Game {
 			BaseDamage: new(big.Float),
 			Locked:     true,
 			Constant:   1.1,
+			DiamondUpgrade: DiamondUpgrade{
+				Level:      gameData.Ship[4].DiamondLevel,
+				Multiplier: 1.0,
+				BaseCost:   1,
+				Cost:       1,
+				Constant:   1.5,
+			},
 		},
 	}
 
@@ -262,21 +292,22 @@ func NewGame(gameData *GameData) *Game {
 	ship[4].Damage.SetString(ship[4].BaseDamage.String())
 
 	return &Game{
-		Id:               id,
-		Gold:             gold,
-		Diamonds:         diamonds,
-		CurrentDamage:    currentDamage,
-		MaxDamage:        maxDamage,
-		DamageDone:       damageDone,
-		Dps:              dps,
-		CurrentLevel:     currentLevel,
-		MaxLevel:         maxLevel,
-		CurrentStage:     currentStage,
-		MaxStage:         maxStage,
-		PlanetsDestroyed: planetsDestroyed,
-		Planet:           planet,
-		Store:            store,
-		Ship:             ship,
-		Ch:               make(chan string),
+		Id:                      id,
+		Gold:                    gold,
+		Diamonds:                diamonds,
+		CurrentDamage:           currentDamage,
+		MaxDamage:               maxDamage,
+		DamageDone:              damageDone,
+		Dps:                     dps,
+		CurrentLevel:            currentLevel,
+		MaxLevel:                maxLevel,
+		CurrentStage:            currentStage,
+		MaxStage:                maxStage,
+		DiamondUpgradesUnlocked: diamondUpgradesUnlocked,
+		PlanetsDestroyed:        planetsDestroyed,
+		Planet:                  planet,
+		Store:                   store,
+		Ship:                    ship,
+		Ch:                      make(chan string),
 	}
 }

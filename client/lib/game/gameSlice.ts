@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, current } from "@reduxjs/toolkit";
+import { LargeNumberLike } from "crypto";
 
 export interface Store {
   index: number;
@@ -18,6 +19,12 @@ interface StoreMessage {
   store: Store;
 }
 
+interface DiamondUpgrade {
+  level: number;
+  multiplier: number;
+  cost: number;
+}
+
 export interface Ship {
   index: number;
   level: number;
@@ -25,6 +32,7 @@ export interface Ship {
   multiplier: number;
   damage: string;
   locked: boolean;
+  diamondUpgrade: DiamondUpgrade;
 }
 
 export interface ShipWrapper {
@@ -61,6 +69,7 @@ export interface Data {
   currentHealth: string;
   healthPercent: number;
   maxHealth: string;
+  diamondUpgradesUnlocked: boolean;
   planetGold: string;
   isBoss: boolean;
   currentLevel: number;
@@ -96,6 +105,7 @@ export const gameObject: Data = {
   maxLevel: 1,
   currentStage: 1,
   maxStage: 1,
+  diamondUpgradesUnlocked: false,
   planetsDestroyed: "0",
   store: {
     1: {
@@ -114,6 +124,11 @@ export const gameObject: Data = {
       multiplier: 0.0,
       damage: "0",
       locked: true,
+      diamondUpgrade: {
+        level: 0,
+        multiplier: 1.0,
+        cost: 1,
+      },
     },
   },
 };
@@ -172,6 +187,11 @@ export const gameSlice = createSlice({
             multiplier: action.payload.ship.multiplier,
             damage: action.payload.ship.damage,
             locked: action.payload.ship.locked,
+            diamondUpgrade: {
+              level: action.payload.ship.diamondUpgrade.level,
+              multiplier: action.payload.ship.diamondUpgrade.multiplier,
+              cost: action.payload.ship.diamondUpgrade.cost,
+            },
           },
         },
       };
@@ -191,6 +211,7 @@ export const gameSlice = createSlice({
         isBoss: action.payload.isBoss,
         currentLevel: action.payload.currentLevel,
         maxLevel: action.payload.maxLevel,
+        diamondUpgradesUnlocked: action.payload.diamondUpgradesUnlocked,
         currentStage: action.payload.currentStage,
         maxStage: action.payload.maxStage,
         planetsDestroyed: action.payload.planetsDestroyed,

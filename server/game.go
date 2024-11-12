@@ -65,13 +65,20 @@ type StoreDataMessageWrapper struct {
 	Store    map[int]StoreDataMessage `json:"store"`
 }
 
-type ShipDataMessage struct {
-	Index      int     `json:"index"`
+type DiamondUpgradeDataMessage struct {
 	Level      int64   `json:"level"`
-	Cost       string  `json:"cost"`
 	Multiplier float64 `json:"multiplier"`
-	Damage     string  `json:"damage"`
-	Locked     bool    `json:"locked"`
+	Cost       int64   `json:"cost"`
+}
+
+type ShipDataMessage struct {
+	Index          int                       `json:"index"`
+	Level          int64                     `json:"level"`
+	Cost           string                    `json:"cost"`
+	Multiplier     float64                   `json:"multiplier"`
+	Damage         string                    `json:"damage"`
+	Locked         bool                      `json:"locked"`
+	DiamondUpgrade DiamondUpgradeDataMessage `json:"diamondUpgrade"`
 }
 
 type ShipDataMessageWrapper struct {
@@ -138,6 +145,9 @@ func ActionHandler(g *Game, action string) []byte {
 			} else {
 				s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 			}
+			s.DiamondUpgrade.Level = g.Ship[k].DiamondUpgrade.Level
+			s.DiamondUpgrade.Multiplier = g.Ship[k].DiamondUpgrade.Multiplier
+			s.DiamondUpgrade.Cost = g.Ship[k].DiamondUpgrade.Cost
 			ship[k] = *s
 		}
 		// Wrapper to indicate for frontend how to behave depending on the action field
@@ -170,6 +180,7 @@ func ActionHandler(g *Game, action string) []byte {
 		g.CheckBoss()
 		g.CalculatePlanetHealth()
 		g.GeneratePlanetName()
+		g.CalculateDiamondUpgrade(-1)
 		g.CalculateCurrentDamage()
 		g.CalculateStore(-1)
 		g.CalculateShip(-1)
@@ -205,6 +216,9 @@ func ActionHandler(g *Game, action string) []byte {
 			} else {
 				s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 			}
+			s.DiamondUpgrade.Level = g.Ship[k].DiamondUpgrade.Level
+			s.DiamondUpgrade.Multiplier = g.Ship[k].DiamondUpgrade.Multiplier
+			s.DiamondUpgrade.Cost = g.Ship[k].DiamondUpgrade.Cost
 			ship[k] = *s
 		}
 		percent := g.GetHealthPercent()
@@ -264,7 +278,7 @@ func ActionHandler(g *Game, action string) []byte {
 				fmt.Println("ERROR json ActionHandler: ", err)
 			}
 		}
-		if unmarshaled.Upgrade == "store" || unmarshaled.Upgrade == "ship" {
+		if unmarshaled.Upgrade == "store" || unmarshaled.Upgrade == "ship" || unmarshaled.Upgrade == "diamond-upgrade" {
 			if unmarshaled.Upgrade == "store" {
 				err := g.UpgradeStore(unmarshaled.Index, unmarshaled.Levels)
 				if err != "" {
@@ -291,6 +305,20 @@ func ActionHandler(g *Game, action string) []byte {
 					return []byte(enc)
 				}
 			}
+			if unmarshaled.Upgrade == "diamond-upgrade" {
+				err := g.UpgradeDiamondUpgrade(unmarshaled.Index, unmarshaled.Levels)
+				if err != "" {
+					message := ActionMessage{
+						Action: "error",
+						Data: ErrorDataMessage{
+							Error: err,
+						},
+					}
+					enc, _ := json.Marshal(message)
+					return []byte(enc)
+				}
+			}
+			g.CalculateDiamondUpgrade(unmarshaled.Index)
 			g.CalculateStore(unmarshaled.Index)
 			g.CalculateShip(-1)
 			store := map[int]StoreDataMessage{}
@@ -316,6 +344,9 @@ func ActionHandler(g *Game, action string) []byte {
 				} else {
 					s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 				}
+				s.DiamondUpgrade.Level = g.Ship[k].DiamondUpgrade.Level
+				s.DiamondUpgrade.Multiplier = g.Ship[k].DiamondUpgrade.Multiplier
+				s.DiamondUpgrade.Cost = g.Ship[k].DiamondUpgrade.Cost
 				ship[k] = *s
 			}
 			message := ActionMessage{
@@ -371,6 +402,9 @@ func DealDps(g *Game) []byte {
 		} else {
 			s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 		}
+		s.DiamondUpgrade.Level = g.Ship[k].DiamondUpgrade.Level
+		s.DiamondUpgrade.Multiplier = g.Ship[k].DiamondUpgrade.Multiplier
+		s.DiamondUpgrade.Cost = g.Ship[k].DiamondUpgrade.Cost
 		ship[k] = *s
 	}
 

@@ -18,6 +18,7 @@ interface DiamondUpgradeProps {
 }
 
 export default function DiamondUpgrade({ title, index }: DiamondUpgradeProps) {
+  const gameData = useAppSelector((state) => state.game);
   const upgradeData = useAppSelector((state) => state.upgrade);
   const errorData = useAppSelector((state) => state.error);
   const dispatch = useAppDispatch();
@@ -81,8 +82,8 @@ export default function DiamondUpgrade({ title, index }: DiamondUpgradeProps) {
           {title}
         </Typography>
         <div>
-          Cost:{" "}
-          <Image src={Diamond} alt="diamond" width={14} height={14}></Image>
+          Cost: {gameData?.ship[index].diamondUpgrade.cost} &nbsp;
+          <Image src={Diamond} alt="diamond" width={13} height={13}></Image>
         </div>
       </Box>
       <IconButton

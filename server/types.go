@@ -15,9 +15,10 @@ type LoginCredentials struct {
 type UserId string
 
 type ShipUpgradeData struct {
-	Level      int64
-	Multiplier float64
-	Damage     string
+	Level        int64
+	DiamondLevel int64
+	Multiplier   float64
+	Damage       string
 }
 
 type StoreUpgradeData struct {

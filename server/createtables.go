@@ -69,6 +69,7 @@ func createGameShipTable(p *Postgres) error {
 	createGameShip := `CREATE TABLE IF NOT EXISTS game_ship (
 		id SERIAL PRIMARY KEY,
 		level BIGINT,
+		diamond_level INT,
 		game_id INT NOT NULL,
 		ship_id INT NOT NULL,
 		FOREIGN KEY (game_id)

@@ -141,7 +141,10 @@ export default function Game() {
         console.log(message.data);
         dispatch(Click(message.data));
       }
-      if (message.action === "upgrade") {
+      if (
+        message.action === "upgrade" ||
+        message.action === "diamond-upgrade"
+      ) {
         dispatch(Upgrade(message.data));
       }
 
