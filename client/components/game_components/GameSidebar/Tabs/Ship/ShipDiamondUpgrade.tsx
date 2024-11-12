@@ -31,6 +31,7 @@ export default function ShipDiamondUpgrade({
         <Box sx={{ width: "100%" }}>
           <DiamondUpgrade title={"Dps"} index={1}></DiamondUpgrade>
           <DiamondUpgrade title={"Click damage"} index={2}></DiamondUpgrade>
+          <DiamondUpgrade title={"Cricital damage"} index={3}></DiamondUpgrade>
           <DiamondUpgrade title={"Planet gold"} index={4}></DiamondUpgrade>
         </Box>
       </div>

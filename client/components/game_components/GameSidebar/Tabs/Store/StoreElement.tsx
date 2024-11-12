@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState, useEffect } from "react";
 import Image from "next/image";
 
-import type { Data } from "@/lib/game/gameSlice";
+//import type { Data } from "@/lib/game/gameSlice";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
 import { SetError, SetErrorMessage } from "@/lib/game/errorSlice";
 import { IconButton } from "@mui/material";

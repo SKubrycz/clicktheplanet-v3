@@ -90,7 +90,7 @@
 }
 
 .ship-diamond-upgrade-wrapper {
-  min-width: 250px;
+  min-width: 280px;
   min-height: 150px;
 
   padding: 0.5em;
@@ -113,10 +113,23 @@
 }
 
 .diamond-upgrade {
+  margin: 0.5em 0;
   padding: 0.5em;
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  border: 1px solid adjust-color($color: $buttonColor, $hue: 345, $alpha: 0.3);
+  border-radius: 5px;
+
+  &:hover {
+    background-color: adjust-color(
+      $color: $buttonColor,
+      $hue: 355,
+      $lightness: -35,
+      $alpha: -0
+    );
+  }
 }
 
 .game-sidebar-options-content-title {
