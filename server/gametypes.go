@@ -569,7 +569,9 @@ func (g *Game) CalculateShipOne() {
 	//damage = currentDamage * multiplier
 	bigMultiplier := big.NewFloat(g.Ship[1].Multiplier)
 	g.Ship[1].Damage.Mul(g.CurrentDamage, bigMultiplier) // per 100ms
-	g.Ship[1].Damage.Mul(g.Ship[1].Damage, big.NewFloat(g.Ship[1].DiamondUpgrade.Multiplier))
+	if g.Ship[1].DiamondUpgrade.Level > 0 {
+		g.Ship[1].Damage.Mul(g.Ship[1].Damage, big.NewFloat(g.Ship[1].DiamondUpgrade.Multiplier))
+	}
 
 	g.CheckShipLock(1)
 }
@@ -588,7 +590,11 @@ func (g *Game) CalculateShipTwo() {
 
 	if entry, ok := g.Ship[2]; ok {
 		entry.Multiplier = toFixed((1.0 + 0.05*float64(g.Ship[2].Level)), 3)
-		entry.Damage.Mul(g.CurrentDamage, big.NewFloat(g.Ship[2].DiamondUpgrade.Multiplier))
+		if g.Ship[2].DiamondUpgrade.Level > 0 {
+			entry.Damage.Mul(g.CurrentDamage, big.NewFloat(g.Ship[2].DiamondUpgrade.Multiplier))
+		} else {
+			entry.Damage = g.CurrentDamage
+		}
 		g.Ship[2] = entry
 	}
 
@@ -624,7 +630,12 @@ func (g *Game) CalculateShipThree() {
 	}
 
 	//critical damage = currentDamage * 5 <-- for now
-	bigMultiplier := big.NewFloat(5.0 * g.Ship[3].DiamondUpgrade.Multiplier)
+	var bigMultiplier *big.Float
+	if g.Ship[3].DiamondUpgrade.Level > 0 {
+		bigMultiplier = big.NewFloat(5.0 * g.Ship[3].DiamondUpgrade.Multiplier)
+	} else {
+		bigMultiplier = big.NewFloat(5.0)
+	}
 	g.Ship[3].Damage.Mul(g.CurrentDamage, bigMultiplier)
 
 	g.CheckShipLock(3)
