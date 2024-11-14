@@ -15,24 +15,25 @@ import (
 // - next level
 
 type UserClick struct {
-	Gold             string                   `json:"gold"`
-	Diamonds         int64                    `json:"diamonds"`
-	CurrentDamage    string                   `json:"currentDamage"`
-	MaxDamage        string                   `json:"maxDamage"`
-	DamageDone       DamageDoneData           `json:"damageDone"`
-	PlanetName       string                   `json:"planetName"`
-	CurrentHealth    string                   `json:"currentHealth"`
-	HealthPercent    int                      `json:"healthPercent"`
-	MaxHealth        string                   `json:"maxHealth"`
-	PlanetGold       string                   `json:"planetGold"`
-	IsBoss           bool                     `json:"isBoss"`
-	CurrentLevel     int64                    `json:"currentLevel"`
-	MaxLevel         int64                    `json:"maxLevel"`
-	CurrentStage     uint8                    `json:"currentStage"`
-	MaxStage         uint8                    `json:"maxStage"`
-	PlanetsDestroyed string                   `json:"planetsDestroyed"`
-	Store            map[int]StoreDataMessage `json:"store"`
-	Ship             map[int]ShipDataMessage  `json:"ship"`
+	Gold                    string                   `json:"gold"`
+	Diamonds                int64                    `json:"diamonds"`
+	CurrentDamage           string                   `json:"currentDamage"`
+	MaxDamage               string                   `json:"maxDamage"`
+	DamageDone              DamageDoneData           `json:"damageDone"`
+	PlanetName              string                   `json:"planetName"`
+	CurrentHealth           string                   `json:"currentHealth"`
+	HealthPercent           int                      `json:"healthPercent"`
+	MaxHealth               string                   `json:"maxHealth"`
+	PlanetGold              string                   `json:"planetGold"`
+	IsBoss                  bool                     `json:"isBoss"`
+	CurrentLevel            int64                    `json:"currentLevel"`
+	MaxLevel                int64                    `json:"maxLevel"`
+	CurrentStage            uint8                    `json:"currentStage"`
+	MaxStage                uint8                    `json:"maxStage"`
+	DiamondUpgradesUnlocked bool                     `json:"diamondUpgradesUnlocked"`
+	PlanetsDestroyed        string                   `json:"planetsDestroyed"`
+	Store                   map[int]StoreDataMessage `json:"store"`
+	Ship                    map[int]ShipDataMessage  `json:"ship"`
 }
 
 type ActionMessage struct {
@@ -154,24 +155,25 @@ func ActionHandler(g *Game, action string) []byte {
 		message := ActionMessage{
 			Action: action,
 			Data: UserClick{
-				Gold:             g.DisplayNumber(g.Gold),
-				Diamonds:         g.Diamonds,
-				CurrentDamage:    g.DisplayNumber(g.CurrentDamage),
-				MaxDamage:        g.DisplayNumber(g.MaxDamage),
-				DamageDone:       damageDone,
-				PlanetName:       g.Planet.Name,
-				CurrentHealth:    g.DisplayNumber(g.Planet.CurrentHealth),
-				HealthPercent:    percent,
-				MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
-				PlanetGold:       g.DisplayNumber(g.Planet.Gold),
-				IsBoss:           g.Planet.IsBoss,
-				CurrentLevel:     g.CurrentLevel,
-				MaxLevel:         g.MaxLevel,
-				CurrentStage:     g.CurrentStage,
-				MaxStage:         g.MaxStage,
-				PlanetsDestroyed: g.DisplayNumber(g.PlanetsDestroyed),
-				Store:            store,
-				Ship:             ship,
+				Gold:                    g.DisplayNumber(g.Gold),
+				Diamonds:                g.Diamonds,
+				CurrentDamage:           g.DisplayNumber(g.CurrentDamage),
+				MaxDamage:               g.DisplayNumber(g.MaxDamage),
+				DamageDone:              damageDone,
+				PlanetName:              g.Planet.Name,
+				CurrentHealth:           g.DisplayNumber(g.Planet.CurrentHealth),
+				HealthPercent:           percent,
+				MaxHealth:               g.DisplayNumber(g.Planet.MaxHealth),
+				PlanetGold:              g.DisplayNumber(g.Planet.Gold),
+				IsBoss:                  g.Planet.IsBoss,
+				CurrentLevel:            g.CurrentLevel,
+				MaxLevel:                g.MaxLevel,
+				CurrentStage:            g.CurrentStage,
+				MaxStage:                g.MaxStage,
+				DiamondUpgradesUnlocked: g.DiamondUpgradesUnlocked,
+				PlanetsDestroyed:        g.DisplayNumber(g.PlanetsDestroyed),
+				Store:                   store,
+				Ship:                    ship,
 			},
 		}
 		encoded, _ := json.Marshal(message)
@@ -180,6 +182,7 @@ func ActionHandler(g *Game, action string) []byte {
 		g.CheckBoss()
 		g.CalculatePlanetHealth()
 		g.GeneratePlanetName()
+		g.CheckDiamondUpgradeUnlock()
 		g.CalculateDiamondUpgrade(-1)
 		g.CalculateCurrentDamage()
 		g.CalculateStore(-1)
@@ -226,24 +229,25 @@ func ActionHandler(g *Game, action string) []byte {
 		message := ActionMessage{
 			Action: action,
 			Data: UserClick{
-				Gold:             g.DisplayNumber(g.Gold),
-				Diamonds:         g.Diamonds,
-				CurrentDamage:    g.DisplayNumber(g.CurrentDamage),
-				MaxDamage:        g.DisplayNumber(g.MaxDamage),
-				DamageDone:       damageDone,
-				PlanetName:       g.Planet.Name,
-				CurrentHealth:    g.DisplayNumber(g.Planet.CurrentHealth),
-				HealthPercent:    percent,
-				MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
-				PlanetGold:       g.DisplayNumber(g.Planet.Gold),
-				IsBoss:           g.Planet.IsBoss,
-				CurrentLevel:     g.CurrentLevel,
-				MaxLevel:         g.MaxLevel,
-				CurrentStage:     g.CurrentStage,
-				MaxStage:         g.MaxStage,
-				PlanetsDestroyed: g.DisplayNumber(g.PlanetsDestroyed),
-				Store:            store,
-				Ship:             ship,
+				Gold:                    g.DisplayNumber(g.Gold),
+				Diamonds:                g.Diamonds,
+				CurrentDamage:           g.DisplayNumber(g.CurrentDamage),
+				MaxDamage:               g.DisplayNumber(g.MaxDamage),
+				DamageDone:              damageDone,
+				PlanetName:              g.Planet.Name,
+				CurrentHealth:           g.DisplayNumber(g.Planet.CurrentHealth),
+				HealthPercent:           percent,
+				MaxHealth:               g.DisplayNumber(g.Planet.MaxHealth),
+				PlanetGold:              g.DisplayNumber(g.Planet.Gold),
+				IsBoss:                  g.Planet.IsBoss,
+				CurrentLevel:            g.CurrentLevel,
+				MaxLevel:                g.MaxLevel,
+				CurrentStage:            g.CurrentStage,
+				MaxStage:                g.MaxStage,
+				DiamondUpgradesUnlocked: g.DiamondUpgradesUnlocked,
+				PlanetsDestroyed:        g.DisplayNumber(g.PlanetsDestroyed),
+				Store:                   store,
+				Ship:                    ship,
 			},
 		}
 		encoded, _ := json.Marshal(message)
@@ -411,23 +415,24 @@ func DealDps(g *Game) []byte {
 	message := ActionMessage{
 		Action: "dps",
 		Data: UserClick{
-			Gold:             g.DisplayNumber(g.Gold),
-			Diamonds:         g.Diamonds,
-			CurrentDamage:    g.DisplayNumber(g.CurrentDamage),
-			MaxDamage:        g.DisplayNumber(g.MaxDamage),
-			PlanetName:       g.Planet.Name,
-			CurrentHealth:    g.DisplayNumber(g.Planet.CurrentHealth),
-			HealthPercent:    percent,
-			MaxHealth:        g.DisplayNumber(g.Planet.MaxHealth),
-			PlanetGold:       g.DisplayNumber(g.Planet.Gold),
-			IsBoss:           g.Planet.IsBoss,
-			CurrentLevel:     g.CurrentLevel,
-			MaxLevel:         g.MaxLevel,
-			CurrentStage:     g.CurrentStage,
-			MaxStage:         g.MaxStage,
-			PlanetsDestroyed: g.DisplayNumber(g.PlanetsDestroyed),
-			Store:            store,
-			Ship:             ship,
+			Gold:                    g.DisplayNumber(g.Gold),
+			Diamonds:                g.Diamonds,
+			CurrentDamage:           g.DisplayNumber(g.CurrentDamage),
+			MaxDamage:               g.DisplayNumber(g.MaxDamage),
+			PlanetName:              g.Planet.Name,
+			CurrentHealth:           g.DisplayNumber(g.Planet.CurrentHealth),
+			HealthPercent:           percent,
+			MaxHealth:               g.DisplayNumber(g.Planet.MaxHealth),
+			PlanetGold:              g.DisplayNumber(g.Planet.Gold),
+			IsBoss:                  g.Planet.IsBoss,
+			CurrentLevel:            g.CurrentLevel,
+			MaxLevel:                g.MaxLevel,
+			CurrentStage:            g.CurrentStage,
+			MaxStage:                g.MaxStage,
+			DiamondUpgradesUnlocked: g.DiamondUpgradesUnlocked,
+			PlanetsDestroyed:        g.DisplayNumber(g.PlanetsDestroyed),
+			Store:                   store,
+			Ship:                    ship,
 		},
 	}
 	enc, _ := json.Marshal(message)

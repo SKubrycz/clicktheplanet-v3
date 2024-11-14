@@ -416,14 +416,16 @@ func (g *Game) UpgradeDiamondUpgrade(index int, levels int) string {
 func (g *Game) CalculateDiamondUpgrade(index int) {
 	if index != -1 {
 		if entry, ok := g.Ship[index]; ok {
-			entry.DiamondUpgrade.Cost = int64(math.Pow(g.Ship[index].DiamondUpgrade.Constant, float64(g.Ship[index].DiamondUpgrade.BaseCost)))
+			pow := math.Pow(g.Ship[index].DiamondUpgrade.Constant, float64(g.Ship[index].DiamondUpgrade.Level))
+			entry.DiamondUpgrade.Cost = int64(pow * float64(g.Ship[index].DiamondUpgrade.BaseCost))
 			entry.DiamondUpgrade.Multiplier = float64(2 * entry.DiamondUpgrade.Level)
 			g.Ship[index] = entry
 		}
 	} else if index == -1 {
 		for k := range g.Ship {
 			if entry, ok := g.Ship[k]; ok {
-				entry.DiamondUpgrade.Cost = int64(math.Pow(g.Ship[k].DiamondUpgrade.Constant, float64(g.Ship[k].DiamondUpgrade.BaseCost)))
+				pow := math.Pow(g.Ship[k].DiamondUpgrade.Constant, float64(g.Ship[k].DiamondUpgrade.Level))
+				entry.DiamondUpgrade.Cost = int64(pow * float64(g.Ship[k].DiamondUpgrade.BaseCost))
 				entry.DiamondUpgrade.Multiplier = float64(2 * entry.DiamondUpgrade.Level)
 				g.Ship[k] = entry
 			}

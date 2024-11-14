@@ -85,7 +85,8 @@ export default function Settings() {
               borderRadius: "5px",
               outline: 0,
               boxShadow: "0px 0px 15px black",
-              backgroundColor: "rgba(10, 10, 10, 0.9)",
+              backgroundColor: "rgba(10, 10, 10, 0.8)",
+              backdropFilter: "blur(5px)",
             }}
           >
             <Typography
@@ -119,6 +120,7 @@ export default function Settings() {
                     <input
                       type="checkbox"
                       className="settings-checkbox"
+                      title="Toggle option"
                       checked={settingsData[`option${i + 1}`]}
                       onChange={() => handleOptionToggle(i + 1)}
                     ></input>
