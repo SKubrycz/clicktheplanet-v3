@@ -7,7 +7,7 @@ import { UpgradeElement } from "@/lib/game/upgradeSlice";
 import { SetErrorMessage, SetError } from "@/lib/game/errorSlice";
 
 import { IconButton } from "@mui/material";
-import { ArrowUpward } from "@mui/icons-material";
+import { ArrowUpward, ElectricBoltOutlined } from "@mui/icons-material";
 
 import Gold from "@/assets/svg/gold.svg";
 import Image from "next/image";
@@ -90,6 +90,21 @@ export default function ShipElement({
         <div className="ship-element-title">
           {title} - Level: {gameData?.ship[index]?.level} | Multiplier: x
           {gameData?.ship[index]?.multiplier}
+          {gameData?.diamondUpgradesUnlocked ? (
+            <>
+              {" "}
+              |{" "}
+              <ElectricBoltOutlined
+                sx={{
+                  width: 22,
+                  height: 22,
+                  color: "lightskyblue",
+                  cursor: "pointer",
+                }}
+              ></ElectricBoltOutlined>
+              x{gameData?.ship[index]?.diamondUpgrade.multiplier}
+            </>
+          ) : undefined}
         </div>
         <div className="ship-element-description">
           {description}{" "}
