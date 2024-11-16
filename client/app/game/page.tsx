@@ -12,6 +12,7 @@ import { SetErrorMessage } from "@/lib/game/errorSlice";
 import { SetGlobalError } from "@/lib/game/globalErrorSlice";
 import { SetSettings } from "@/lib/game/settingsSlice";
 import type { SettingsState } from "@/lib/game/settingsSlice";
+import { SetUser } from "@/lib/game/userSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Alert, CircularProgress, Snackbar } from "@mui/material";
 
@@ -49,6 +50,7 @@ export default function Game() {
       }
       let data = await res.json();
       console.log(data);
+      dispatch(SetUser(data));
     } catch (err: unknown) {
       if (err instanceof Response) {
         console.error("Error: ", err);

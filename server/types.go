@@ -14,6 +14,11 @@ type LoginCredentials struct {
 
 type UserId string
 
+type UserData struct {
+	Login string `json:"login"`
+	// also later image
+}
+
 type ShipUpgradeData struct {
 	Level        int64
 	DiamondLevel int64

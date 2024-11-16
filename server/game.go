@@ -325,6 +325,7 @@ func ActionHandler(g *Game, action string) []byte {
 			g.CalculateDiamondUpgrade(unmarshaled.Index)
 			g.CalculateStore(unmarshaled.Index)
 			g.CalculateShip(-1)
+
 			store := map[int]StoreDataMessage{}
 			for k := range g.Store {
 				s := new(StoreDataMessage)

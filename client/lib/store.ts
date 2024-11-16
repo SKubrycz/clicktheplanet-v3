@@ -6,6 +6,7 @@ import levelReducer from "@/lib/game/levelSlice";
 import errorReducer from "@/lib/game/errorSlice";
 import globalErrorReducer from "@/lib/game/globalErrorSlice";
 import settingsReducer from "@/lib/game/settingsSlice";
+import userReducer from "@/lib/game/userSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -16,6 +17,7 @@ export const makeStore = () => {
       error: errorReducer,
       globalError: globalErrorReducer,
       settings: settingsReducer,
+      user: userReducer,
     },
   });
 };

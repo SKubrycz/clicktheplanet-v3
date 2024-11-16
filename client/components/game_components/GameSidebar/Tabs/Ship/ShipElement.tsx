@@ -99,7 +99,6 @@ export default function ShipElement({
                   width: 22,
                   height: 22,
                   color: "lightskyblue",
-                  cursor: "pointer",
                 }}
               ></ElectricBoltOutlined>
               x{gameData?.ship[index]?.diamondUpgrade.multiplier}

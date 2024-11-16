@@ -92,7 +92,22 @@ func (s *Server) handleGame(w http.ResponseWriter, r *http.Request) {
 	// Here the user game state data is going to be fetched from the database
 
 	if r.Method == "GET" {
-		writeJSON(w, http.StatusOK, "Welcome to /game")
+		const userId UserId = "userid" // key of type UserId - it has to stay here
+		id, ok := r.Context().Value(userId).(int)
+		if !ok {
+			writeJSON(w, http.StatusForbidden, "Not authorized")
+			return
+		}
+		user, err := s.db.GetAccountById(id)
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, "Internal server error")
+		}
+
+		userData := UserData{
+			Login: user.Login,
+		}
+
+		writeJSON(w, http.StatusOK, userData)
 		return
 	} else {
 		writeJSON(w, http.StatusMethodNotAllowed, "Method not allowed")

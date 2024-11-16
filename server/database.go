@@ -10,6 +10,7 @@ type Database interface {
 	CreateAccount(*User) error
 	DeleteAccountById(id int) error
 	GetAccountByLogin(string) (*User, error)
+	GetAccountById(id int) (*User, error)
 	GetGameByUserId(id int) (*GameData, error)
 	SaveGameProgress(userId int, g *Game) error
 }
@@ -151,6 +152,30 @@ func (p *Postgres) GetAccountByLogin(login string) (*User, error) {
 
 	fmt.Println("Searching for existing user...")
 	rows, err := p.db.Query(query, login)
+	if err != nil {
+		return nil, err
+	}
+
+	var user *User
+	for rows.Next() {
+		user = new(User)
+		err = rows.Scan(
+			&user.Id,
+			&user.Login,
+			&user.Email,
+			&user.Password,
+			&user.CreatedAt,
+		)
+	}
+	fmt.Println("User result: ", user)
+	return user, err
+}
+
+func (p *Postgres) GetAccountById(id int) (*User, error) {
+	query := `SELECT * FROM users WHERE id = $1`
+
+	fmt.Println("Searching for existing user...")
+	rows, err := p.db.Query(query, id)
 	if err != nil {
 		return nil, err
 	}

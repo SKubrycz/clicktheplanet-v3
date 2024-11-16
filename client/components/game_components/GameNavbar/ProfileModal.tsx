@@ -6,12 +6,15 @@ import { useRouter } from "next/navigation";
 import { Box, Modal, ThemeProvider, Typography } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import { defaultTheme } from "@/assets/defaultTheme";
+import { useAppSelector } from "@/lib/hooks";
 
 interface ProfileModalProps {
   handleSocketClose: () => Promise<void>;
 }
 
 export default function ProfileModal({ handleSocketClose }: ProfileModalProps) {
+  const userData = useAppSelector((state) => state.user);
+
   const [open, setOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const router = useRouter();
@@ -127,7 +130,7 @@ export default function ProfileModal({ handleSocketClose }: ProfileModalProps) {
                   alignItems: "center",
                 }}
               >
-                <Typography variant="h6">Nickname</Typography>
+                <Typography variant="h6">{userData?.login}</Typography>
                 <button
                   className="profile-logout-btn"
                   onClick={(e) => handleLogout(e)}

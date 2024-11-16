@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction, current } from "@reduxjs/toolkit";
-import { LargeNumberLike } from "crypto";
 
 export interface Store {
   index: number;
