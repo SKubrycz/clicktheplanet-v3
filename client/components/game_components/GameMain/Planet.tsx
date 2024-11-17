@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { setLevel } from "@/lib/game/levelSlice";
+import { IconButton } from "@mui/material";
 
 interface Loaded {
   isLoaded: boolean;
@@ -64,6 +65,8 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   let seed =
     gameData?.currentLevel * gameData?.currentLevel +
     gameData?.currentStage * gameData?.currentStage;
+  seed = (31764 * (seed + 936)) % 5492340;
+
   let size = 1;
   let ctx: CanvasRenderingContext2D | null;
   let imageData: ImageData;
@@ -113,6 +116,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       seed =
         gameData?.currentLevel * gameData?.currentLevel +
         gameData?.currentStage * gameData?.currentStage;
+      seed = (31764 * (seed + 936)) % 5492340;
 
       workerRef.current = new Worker(
         new URL("../../../utilities/workers/drawWorker.ts", import.meta.url)
@@ -258,18 +262,25 @@ export default function Planet({ planetRef, click }: PlanetProps) {
 
   return (
     <>
-      <KeyboardArrowLeft
-        aria-label="previous-level-button"
-        onClick={() => goToPrevious()}
+      <IconButton
+        disabled={gameData?.currentLevel > 0 ? false : true}
         sx={{
           marginRight: "3em",
           cursor: "pointer",
-          fontSize: "30px",
           "&:hover": {
+            background: "unset",
             filter: "drop-shadow(0px 0px 12px white)",
           },
         }}
-      ></KeyboardArrowLeft>
+      >
+        <KeyboardArrowLeft
+          aria-label="previous-level-button"
+          onClick={() => goToPrevious()}
+          sx={{
+            fontSize: "30px",
+          }}
+        ></KeyboardArrowLeft>
+      </IconButton>
       <canvas
         className="main-planet-image"
         width="200"
@@ -277,18 +288,25 @@ export default function Planet({ planetRef, click }: PlanetProps) {
         ref={planetRef}
         onClick={click}
       ></canvas>
-      <KeyboardArrowRight
-        aria-label="next-level-button"
-        onClick={() => goToNext()}
+      <IconButton
+        disabled={gameData?.currentLevel === gameData?.maxLevel ? true : false}
         sx={{
           marginLeft: "3em",
           cursor: "pointer",
-          fontSize: "30px",
           "&:hover": {
+            background: "unset",
             filter: "drop-shadow(0px 0px 12px white)",
           },
         }}
-      ></KeyboardArrowRight>
+      >
+        <KeyboardArrowRight
+          aria-label="next-level-button"
+          onClick={() => goToNext()}
+          sx={{
+            fontSize: "30px",
+          }}
+        ></KeyboardArrowRight>
+      </IconButton>
     </>
   );
 }
