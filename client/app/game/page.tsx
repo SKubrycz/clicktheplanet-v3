@@ -14,7 +14,13 @@ import { SetSettings } from "@/lib/game/settingsSlice";
 import type { SettingsState } from "@/lib/game/settingsSlice";
 import { SetUser } from "@/lib/game/userSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { Alert, CircularProgress, Snackbar } from "@mui/material";
+import {
+  Alert,
+  CircularProgress,
+  Snackbar,
+  ThemeProvider,
+} from "@mui/material";
+import { defaultTheme } from "@/assets/defaultTheme";
 
 interface ActionMessage {
   action: string;
@@ -204,38 +210,40 @@ export default function Game() {
   };
 
   return (
-    <div className="game-wrapper" style={{ backgroundColor: bgColor }}>
-      {loading ? (
-        <CircularProgress
-          sx={{
-            position: "absolute",
-            transform: "translate(-50%, -50%)",
-            top: "50%",
-            left: "50%",
-          }}
-        ></CircularProgress>
-      ) : (
-        <>
-          <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
-            <Alert
-              onClose={handleClose}
-              severity="error"
-              variant="filled"
-              sx={{ width: "100%" }}
-            >
-              <b>{globalErrorData.message}</b> - Status code:{" "}
-              {globalErrorData.statusCode}
-            </Alert>
-          </Snackbar>
-          <GameNavbar
-            handleSocketClose={() => handleSocketClose()}
-          ></GameNavbar>
-          <div className="game-content-wrapper">
-            <GameSidebar></GameSidebar>
-            <GameMain planetClick={handlePlanetClickData}></GameMain>
-          </div>
-        </>
-      )}
-    </div>
+    <ThemeProvider theme={defaultTheme}>
+      <div className="game-wrapper" style={{ backgroundColor: bgColor }}>
+        {loading ? (
+          <CircularProgress
+            sx={{
+              position: "absolute",
+              transform: "translate(-50%, -50%)",
+              top: "50%",
+              left: "50%",
+            }}
+          ></CircularProgress>
+        ) : (
+          <>
+            <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+              <Alert
+                onClose={handleClose}
+                severity="error"
+                variant="filled"
+                sx={{ width: "100%" }}
+              >
+                <b>{globalErrorData.message}</b> - Status code:{" "}
+                {globalErrorData.statusCode}
+              </Alert>
+            </Snackbar>
+            <GameNavbar
+              handleSocketClose={() => handleSocketClose()}
+            ></GameNavbar>
+            <div className="game-content-wrapper">
+              <GameSidebar></GameSidebar>
+              <GameMain planetClick={handlePlanetClickData}></GameMain>
+            </div>
+          </>
+        )}
+      </div>
+    </ThemeProvider>
   );
 }

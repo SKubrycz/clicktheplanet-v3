@@ -3,9 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { Box, Modal, ThemeProvider, Typography } from "@mui/material";
+import { Box, Modal, Typography } from "@mui/material";
 import { Person } from "@mui/icons-material";
-import { defaultTheme } from "@/assets/defaultTheme";
 import { useAppSelector } from "@/lib/hooks";
 
 interface ProfileModalProps {
@@ -80,115 +79,110 @@ export default function ProfileModal({ handleSocketClose }: ProfileModalProps) {
 
   return (
     <>
-      <ThemeProvider theme={defaultTheme}>
-        <div
-          aria-labelledby="modal-modal-title"
-          onClick={() => handleModalOpen()}
+      <div
+        aria-labelledby="modal-modal-title"
+        onClick={() => handleModalOpen()}
+      >
+        <Person></Person>
+      </div>
+      <Modal open={open} onClose={() => handleModalClose()}>
+        <Box
+          sx={{
+            minWidth: 300,
+            p: "0.5em",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            border: "1px solid gray",
+            borderRadius: "5px",
+            outline: 0,
+            boxShadow: "0px 0px 15px black",
+            backgroundColor: "rgba(10, 10, 10, 0.9)",
+          }}
         >
-          <Person></Person>
-        </div>
-        <Modal open={open} onClose={() => handleModalClose()}>
+          <Typography id="modal-modal-title" variant="h5">
+            Profile
+          </Typography>
           <Box
             sx={{
-              minWidth: 300,
-              p: "0.5em",
+              width: "90%",
+              p: "0.7em",
               display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
+              justifyContent: "space-around",
               alignItems: "center",
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              border: "1px solid gray",
-              borderRadius: "5px",
-              outline: 0,
-              boxShadow: "0px 0px 15px black",
-              backgroundColor: "rgba(10, 10, 10, 0.9)",
+              border: "none",
             }}
           >
-            <Typography id="modal-modal-title" variant="h5">
-              Profile
-            </Typography>
+            <div className="profile-img-lg">Image</div>
             <Box
               sx={{
-                width: "90%",
-                p: "0.7em",
+                minWidth: 150,
                 display: "flex",
-                justifyContent: "space-around",
+                flexDirection: "column",
+                justifyContent: "center",
                 alignItems: "center",
-                border: "none",
               }}
             >
-              <div className="profile-img-lg">Image</div>
+              <Typography variant="h6">{userData?.login}</Typography>
+              <button
+                className="profile-logout-btn"
+                onClick={(e) => handleLogout(e)}
+              >
+                Logout
+              </button>
+            </Box>
+            <Modal open={deleteOpen} onClose={() => handleDeleteAccountClose()}>
               <Box
                 sx={{
-                  minWidth: 150,
+                  minWidth: 300,
+                  minHeight: 200,
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
+                  border: "1px solid white",
+                  borderRadius: "5px",
+                  backgroundColor: "rgb(0, 0, 0)",
                 }}
               >
-                <Typography variant="h6">{userData?.login}</Typography>
-                <button
-                  className="profile-logout-btn"
-                  onClick={(e) => handleLogout(e)}
-                >
-                  Logout
-                </button>
-              </Box>
-              <Modal
-                open={deleteOpen}
-                onClose={() => handleDeleteAccountClose()}
-              >
-                <Box
-                  sx={{
-                    minWidth: 300,
-                    minHeight: 200,
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    border: "1px solid white",
-                    borderRadius: "5px",
-                    backgroundColor: "rgb(0, 0, 0)",
-                  }}
-                >
-                  <Typography variant="h5">Are you sure?</Typography>
-                  <Typography variant="body1">
-                    This action is irreversible!
-                  </Typography>
-                  <Box>
-                    <button
-                      className="profile-delete-account-confirm"
-                      onClick={(e) => handleDeleteAccountConfirm(e)}
-                    >
-                      Yes (Delete account)
-                    </button>
-                    <button
-                      className="profile-delete-account-cancel"
-                      onClick={() => handleDeleteAccountClose()}
-                    >
-                      No (Cancel)
-                    </button>
-                  </Box>
+                <Typography variant="h5">Are you sure?</Typography>
+                <Typography variant="body1">
+                  This action is irreversible!
+                </Typography>
+                <Box>
+                  <button
+                    className="profile-delete-account-confirm"
+                    onClick={(e) => handleDeleteAccountConfirm(e)}
+                  >
+                    Yes (Delete account)
+                  </button>
+                  <button
+                    className="profile-delete-account-cancel"
+                    onClick={() => handleDeleteAccountClose()}
+                  >
+                    No (Cancel)
+                  </button>
                 </Box>
-              </Modal>
-            </Box>
-            <button
-              className="profile-delete-account-modal-btn"
-              onClick={() => handleDeleteAccount()}
-            >
-              Delete account
-            </button>
+              </Box>
+            </Modal>
           </Box>
-        </Modal>
-      </ThemeProvider>
+          <button
+            className="profile-delete-account-modal-btn"
+            onClick={() => handleDeleteAccount()}
+          >
+            Delete account
+          </button>
+        </Box>
+      </Modal>
     </>
   );
 }

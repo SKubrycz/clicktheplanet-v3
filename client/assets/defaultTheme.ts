@@ -8,7 +8,7 @@ export const defaultTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: "Space Grotesk",
+    fontFamily: '"Space Grotesk", sans-serif',
   },
   components: {
     MuiFormControl: {
