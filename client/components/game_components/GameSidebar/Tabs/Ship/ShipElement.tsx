@@ -101,7 +101,7 @@ export default function ShipElement({
                   color: "lightskyblue",
                 }}
               ></ElectricBoltOutlined>
-              x{gameData?.ship[index]?.diamondUpgrade.multiplier}
+              x{gameData?.diamondUpgrade[index].multiplier}
             </>
           ) : undefined}
         </div>

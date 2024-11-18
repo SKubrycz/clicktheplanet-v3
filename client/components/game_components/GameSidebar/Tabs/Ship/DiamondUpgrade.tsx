@@ -79,11 +79,11 @@ export default function DiamondUpgrade({ title, index }: DiamondUpgradeProps) {
     <div className="diamond-upgrade">
       <Box sx={{ padding: "0.4em" }}>
         <Typography variant="h6" sx={{ fontSize: "18px" }}>
-          {title} | Lv. {gameData?.ship[index].diamondUpgrade.level} | x
-          {gameData?.ship[index].diamondUpgrade.multiplier}
+          {title} | Lv. {gameData?.diamondUpgrade[index].level} | x
+          {gameData?.diamondUpgrade[index].multiplier}
         </Typography>
         <div>
-          Cost: {gameData?.ship[index].diamondUpgrade.cost} &nbsp;
+          Cost: {gameData?.diamondUpgrade[index].cost} &nbsp;
           <Image src={Diamond} alt="diamond" width={13} height={13}></Image>
         </div>
       </Box>
