@@ -19,6 +19,7 @@ interface StoreMessage {
 }
 
 interface DiamondUpgrade {
+  index: number;
   level: number;
   multiplier: number;
   cost: number;
@@ -26,6 +27,12 @@ interface DiamondUpgrade {
 
 interface DiamondUpgradeWrapper {
   [key: number]: DiamondUpgrade;
+}
+
+interface DiamondUpgradeMessage {
+  gold: string;
+  diamonds: number;
+  diamondUpgrade: DiamondUpgrade;
 }
 
 export interface Ship {
@@ -132,6 +139,7 @@ export const gameObject: Data = {
   },
   diamondUpgrade: {
     1: {
+      index: 1,
       level: 0,
       multiplier: 1.0,
       cost: 1,
@@ -198,6 +206,25 @@ export const gameSlice = createSlice({
         },
       };
     },
+    UpdateDiamondUpgrade: (
+      state,
+      action: PayloadAction<DiamondUpgradeMessage>
+    ) => {
+      return {
+        ...state,
+        gold: action.payload.gold,
+        diamonds: action.payload.diamonds,
+        diamondUpgrade: {
+          ...state.diamondUpgrade,
+          [action.payload.diamondUpgrade.index]: {
+            index: action.payload.diamondUpgrade.index,
+            level: action.payload.diamondUpgrade.level,
+            cost: action.payload.diamondUpgrade.cost,
+            multiplier: action.payload.diamondUpgrade.multiplier,
+          },
+        },
+      };
+    },
     DealDps: (state, action: PayloadAction<Data>) => {
       return {
         ...state,
@@ -225,7 +252,14 @@ export const gameSlice = createSlice({
   },
 });
 
-export const { Init, Click, Upgrade, UpdateStore, UpdateShip, DealDps } =
-  gameSlice.actions;
+export const {
+  Init,
+  Click,
+  Upgrade,
+  UpdateStore,
+  UpdateShip,
+  UpdateDiamondUpgrade,
+  DealDps,
+} = gameSlice.actions;
 
 export default gameSlice.reducer;

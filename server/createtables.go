@@ -32,7 +32,7 @@ func createDiamondUpgradeTable(p *Postgres) error {
 		title VARCHAR(50),
 		description TEXT
 	);
-	CREATE UNIQUE INDEX IF NOT EXISTS idx_title_store ON diamond_upgrade (title);
+	CREATE UNIQUE INDEX IF NOT EXISTS idx_title_diamond_upgrade ON diamond_upgrade (title);
 	`
 
 	_, err := p.db.Exec(createDiamondUpgrade)
@@ -117,6 +117,7 @@ func createGameDiamondUpgradeTable(p *Postgres) error {
 		id SERIAL PRIMARY KEY,
 		level BIGINT,
 		game_id INT NOT NULL,
+		diamond_upgrade_id INT NOT NULL,
 		FOREIGN KEY (game_id)
 		REFERENCES games(id),
 		FOREIGN KEY (diamond_upgrade_id)

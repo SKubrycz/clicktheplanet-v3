@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"math/big"
 )
 
 func NewGame(gameData *GameData) *Game {
+	fmt.Println("ASSIGNING gameData")
+
 	// big numbers initialization and db data assignment to variables
 	id := gameData.Id
 

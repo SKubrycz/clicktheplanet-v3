@@ -46,7 +46,7 @@ func (p *Postgres) CreateAccount(u *User) error {
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id;
 	`
 	queryGameShip := `
-	INSERT INTO game_ship (level, diamond_level, game_id, ship_id) VALUES ($1, $2, $3, $4);
+	INSERT INTO game_ship (level, game_id, ship_id) VALUES ($1, $2, $3);
 	`
 
 	queryGameStore := `
@@ -54,7 +54,7 @@ func (p *Postgres) CreateAccount(u *User) error {
 	`
 
 	queryGameDiamondUpgrade := `
-	INSERT INTO game_diamond_upgrade (level, game_id, game_diamond_upgrade_id) VALUES ($1, $2, $3);
+	INSERT INTO game_diamond_upgrade (level, game_id, diamond_upgrade_id) VALUES ($1, $2, $3);
 	`
 
 	queryCountShip := `
@@ -103,7 +103,7 @@ func (p *Postgres) CreateAccount(u *User) error {
 	}
 
 	for i := 1; i <= shipCount; i++ {
-		_, err = p.db.Exec(queryGameShip, 0, 0, gameId, i)
+		_, err = p.db.Exec(queryGameShip, 0, gameId, i)
 		if err != nil {
 			fmt.Println(err)
 			return err
@@ -228,7 +228,7 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 	`
 
 	gameShipQuery := `
-	SELECT level, diamond_level FROM game_ship WHERE game_id = $1 ORDER BY id ASC
+	SELECT level FROM game_ship WHERE game_id = $1 ORDER BY id ASC
 	`
 
 	gameStoreQuery := `
@@ -326,8 +326,8 @@ func (p *Postgres) SaveGameProgress(userId int, g *Game) error {
 	// Also, save store and ship upgrades
 	queryGameShip := `
 		UPDATE game_ship
-		SET level = $1, diamond_level = $2
-		WHERE game_id = $3 AND ship_id = $4;
+		SET level = $1
+		WHERE game_id = $2 AND ship_id = $3;
 	`
 
 	queryGameStore := `
@@ -358,7 +358,7 @@ func (p *Postgres) SaveGameProgress(userId int, g *Game) error {
 	}
 
 	for i := 1; i <= len(g.Ship); i++ {
-		_, err := p.db.Exec(queryGameShip, g.Ship[i].Level, g.Ship[i].DiamondUpgrade.Level, g.Id, i)
+		_, err := p.db.Exec(queryGameShip, g.Ship[i].Level, g.Id, i)
 		if err != nil {
 			return err
 		}
