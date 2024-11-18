@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef } from "react";
 
 import StoreElement from "./StoreElement";
 
@@ -12,7 +12,7 @@ interface IStoreElement {
 }
 
 export default function Store() {
-  const [storeElementsArr, setStoreElementsArr] = useState<IStoreElement[]>([
+  const storeElementsArr = useRef<IStoreElement[]>([
     { title: `Element 1`, desc: `Element 1 description` },
     { title: `Element 2`, desc: `Element 2 description` },
     { title: `Element 3`, desc: `Element 3 description` },
@@ -29,7 +29,7 @@ export default function Store() {
 
   return (
     <div className="store-content-scroll">
-      {storeElementsArr.map((el, i) => {
+      {storeElementsArr.current.map((el, i) => {
         return (
           <StoreElement
             key={i}
