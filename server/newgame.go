@@ -210,13 +210,6 @@ func NewGame(gameData *GameData) *Game {
 			BaseDamage: new(big.Float),
 			Locked:     true,
 			Constant:   1.3,
-			DiamondUpgrade: DiamondUpgrade{
-				Level:      gameData.Ship[1].DiamondLevel,
-				Multiplier: 1.0,
-				BaseCost:   1,
-				Cost:       1,
-				Constant:   1.5,
-			},
 		},
 		2: {
 			Level:      gameData.Ship[2].Level,
@@ -227,13 +220,6 @@ func NewGame(gameData *GameData) *Game {
 			BaseDamage: new(big.Float),
 			Locked:     true,
 			Constant:   1.2,
-			DiamondUpgrade: DiamondUpgrade{
-				Level:      gameData.Ship[2].DiamondLevel,
-				Multiplier: 1.0,
-				BaseCost:   1,
-				Cost:       1,
-				Constant:   1.5,
-			},
 		},
 		3: {
 			Level:      gameData.Ship[3].Level,
@@ -244,13 +230,6 @@ func NewGame(gameData *GameData) *Game {
 			BaseDamage: new(big.Float),
 			Locked:     true,
 			Constant:   1.5,
-			DiamondUpgrade: DiamondUpgrade{
-				Level:      gameData.Ship[3].DiamondLevel,
-				Multiplier: 1.0,
-				BaseCost:   1,
-				Cost:       1,
-				Constant:   1.5,
-			},
 		},
 		4: {
 			Level:      gameData.Ship[4].Level,
@@ -261,13 +240,6 @@ func NewGame(gameData *GameData) *Game {
 			BaseDamage: new(big.Float),
 			Locked:     true,
 			Constant:   1.1,
-			DiamondUpgrade: DiamondUpgrade{
-				Level:      gameData.Ship[4].DiamondLevel,
-				Multiplier: 1.0,
-				BaseCost:   1,
-				Cost:       1,
-				Constant:   1.5,
-			},
 		},
 	}
 
@@ -291,6 +263,44 @@ func NewGame(gameData *GameData) *Game {
 	ship[3].Damage.SetString(ship[3].BaseDamage.String())
 	ship[4].Damage.SetString(ship[4].BaseDamage.String())
 
+	diamondUpgrade := map[int]DiamondUpgrade{
+		1: {
+			Level:      gameData.DiamondUpgrade[1].Level,
+			Multiplier: 1.0,
+			BaseCost:   1,
+			Cost:       1,
+			Constant:   1.5,
+		},
+		2: {
+			Level:      gameData.DiamondUpgrade[2].Level,
+			Multiplier: 1.0,
+			BaseCost:   1,
+			Cost:       1,
+			Constant:   1.5,
+		},
+		3: {
+			Level:      gameData.DiamondUpgrade[3].Level,
+			Multiplier: 1.0,
+			BaseCost:   1,
+			Cost:       1,
+			Constant:   1.5,
+		},
+		4: {
+			Level:      gameData.DiamondUpgrade[4].Level,
+			Multiplier: 1.0,
+			BaseCost:   1,
+			Cost:       1,
+			Constant:   1.5,
+		},
+		5: {
+			Level:      gameData.DiamondUpgrade[5].Level,
+			Multiplier: 1.0,
+			BaseCost:   1,
+			Cost:       1,
+			Constant:   1.5,
+		},
+	}
+
 	return &Game{
 		Id:                      id,
 		Gold:                    gold,
@@ -308,6 +318,7 @@ func NewGame(gameData *GameData) *Game {
 		Planet:                  planet,
 		Store:                   store,
 		Ship:                    ship,
+		DiamondUpgrade:          diamondUpgrade,
 		Ch:                      make(chan string),
 	}
 }

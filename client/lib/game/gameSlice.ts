@@ -24,6 +24,10 @@ interface DiamondUpgrade {
   cost: number;
 }
 
+interface DiamondUpgradeWrapper {
+  [key: number]: DiamondUpgrade;
+}
+
 export interface Ship {
   index: number;
   level: number;
@@ -31,7 +35,6 @@ export interface Ship {
   multiplier: number;
   damage: string;
   locked: boolean;
-  diamondUpgrade: DiamondUpgrade;
 }
 
 export interface ShipWrapper {
@@ -51,6 +54,7 @@ interface UpgradeMessage {
   maxDamage: string;
   store: StoreWrapper;
   ship: ShipWrapper;
+  diamondUpgrade: DiamondUpgradeWrapper;
 }
 
 export interface DamageDone {
@@ -78,6 +82,7 @@ export interface Data {
   planetsDestroyed: string;
   store: StoreWrapper;
   ship: ShipWrapper;
+  diamondUpgrade: DiamondUpgradeWrapper;
 }
 
 // export interface UpgradeMessage {
@@ -123,11 +128,13 @@ export const gameObject: Data = {
       multiplier: 0.0,
       damage: "0",
       locked: true,
-      diamondUpgrade: {
-        level: 0,
-        multiplier: 1.0,
-        cost: 1,
-      },
+    },
+  },
+  diamondUpgrade: {
+    1: {
+      level: 0,
+      multiplier: 1.0,
+      cost: 1,
     },
   },
 };
@@ -153,6 +160,7 @@ export const gameSlice = createSlice({
         maxDamage: action.payload.maxDamage,
         store: action.payload.store,
         ship: action.payload.ship,
+        diamondUpgrade: action.payload.diamondUpgrade,
       };
     },
     UpdateStore: (state, action: PayloadAction<StoreMessage>) => {
@@ -186,11 +194,6 @@ export const gameSlice = createSlice({
             multiplier: action.payload.ship.multiplier,
             damage: action.payload.ship.damage,
             locked: action.payload.ship.locked,
-            diamondUpgrade: {
-              level: action.payload.ship.diamondUpgrade.level,
-              multiplier: action.payload.ship.diamondUpgrade.multiplier,
-              cost: action.payload.ship.diamondUpgrade.cost,
-            },
           },
         },
       };
@@ -216,6 +219,7 @@ export const gameSlice = createSlice({
         planetsDestroyed: action.payload.planetsDestroyed,
         store: action.payload.store,
         ship: action.payload.ship,
+        diamondUpgrade: action.payload.diamondUpgrade,
       };
     },
   },

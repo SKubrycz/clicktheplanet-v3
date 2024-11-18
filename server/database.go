@@ -53,12 +53,20 @@ func (p *Postgres) CreateAccount(u *User) error {
 	INSERT INTO game_store (level, game_id, store_id) VALUES ($1, $2, $3);
 	`
 
+	queryGameDiamondUpgrade := `
+	INSERT INTO game_diamond_upgrade (level, game_id, game_diamond_upgrade_id) VALUES ($1, $2, $3);
+	`
+
 	queryCountShip := `
 	SELECT COUNT(id) FROM ship;
 	`
 
 	queryCountStore := `
 	SELECT count(id) FROM store;
+	`
+
+	queryCountDiamondUpgrade := `
+	SELECT count(id) from diamond_upgrade;
 	`
 
 	_, err := p.db.Exec(queryUser, u.Login, u.Email, u.Password, u.CreatedAt)
@@ -88,6 +96,11 @@ func (p *Postgres) CreateAccount(u *User) error {
 	if err != nil {
 		return err
 	}
+	var diamondUpgradeCount int
+	err = p.db.QueryRow(queryCountDiamondUpgrade).Scan(&diamondUpgradeCount)
+	if err != nil {
+		return err
+	}
 
 	for i := 1; i <= shipCount; i++ {
 		_, err = p.db.Exec(queryGameShip, 0, 0, gameId, i)
@@ -103,6 +116,13 @@ func (p *Postgres) CreateAccount(u *User) error {
 			return err
 		}
 	}
+	for i := 1; i <= diamondUpgradeCount; i++ {
+		_, err = p.db.Exec(queryGameDiamondUpgrade, 0, gameId, i)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+	}
 
 	return nil
 }
@@ -112,6 +132,7 @@ func (p *Postgres) DeleteAccountById(id int) error {
 
 	deleteFromGameStore := `DELETE FROM game_store WHERE game_id = $1`
 	deleteFromGameShip := `DELETE FROM game_ship WHERE game_id = $1`
+	deleteFromGameDiamondUpgrade := `DELETE FROM game_diamond_upgrade WHERE game_id = $1`
 	deleteFromGames := `DELETE FROM games WHERE user_id = $1`
 	deleteFromUsers := `DELETE FROM users WHERE id = $1`
 
@@ -128,6 +149,11 @@ func (p *Postgres) DeleteAccountById(id int) error {
 	}
 
 	_, err = p.db.Exec(deleteFromGameShip, gameId)
+	if err != nil {
+		return err
+	}
+
+	_, err = p.db.Exec(deleteFromGameDiamondUpgrade, gameId)
 	if err != nil {
 		return err
 	}
@@ -209,9 +235,14 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 	SELECT level FROM game_store WHERE game_id = $1 ORDER BY id ASC
 	`
 
+	gameDiamondUpgradeQuery := `
+	SELECT level FROM game_diamond_upgrade WHERE game_id = $1 ORDER BY id ASC
+	`
+
 	var game = &GameData{
-		Store: map[int]StoreUpgradeData{},
-		Ship:  map[int]ShipUpgradeData{},
+		Store:          map[int]StoreUpgradeData{},
+		Ship:           map[int]ShipUpgradeData{},
+		DiamondUpgrade: map[int]DiamondUpgradeUpgradeData{},
 	}
 	err := p.db.QueryRow(gameQuery, id).Scan(
 		&game.Id,
@@ -237,7 +268,6 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 		ship := new(ShipUpgradeData)
 		err := rows.Scan(
 			&ship.Level,
-			&ship.DiamondLevel,
 		)
 		if err != nil {
 			return nil, err
@@ -260,6 +290,23 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 			return nil, err
 		}
 		game.Store[i] = *store
+		i++
+	}
+
+	i = 1
+	rows, err = p.db.Query(gameDiamondUpgradeQuery, game.Id)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		diamondUpgrade := new(DiamondUpgradeUpgradeData)
+		err := rows.Scan(
+			&diamondUpgrade.Level,
+		)
+		if err != nil {
+			return nil, err
+		}
+		game.DiamondUpgrade[i] = *diamondUpgrade
 		i++
 	}
 
@@ -289,6 +336,12 @@ func (p *Postgres) SaveGameProgress(userId int, g *Game) error {
 		WHERE game_id = $2 AND store_id = $3;
 	`
 
+	queryGameDiamondUpgrade := `
+		UPDATE game_diamond_upgrade
+		SET level = $1
+		WHERE game_id = $2 AND diamond_upgrade_id = $3;
+	`
+
 	_, err := p.db.Exec(queryGame,
 		g.Gold.String(),
 		g.Diamonds,
@@ -313,6 +366,13 @@ func (p *Postgres) SaveGameProgress(userId int, g *Game) error {
 
 	for i := 1; i <= len(g.Store); i++ {
 		_, err := p.db.Exec(queryGameStore, g.Store[i].Level, g.Id, i)
+		if err != nil {
+			return err
+		}
+	}
+
+	for i := 1; i <= len(g.DiamondUpgrade); i++ {
+		_, err := p.db.Exec(queryGameDiamondUpgrade, g.DiamondUpgrade[i].Level, g.Id, i)
 		if err != nil {
 			return err
 		}

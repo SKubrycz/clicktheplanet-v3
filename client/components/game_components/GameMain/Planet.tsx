@@ -264,6 +264,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
     <>
       <IconButton
         disabled={gameData?.currentLevel > 0 ? false : true}
+        onClick={() => goToPrevious()}
         sx={{
           marginRight: "3em",
           cursor: "pointer",
@@ -275,7 +276,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       >
         <KeyboardArrowLeft
           aria-label="previous-level-button"
-          onClick={() => goToPrevious()}
           sx={{
             fontSize: "30px",
           }}
@@ -290,6 +290,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       ></canvas>
       <IconButton
         disabled={gameData?.currentLevel === gameData?.maxLevel ? true : false}
+        onClick={() => goToNext()}
         sx={{
           marginLeft: "3em",
           cursor: "pointer",
@@ -301,7 +302,6 @@ export default function Planet({ planetRef, click }: PlanetProps) {
       >
         <KeyboardArrowRight
           aria-label="next-level-button"
-          onClick={() => goToNext()}
           sx={{
             fontSize: "30px",
           }}

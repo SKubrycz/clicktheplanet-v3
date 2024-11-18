@@ -20,15 +20,18 @@ type UserData struct {
 }
 
 type ShipUpgradeData struct {
-	Level        int64
-	DiamondLevel int64
-	Multiplier   float64
-	Damage       string
+	Level      int64
+	Multiplier float64
+	Damage     string
 }
 
 type StoreUpgradeData struct {
 	Level  int64
 	Damage string
+}
+
+type DiamondUpgradeUpgradeData struct {
+	Level int64
 }
 
 // For data retrieved from the database
@@ -44,4 +47,5 @@ type GameData struct {
 	PlanetsDestroyed string
 	Store            map[int]StoreUpgradeData
 	Ship             map[int]ShipUpgradeData
+	DiamondUpgrade   map[int]DiamondUpgradeUpgradeData
 }

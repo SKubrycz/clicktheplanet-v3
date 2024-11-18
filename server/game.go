@@ -15,25 +15,26 @@ import (
 // - next level
 
 type UserClick struct {
-	Gold                    string                   `json:"gold"`
-	Diamonds                int64                    `json:"diamonds"`
-	CurrentDamage           string                   `json:"currentDamage"`
-	MaxDamage               string                   `json:"maxDamage"`
-	DamageDone              DamageDoneData           `json:"damageDone"`
-	PlanetName              string                   `json:"planetName"`
-	CurrentHealth           string                   `json:"currentHealth"`
-	HealthPercent           int                      `json:"healthPercent"`
-	MaxHealth               string                   `json:"maxHealth"`
-	PlanetGold              string                   `json:"planetGold"`
-	IsBoss                  bool                     `json:"isBoss"`
-	CurrentLevel            int64                    `json:"currentLevel"`
-	MaxLevel                int64                    `json:"maxLevel"`
-	CurrentStage            uint8                    `json:"currentStage"`
-	MaxStage                uint8                    `json:"maxStage"`
-	DiamondUpgradesUnlocked bool                     `json:"diamondUpgradesUnlocked"`
-	PlanetsDestroyed        string                   `json:"planetsDestroyed"`
-	Store                   map[int]StoreDataMessage `json:"store"`
-	Ship                    map[int]ShipDataMessage  `json:"ship"`
+	Gold                    string                            `json:"gold"`
+	Diamonds                int64                             `json:"diamonds"`
+	CurrentDamage           string                            `json:"currentDamage"`
+	MaxDamage               string                            `json:"maxDamage"`
+	DamageDone              DamageDoneData                    `json:"damageDone"`
+	PlanetName              string                            `json:"planetName"`
+	CurrentHealth           string                            `json:"currentHealth"`
+	HealthPercent           int                               `json:"healthPercent"`
+	MaxHealth               string                            `json:"maxHealth"`
+	PlanetGold              string                            `json:"planetGold"`
+	IsBoss                  bool                              `json:"isBoss"`
+	CurrentLevel            int64                             `json:"currentLevel"`
+	MaxLevel                int64                             `json:"maxLevel"`
+	CurrentStage            uint8                             `json:"currentStage"`
+	MaxStage                uint8                             `json:"maxStage"`
+	DiamondUpgradesUnlocked bool                              `json:"diamondUpgradesUnlocked"`
+	PlanetsDestroyed        string                            `json:"planetsDestroyed"`
+	Store                   map[int]StoreDataMessage          `json:"store"`
+	Ship                    map[int]ShipDataMessage           `json:"ship"`
+	DiamondUpgrade          map[int]DiamondUpgradeDataMessage `json:"diamondUpgrade"`
 }
 
 type ActionMessage struct {
@@ -67,19 +68,19 @@ type StoreDataMessageWrapper struct {
 }
 
 type DiamondUpgradeDataMessage struct {
+	Index      int     `json:"index"`
 	Level      int64   `json:"level"`
 	Multiplier float64 `json:"multiplier"`
 	Cost       int64   `json:"cost"`
 }
 
 type ShipDataMessage struct {
-	Index          int                       `json:"index"`
-	Level          int64                     `json:"level"`
-	Cost           string                    `json:"cost"`
-	Multiplier     float64                   `json:"multiplier"`
-	Damage         string                    `json:"damage"`
-	Locked         bool                      `json:"locked"`
-	DiamondUpgrade DiamondUpgradeDataMessage `json:"diamondUpgrade"`
+	Index      int     `json:"index"`
+	Level      int64   `json:"level"`
+	Cost       string  `json:"cost"`
+	Multiplier float64 `json:"multiplier"`
+	Damage     string  `json:"damage"`
+	Locked     bool    `json:"locked"`
 }
 
 type ShipDataMessageWrapper struct {
@@ -89,13 +90,14 @@ type ShipDataMessageWrapper struct {
 }
 
 type UpgradeDataMessageWrapper struct {
-	Gold          string                   `json:"gold"`
-	Diamonds      int64                    `json:"diamonds"`
-	CurrentDamage string                   `json:"currentDamage"`
-	MaxDamage     string                   `json:"maxDamage"`
-	PlanetGold    string                   `json:"planetGold"`
-	Store         map[int]StoreDataMessage `json:"store"`
-	Ship          map[int]ShipDataMessage  `json:"ship"`
+	Gold           string                            `json:"gold"`
+	Diamonds       int64                             `json:"diamonds"`
+	CurrentDamage  string                            `json:"currentDamage"`
+	MaxDamage      string                            `json:"maxDamage"`
+	PlanetGold     string                            `json:"planetGold"`
+	Store          map[int]StoreDataMessage          `json:"store"`
+	Ship           map[int]ShipDataMessage           `json:"ship"`
+	DiamondUpgrade map[int]DiamondUpgradeDataMessage `json:"diamondUpgrade"`
 }
 
 type LevelDataMessage struct {
@@ -146,10 +148,16 @@ func ActionHandler(g *Game, action string) []byte {
 			} else {
 				s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 			}
-			s.DiamondUpgrade.Level = g.Ship[k].DiamondUpgrade.Level
-			s.DiamondUpgrade.Multiplier = g.Ship[k].DiamondUpgrade.Multiplier
-			s.DiamondUpgrade.Cost = g.Ship[k].DiamondUpgrade.Cost
 			ship[k] = *s
+		}
+		diamondUpgrade := map[int]DiamondUpgradeDataMessage{}
+		for k := range g.DiamondUpgrade {
+			d := new(DiamondUpgradeDataMessage)
+			d.Index = k
+			d.Level = g.DiamondUpgrade[k].Level
+			d.Cost = g.DiamondUpgrade[k].Cost
+			d.Multiplier = g.DiamondUpgrade[k].Multiplier
+			diamondUpgrade[k] = *d
 		}
 		// Wrapper to indicate for frontend how to behave depending on the action field
 		message := ActionMessage{
@@ -174,6 +182,7 @@ func ActionHandler(g *Game, action string) []byte {
 				PlanetsDestroyed:        g.DisplayNumber(g.PlanetsDestroyed),
 				Store:                   store,
 				Ship:                    ship,
+				DiamondUpgrade:          diamondUpgrade,
 			},
 		}
 		encoded, _ := json.Marshal(message)
@@ -219,10 +228,16 @@ func ActionHandler(g *Game, action string) []byte {
 			} else {
 				s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 			}
-			s.DiamondUpgrade.Level = g.Ship[k].DiamondUpgrade.Level
-			s.DiamondUpgrade.Multiplier = g.Ship[k].DiamondUpgrade.Multiplier
-			s.DiamondUpgrade.Cost = g.Ship[k].DiamondUpgrade.Cost
 			ship[k] = *s
+		}
+		diamondUpgrade := map[int]DiamondUpgradeDataMessage{}
+		for k := range g.DiamondUpgrade {
+			d := new(DiamondUpgradeDataMessage)
+			d.Index = k
+			d.Level = g.DiamondUpgrade[k].Level
+			d.Cost = g.DiamondUpgrade[k].Cost
+			d.Multiplier = g.DiamondUpgrade[k].Multiplier
+			diamondUpgrade[k] = *d
 		}
 		percent := g.GetHealthPercent()
 		g.ConvertNumber(g.Planet.MaxHealth, g.Planet.MaxHealth)
@@ -248,6 +263,7 @@ func ActionHandler(g *Game, action string) []byte {
 				PlanetsDestroyed:        g.DisplayNumber(g.PlanetsDestroyed),
 				Store:                   store,
 				Ship:                    ship,
+				DiamondUpgrade:          diamondUpgrade,
 			},
 		}
 		encoded, _ := json.Marshal(message)
@@ -349,21 +365,28 @@ func ActionHandler(g *Game, action string) []byte {
 				} else {
 					s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 				}
-				s.DiamondUpgrade.Level = g.Ship[k].DiamondUpgrade.Level
-				s.DiamondUpgrade.Multiplier = g.Ship[k].DiamondUpgrade.Multiplier
-				s.DiamondUpgrade.Cost = g.Ship[k].DiamondUpgrade.Cost
 				ship[k] = *s
+			}
+			diamondUpgrade := map[int]DiamondUpgradeDataMessage{}
+			for k := range g.DiamondUpgrade {
+				d := new(DiamondUpgradeDataMessage)
+				d.Index = k
+				d.Level = g.DiamondUpgrade[k].Level
+				d.Cost = g.DiamondUpgrade[k].Cost
+				d.Multiplier = g.DiamondUpgrade[k].Multiplier
+				diamondUpgrade[k] = *d
 			}
 			message := ActionMessage{
 				Action: "upgrade",
 				Data: UpgradeDataMessageWrapper{
-					Gold:          g.DisplayNumber(g.Gold),
-					Diamonds:      g.Diamonds,
-					CurrentDamage: g.DisplayNumber(g.CurrentDamage),
-					MaxDamage:     g.DisplayNumber(g.MaxDamage),
-					PlanetGold:    g.DisplayNumber(g.Planet.Gold),
-					Store:         store,
-					Ship:          ship,
+					Gold:           g.DisplayNumber(g.Gold),
+					Diamonds:       g.Diamonds,
+					CurrentDamage:  g.DisplayNumber(g.CurrentDamage),
+					MaxDamage:      g.DisplayNumber(g.MaxDamage),
+					PlanetGold:     g.DisplayNumber(g.Planet.Gold),
+					Store:          store,
+					Ship:           ship,
+					DiamondUpgrade: diamondUpgrade,
 				},
 			}
 			encoded, _ := json.Marshal(message)
@@ -407,10 +430,16 @@ func DealDps(g *Game) []byte {
 		} else {
 			s.Damage = g.DisplayNumber(g.Ship[k].Damage)
 		}
-		s.DiamondUpgrade.Level = g.Ship[k].DiamondUpgrade.Level
-		s.DiamondUpgrade.Multiplier = g.Ship[k].DiamondUpgrade.Multiplier
-		s.DiamondUpgrade.Cost = g.Ship[k].DiamondUpgrade.Cost
 		ship[k] = *s
+	}
+	diamondUpgrade := map[int]DiamondUpgradeDataMessage{}
+	for k := range g.DiamondUpgrade {
+		d := new(DiamondUpgradeDataMessage)
+		d.Index = k
+		d.Level = g.DiamondUpgrade[k].Level
+		d.Cost = g.DiamondUpgrade[k].Cost
+		d.Multiplier = g.DiamondUpgrade[k].Multiplier
+		diamondUpgrade[k] = *d
 	}
 
 	message := ActionMessage{
@@ -434,6 +463,7 @@ func DealDps(g *Game) []byte {
 			PlanetsDestroyed:        g.DisplayNumber(g.PlanetsDestroyed),
 			Store:                   store,
 			Ship:                    ship,
+			DiamondUpgrade:          diamondUpgrade,
 		},
 	}
 	enc, _ := json.Marshal(message)

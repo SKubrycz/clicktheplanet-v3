@@ -26,6 +26,19 @@ func createStoreTable(p *Postgres) error {
 	return err
 }
 
+func createDiamondUpgradeTable(p *Postgres) error {
+	createDiamondUpgrade := `CREATE TABLE IF NOT EXISTS diamond_upgrade (
+		id SERIAL PRIMARY KEY,
+		title VARCHAR(50),
+		description TEXT
+	);
+	CREATE UNIQUE INDEX IF NOT EXISTS idx_title_store ON diamond_upgrade (title);
+	`
+
+	_, err := p.db.Exec(createDiamondUpgrade)
+	return err
+}
+
 func createUsersTable(p *Postgres) error {
 	createUsers := `CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
@@ -99,6 +112,21 @@ func createGameStoreTable(p *Postgres) error {
 	return err
 }
 
+func createGameDiamondUpgradeTable(p *Postgres) error {
+	createGameDiamondUpgrade := `CREATE TABLE IF NOT EXISTS game_diamond_upgrade (
+		id SERIAL PRIMARY KEY,
+		level BIGINT,
+		game_id INT NOT NULL,
+		FOREIGN KEY (game_id)
+		REFERENCES games(id),
+		FOREIGN KEY (diamond_upgrade_id)
+		REFERENCES diamond_upgrade(id)
+	)`
+
+	_, err := p.db.Exec(createGameDiamondUpgrade)
+	return err
+}
+
 func insertShipTable(p *Postgres) error {
 	insertShip := `
 	INSERT INTO ship (id, title, description) VALUES (1, 'Upgrade 1', 'Upgrade 1 desc') ON CONFLICT (title) DO NOTHING;
@@ -131,6 +159,19 @@ func insertStoreTable(p *Postgres) error {
 	return err
 }
 
+func insertDiamondUpgradeTable(p *Postgres) error {
+	insertDiamondUpgrade := `
+	INSERT INTO diamond_upgrade (id, title, description) VALUES (1, 'Dps', 'Enhance idle damage') ON CONFLICT (title) DO NOTHING;
+	INSERT INTO diamond_upgrade (id, title, description) VALUES (2, 'Click damage', 'Enhance current click damage') ON CONFLICT (title) DO NOTHING;
+	INSERT INTO diamond_upgrade (id, title, description) VALUES (3, 'Critical damage', 'Multiply critical click damage') ON CONFLICT (title) DO NOTHING;
+	INSERT INTO diamond_upgrade (id, title, description) VALUES (4, 'Planet gold', 'Enhance gold gained from Planets') ON CONFLICT (title) DO NOTHING;
+	INSERT INTO diamond_upgrade (id, title, description) VALUES (5, 'Boss gold', 'Enhance gold gained from Boss levels') ON CONFLICT (title) DO NOTHING;
+	`
+
+	_, err := p.db.Exec(insertDiamondUpgrade)
+	return err
+}
+
 func (p *Postgres) PrepareDb() error {
 	err := createShipTable(p)
 	if err != nil {
@@ -138,6 +179,11 @@ func (p *Postgres) PrepareDb() error {
 	}
 
 	err = createStoreTable(p)
+	if err != nil {
+		return err
+	}
+
+	err = createDiamondUpgradeTable(p)
 	if err != nil {
 		return err
 	}
@@ -162,6 +208,11 @@ func (p *Postgres) PrepareDb() error {
 		return err
 	}
 
+	err = createGameDiamondUpgradeTable(p)
+	if err != nil {
+		return err
+	}
+
 	//INSERTS
 	err = insertShipTable(p)
 	if err != nil {
@@ -169,6 +220,11 @@ func (p *Postgres) PrepareDb() error {
 	}
 
 	err = insertStoreTable(p)
+	if err != nil {
+		return err
+	}
+
+	err = insertDiamondUpgradeTable(p)
 	if err != nil {
 		return err
 	}
