@@ -30,7 +30,6 @@ interface ActionMessage {
 export default function Game() {
   const [loading, setLoading] = useState<boolean>(true);
   const [open, setOpen] = useState<boolean>(false);
-  const [bgColor, setBgColor] = useState<string>("none");
   const gameData = useAppSelector((state) => state.game);
   const upgradeData = useAppSelector((state) => state.upgrade);
   const levelData = useAppSelector((state) => state.level);
@@ -102,15 +101,6 @@ export default function Game() {
       pressedKeys.current[2] = false;
     }
   };
-
-  useEffect(() => {
-    console.log(gameData?.isBoss);
-    if (!gameData?.isBoss) {
-      setBgColor("unset");
-    } else if (gameData?.isBoss) {
-      setBgColor("rgba(255, 0, 0, 0.3)");
-    }
-  }, [gameData?.isBoss]);
 
   useEffect(() => {
     if (upgradeData && upgradeData.index != -1) {
@@ -211,7 +201,13 @@ export default function Game() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <div className="game-wrapper" style={{ backgroundColor: bgColor }}>
+      <div
+        className={
+          gameData?.isBoss
+            ? `game-wrapper game-boss-background`
+            : `game-wrapper`
+        }
+      >
         {loading ? (
           <CircularProgress
             sx={{
