@@ -21,7 +21,7 @@ interface StoreMessage {
 interface DiamondUpgrade {
   index: number;
   level: number;
-  multiplier: number;
+  multiplier: string;
   cost: number;
 }
 

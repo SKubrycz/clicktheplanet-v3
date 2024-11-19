@@ -68,10 +68,10 @@ type StoreDataMessageWrapper struct {
 }
 
 type DiamondUpgradeDataMessage struct {
-	Index      int     `json:"index"`
-	Level      int64   `json:"level"`
-	Multiplier float64 `json:"multiplier"`
-	Cost       int64   `json:"cost"`
+	Index      int    `json:"index"`
+	Level      int64  `json:"level"`
+	Multiplier string `json:"multiplier"`
+	Cost       int64  `json:"cost"`
 }
 
 type ShipDataMessage struct {
@@ -156,7 +156,7 @@ func ActionHandler(g *Game, action string) []byte {
 			d.Index = k
 			d.Level = g.DiamondUpgrade[k].Level
 			d.Cost = g.DiamondUpgrade[k].Cost
-			d.Multiplier = g.DiamondUpgrade[k].Multiplier
+			d.Multiplier = g.DisplayNumber(g.DiamondUpgrade[k].Multiplier)
 			diamondUpgrade[k] = *d
 		}
 		// Wrapper to indicate for frontend how to behave depending on the action field
@@ -236,7 +236,7 @@ func ActionHandler(g *Game, action string) []byte {
 			d.Index = k
 			d.Level = g.DiamondUpgrade[k].Level
 			d.Cost = g.DiamondUpgrade[k].Cost
-			d.Multiplier = g.DiamondUpgrade[k].Multiplier
+			d.Multiplier = g.DisplayNumber(g.DiamondUpgrade[k].Multiplier)
 			diamondUpgrade[k] = *d
 		}
 		percent := g.GetHealthPercent()
@@ -373,7 +373,7 @@ func ActionHandler(g *Game, action string) []byte {
 				d.Index = k
 				d.Level = g.DiamondUpgrade[k].Level
 				d.Cost = g.DiamondUpgrade[k].Cost
-				d.Multiplier = g.DiamondUpgrade[k].Multiplier
+				d.Multiplier = g.DisplayNumber(g.DiamondUpgrade[k].Multiplier)
 				diamondUpgrade[k] = *d
 			}
 			message := ActionMessage{
@@ -438,7 +438,7 @@ func DealDps(g *Game) []byte {
 		d.Index = k
 		d.Level = g.DiamondUpgrade[k].Level
 		d.Cost = g.DiamondUpgrade[k].Cost
-		d.Multiplier = g.DiamondUpgrade[k].Multiplier
+		d.Multiplier = g.DisplayNumber(g.DiamondUpgrade[k].Multiplier)
 		diamondUpgrade[k] = *d
 	}
 

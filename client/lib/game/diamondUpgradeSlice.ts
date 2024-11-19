@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface DiamondUpgrade {
   index: number;
   level: number;
-  multiplier: number;
+  multiplier: string;
   cost: number;
 }
 
@@ -21,7 +21,7 @@ export const diamondUpgradeObject: DiamondUpgradeWrapper = {
   1: {
     index: 1,
     level: 0,
-    multiplier: 0.0,
+    multiplier: "1.0",
     cost: 1,
   },
 };

@@ -11,7 +11,7 @@ import (
 
 type DiamondUpgrade struct {
 	Level      int64
-	Multiplier float64
+	Multiplier *big.Float // float64
 	BaseCost   int64
 	Cost       int64
 	Constant   float64
@@ -419,7 +419,11 @@ func (g *Game) CalculateDiamondUpgrade(index int) {
 		if entry, ok := g.DiamondUpgrade[index]; ok {
 			pow := math.Pow(g.DiamondUpgrade[index].Constant, float64(g.DiamondUpgrade[index].Level))
 			entry.Cost = int64(pow * float64(g.DiamondUpgrade[index].BaseCost))
-			entry.Multiplier = float64(5 * entry.Level)
+
+			bigPowMulInt := new(big.Int).Exp(big.NewInt(10), big.NewInt(entry.Level), nil)
+			bigPowMul := new(big.Float).SetInt(bigPowMulInt)
+			bigPowMul.Mul(big.NewFloat(1.5), bigPowMul)
+			entry.Multiplier = bigPowMul
 			g.DiamondUpgrade[index] = entry
 		}
 	} else if index == -1 {
@@ -427,7 +431,11 @@ func (g *Game) CalculateDiamondUpgrade(index int) {
 			if entry, ok := g.DiamondUpgrade[k]; ok {
 				pow := math.Pow(g.DiamondUpgrade[k].Constant, float64(g.DiamondUpgrade[k].Level))
 				entry.Cost = int64(pow * float64(g.DiamondUpgrade[k].BaseCost))
-				entry.Multiplier = float64(5 * entry.Level)
+
+				bigPowMulInt := new(big.Int).Exp(big.NewInt(10), big.NewInt(entry.Level), nil)
+				bigPowMul := new(big.Float).SetInt(bigPowMulInt)
+				bigPowMul.Mul(big.NewFloat(1.5), bigPowMul)
+				entry.Multiplier = bigPowMul
 				g.DiamondUpgrade[k] = entry
 			}
 		}
@@ -508,7 +516,7 @@ func (g *Game) CalculateGoldEarned() {
 
 	bigMultiplier := big.NewFloat(g.Ship[4].Multiplier)
 	if g.DiamondUpgrade[4].Level > 0 {
-		bigMultiplier.Mul(bigMultiplier, big.NewFloat(g.DiamondUpgrade[4].Multiplier))
+		bigMultiplier.Mul(bigMultiplier, g.DiamondUpgrade[4].Multiplier)
 	}
 	result.Mul(result, bigMultiplier)
 
@@ -573,7 +581,7 @@ func (g *Game) CalculateShipOne() {
 	bigMultiplier := big.NewFloat(g.Ship[1].Multiplier)
 	g.Ship[1].Damage.Mul(g.CurrentDamage, bigMultiplier) // per 100ms
 	if g.DiamondUpgrade[1].Level > 0 {
-		g.Ship[1].Damage.Mul(g.Ship[1].Damage, big.NewFloat(g.DiamondUpgrade[1].Multiplier))
+		g.Ship[1].Damage.Mul(g.Ship[1].Damage, g.DiamondUpgrade[1].Multiplier)
 	}
 
 	g.CheckShipLock(1)
@@ -594,7 +602,7 @@ func (g *Game) CalculateShipTwo() {
 	if entry, ok := g.Ship[2]; ok {
 		entry.Multiplier = toFixed((1.0 + 0.1*float64(g.Ship[2].Level)), 3)
 		if g.DiamondUpgrade[2].Level > 0 {
-			entry.Damage.Mul(g.CurrentDamage, big.NewFloat(g.DiamondUpgrade[2].Multiplier))
+			entry.Damage.Mul(g.CurrentDamage, g.DiamondUpgrade[2].Multiplier)
 		} else {
 			entry.Damage = g.CurrentDamage
 		}
@@ -635,7 +643,8 @@ func (g *Game) CalculateShipThree() {
 	//critical damage = currentDamage * 5 <-- for now
 	var bigMultiplier *big.Float
 	if g.DiamondUpgrade[3].Level > 0 {
-		bigMultiplier = big.NewFloat(5.0 * g.DiamondUpgrade[3].Multiplier)
+		bigMultiplier = new(big.Float)
+		bigMultiplier.Mul(big.NewFloat(5.0), g.DiamondUpgrade[3].Multiplier)
 	} else {
 		bigMultiplier = big.NewFloat(5.0)
 	}
