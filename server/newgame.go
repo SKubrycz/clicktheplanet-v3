@@ -148,6 +148,30 @@ func NewGame(gameData *GameData) *Game {
 			BaseDamage: new(big.Float),
 			Locked:     true,
 		},
+		13: {
+			Level:      gameData.Store[13].Level,
+			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
+			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
+			Locked:     true,
+		},
+		14: {
+			Level:      gameData.Store[14].Level,
+			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
+			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
+			Locked:     true,
+		},
+		15: {
+			Level:      gameData.Store[15].Level,
+			Cost:       new(big.Float),
+			BaseCost:   new(big.Float),
+			Damage:     new(big.Float),
+			BaseDamage: new(big.Float),
+			Locked:     true,
+		},
 	}
 
 	store[1].BaseCost.SetString("10")
@@ -162,6 +186,9 @@ func NewGame(gameData *GameData) *Game {
 	store[10].BaseCost.SetString("1.0e+22")
 	store[11].BaseCost.SetString("1.0e+25")
 	store[12].BaseCost.SetString("1.0e+28")
+	store[13].BaseCost.SetString("1.0e+31")
+	store[14].BaseCost.SetString("1.0e+35")
+	store[15].BaseCost.SetString("1.0e+39")
 
 	store[1].Cost.SetString(store[1].BaseCost.String())
 	store[2].Cost.SetString(store[2].BaseCost.String())
@@ -175,6 +202,9 @@ func NewGame(gameData *GameData) *Game {
 	store[10].Cost.SetString(store[10].BaseCost.String())
 	store[11].Cost.SetString(store[11].BaseCost.String())
 	store[12].Cost.SetString(store[12].BaseCost.String())
+	store[13].Cost.SetString(store[13].BaseCost.String())
+	store[14].Cost.SetString(store[14].BaseCost.String())
+	store[15].Cost.SetString(store[15].BaseCost.String())
 
 	store[1].BaseDamage.SetString("1")
 	store[2].BaseDamage.SetString("25")
@@ -188,6 +218,9 @@ func NewGame(gameData *GameData) *Game {
 	store[10].BaseDamage.SetString("1.0e+16")
 	store[11].BaseDamage.SetString("1.0e+18")
 	store[12].BaseDamage.SetString("1.0e+20")
+	store[13].BaseDamage.SetString("1.0e+22")
+	store[14].BaseDamage.SetString("1.0e+24")
+	store[15].BaseDamage.SetString("2.0e+26")
 
 	store[1].Damage.SetString(store[1].BaseDamage.String())
 	store[2].Damage.SetString(store[2].BaseDamage.String())
@@ -201,6 +234,9 @@ func NewGame(gameData *GameData) *Game {
 	store[10].Damage.SetString(store[10].BaseDamage.String())
 	store[11].Damage.SetString(store[11].BaseDamage.String())
 	store[12].Damage.SetString(store[12].BaseDamage.String())
+	store[13].Damage.SetString(store[13].BaseDamage.String())
+	store[14].Damage.SetString(store[14].BaseDamage.String())
+	store[15].Damage.SetString(store[15].BaseDamage.String())
 
 	// Constant field is needed to calculate cost
 	ship := map[int]ShipUpgrade{

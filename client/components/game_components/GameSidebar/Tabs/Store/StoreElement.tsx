@@ -30,6 +30,7 @@ export default function StoreElement({
   const dispatch = useAppDispatch();
 
   const [levels, setLevels] = useState<number | undefined>(undefined);
+  const [locked, setLocked] = useState<boolean>(true);
 
   const timeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -55,6 +56,11 @@ export default function StoreElement({
       })
     );
   };
+
+  useEffect(() => {
+    if (storeData[index]?.locked) setLocked(true);
+    else if (!storeData[index]?.locked) setLocked(false);
+  }, [storeData[index]?.locked]);
 
   useEffect(() => {
     if (timeout.current) {
