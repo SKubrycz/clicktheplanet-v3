@@ -24,7 +24,6 @@ export default function DiamondUpgrade({ title, index }: DiamondUpgradeProps) {
   const dispatch = useAppDispatch();
 
   const [levels, setLevels] = useState<number | undefined>(undefined);
-  const [locked, setLocked] = useState<boolean>(true);
 
   const timeout = useRef<NodeJS.Timeout | null>(null);
 

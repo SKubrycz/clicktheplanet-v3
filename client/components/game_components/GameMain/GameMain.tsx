@@ -28,24 +28,9 @@ interface DmgText {
 export default function GameMain({ planetClick }: GameMainProps) {
   const gameData = useAppSelector((state) => state.game);
   const planetData = useAppSelector((state) => state.planet);
-  const [health, setHealth] = useState<Health>({
-    currentHealth: "10",
-    maxHealth: "10",
-  });
-  const [width, setWidth] = useState<number>(100);
+
   const [dmgTextArr, setDmgTextArr] = useState<DmgText[]>([]);
   const planetRef = useRef<HTMLCanvasElement>(null);
-
-  // useEffect(() => {
-  //   if (gameData) {
-  //     setHealth({
-  //       ...health,
-  //       currentHealth: gameData.currentHealth,
-  //       maxHealth: gameData.maxHealth,
-  //     });
-  //     setWidth(gameData.healthPercent);
-  //   }
-  // }, [gameData?.currentHealth]);
 
   const duration: number = 700;
 

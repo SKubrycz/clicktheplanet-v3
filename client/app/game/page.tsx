@@ -122,7 +122,6 @@ export default function Game() {
   }, [upgradeData]);
 
   useEffect(() => {
-    console.log(levelData);
     if (levelData.action === "previous" || levelData.action === "next") {
       if (socket.current) socket.current.send(levelData.action);
     }

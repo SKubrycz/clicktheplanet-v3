@@ -121,11 +121,6 @@ export interface Game {
   planetsDestroyed: string;
 }
 
-// export interface UpgradeMessage {
-//   upgrade: "store" | "ship";
-//   index: number;
-// }
-
 export const gameObject: Game = {
   gold: "100",
   diamonds: 0,
@@ -135,10 +130,6 @@ export const gameObject: Game = {
     damage: "0",
     critical: false,
   },
-  // planetName: "Planet_name",
-  // currentHealth: "10",
-  // healthPercent: 100,
-  // maxHealth: "10",
   planetGold: "1",
   isBoss: false,
   currentLevel: 1,
@@ -147,33 +138,6 @@ export const gameObject: Game = {
   maxStage: 1,
   diamondUpgradesUnlocked: false,
   planetsDestroyed: "0",
-  // store: {
-  //   1: {
-  //     index: 1,
-  //     level: 0,
-  //     cost: "0",
-  //     damage: "0",
-  //     locked: true,
-  //   },
-  // },
-  // ship: {
-  //   1: {
-  //     index: 1,
-  //     level: 0,
-  //     cost: "0",
-  //     multiplier: 0.0,
-  //     damage: "0",
-  //     locked: true,
-  //   },
-  // },
-  // diamondUpgrade: {
-  //   1: {
-  //     index: 1,
-  //     level: 0,
-  //     multiplier: 1.0,
-  //     cost: 1,
-  //   },
-  // },
 };
 
 export const gameSlice = createSlice({
@@ -185,7 +149,7 @@ export const gameSlice = createSlice({
       return { ...action.payload };
     },
     Click: (state, action: PayloadAction<Game>) => {
-      console.log(current(state));
+      //console.log(current(state));
       return { ...action.payload };
     },
     Upgrade: (state, action: PayloadAction<UpgradeMessage>) => {
@@ -197,60 +161,6 @@ export const gameSlice = createSlice({
         maxDamage: action.payload.maxDamage,
       };
     },
-    // UpdateStore: (state, action: PayloadAction<StoreMessage>) => {
-    //   return {
-    //     ...state,
-    //     gold: action.payload.gold,
-    //     diamonds: action.payload.diamonds,
-    //     store: {
-    //       ...state.store,
-    //       [action.payload.store.index]: {
-    //         index: action.payload.store.index,
-    //         level: action.payload.store.level,
-    //         cost: action.payload.store.cost,
-    //         damage: action.payload.store.damage,
-    //         locked: action.payload.store.locked,
-    //       },
-    //     },
-    //   };
-    // },
-    // UpdateShip: (state, action: PayloadAction<ShipMessage>) => {
-    //   return {
-    //     ...state,
-    //     gold: action.payload.gold,
-    //     diamonds: action.payload.diamonds,
-    //     ship: {
-    //       ...state.ship,
-    //       [action.payload.ship.index]: {
-    //         index: action.payload.ship.index,
-    //         level: action.payload.ship.level,
-    //         cost: action.payload.ship.cost,
-    //         multiplier: action.payload.ship.multiplier,
-    //         damage: action.payload.ship.damage,
-    //         locked: action.payload.ship.locked,
-    //       },
-    //     },
-    //   };
-    // },
-    // UpdateDiamondUpgrade: (
-    //   state,
-    //   action: PayloadAction<DiamondUpgradeMessage>
-    // ) => {
-    //   return {
-    //     ...state,
-    //     gold: action.payload.gold,
-    //     diamonds: action.payload.diamonds,
-    //     diamondUpgrade: {
-    //       ...state.diamondUpgrade,
-    //       [action.payload.diamondUpgrade.index]: {
-    //         index: action.payload.diamondUpgrade.index,
-    //         level: action.payload.diamondUpgrade.level,
-    //         cost: action.payload.diamondUpgrade.cost,
-    //         multiplier: action.payload.diamondUpgrade.multiplier,
-    //       },
-    //     },
-    //   };
-    // },
     DealDps: (state, action: PayloadAction<GameDps>) => {
       return {
         ...state,

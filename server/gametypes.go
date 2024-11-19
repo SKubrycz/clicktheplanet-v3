@@ -425,7 +425,7 @@ func (g *Game) CalculateDiamondUpgrade(index int) {
 	} else if index == -1 {
 		for k := range g.DiamondUpgrade {
 			if entry, ok := g.DiamondUpgrade[k]; ok {
-				pow := math.Pow(g.DiamondUpgrade[index].Constant, float64(g.DiamondUpgrade[k].Level))
+				pow := math.Pow(g.DiamondUpgrade[k].Constant, float64(g.DiamondUpgrade[k].Level))
 				entry.Cost = int64(pow * float64(g.DiamondUpgrade[k].BaseCost))
 				entry.Multiplier = float64(5 * entry.Level)
 				g.DiamondUpgrade[k] = entry
