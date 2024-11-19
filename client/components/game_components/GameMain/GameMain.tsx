@@ -27,6 +27,7 @@ interface DmgText {
 
 export default function GameMain({ planetClick }: GameMainProps) {
   const gameData = useAppSelector((state) => state.game);
+  const planetData = useAppSelector((state) => state.planet);
   const [health, setHealth] = useState<Health>({
     currentHealth: "10",
     maxHealth: "10",
@@ -35,16 +36,16 @@ export default function GameMain({ planetClick }: GameMainProps) {
   const [dmgTextArr, setDmgTextArr] = useState<DmgText[]>([]);
   const planetRef = useRef<HTMLCanvasElement>(null);
 
-  useEffect(() => {
-    if (gameData) {
-      setHealth({
-        ...health,
-        currentHealth: gameData.currentHealth,
-        maxHealth: gameData.maxHealth,
-      });
-      setWidth(gameData.healthPercent);
-    }
-  }, [gameData?.currentHealth]);
+  // useEffect(() => {
+  //   if (gameData) {
+  //     setHealth({
+  //       ...health,
+  //       currentHealth: gameData.currentHealth,
+  //       maxHealth: gameData.maxHealth,
+  //     });
+  //     setWidth(gameData.healthPercent);
+  //   }
+  // }, [gameData?.currentHealth]);
 
   const duration: number = 700;
 
@@ -75,7 +76,7 @@ export default function GameMain({ planetClick }: GameMainProps) {
   };
 
   const healthbarStyle = {
-    width: `${width}%`,
+    width: `${planetData?.healthPercent}%`,
     background: gameData?.isBoss
       ? "radial-gradient(ellipse at bottom, rgba(124, 29, 179, 0.6), rgba(188, 0, 255, 0.5))"
       : "radial-gradient(ellipse at bottom, rgba(0, 106, 192, 0.6), rgba(42, 127, 202, 0.5))",
@@ -87,7 +88,7 @@ export default function GameMain({ planetClick }: GameMainProps) {
       <div className="main-current-level">Level {gameData?.currentLevel}</div>
       <div className="main-current-stage">{gameData?.currentStage}/10</div>
       <div className="main-planet-name-title">Planet name:</div>
-      <div className="main-planet-name">{gameData?.planetName}</div>
+      <div className="main-planet-name">{planetData?.planetName}</div>
       <div className="main-planet-image-wrapper">
         <Planet
           planetRef={planetRef}
@@ -97,7 +98,7 @@ export default function GameMain({ planetClick }: GameMainProps) {
       <div className="main-planet-health-title">Health</div>
       <div className="main-planet-healthbar">
         <div className="main-planet-healthbar-amount">
-          {health.currentHealth}/{health.maxHealth}
+          {planetData?.currentHealth}/{planetData?.maxHealth}
         </div>
         <div className="main-planet-healthbar-wrapper">
           <div

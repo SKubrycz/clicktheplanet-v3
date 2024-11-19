@@ -24,6 +24,8 @@ export default function ShipElement({
   description,
 }: ShipElementProps) {
   const gameData = useAppSelector((state) => state.game);
+  const shipData = useAppSelector((state) => state.ship);
+  const diamondUpgradeData = useAppSelector((state) => state.diamondUpgrade);
   const upgradeData = useAppSelector((state) => state.upgrade);
   const errorData = useAppSelector((state) => state.error);
   const dispatch = useAppDispatch();
@@ -81,15 +83,11 @@ export default function ShipElement({
 
   return (
     <div className="ship-element">
-      {gameData?.ship[index]?.locked ? (
-        <div className="element-locked"></div>
-      ) : (
-        ""
-      )}
+      {shipData[index]?.locked ? <div className="element-locked"></div> : ""}
       <div className="ship-element-info-wrapper">
         <div className="ship-element-title">
-          {title} - Level: {gameData?.ship[index]?.level} | Multiplier: x
-          {gameData?.ship[index]?.multiplier}
+          {title} - Level: {shipData[index]?.level} | Multiplier: x
+          {shipData[index]?.multiplier}
           {gameData?.diamondUpgradesUnlocked ? (
             <>
               {" "}
@@ -101,17 +99,17 @@ export default function ShipElement({
                   color: "lightskyblue",
                 }}
               ></ElectricBoltOutlined>
-              x{gameData?.diamondUpgrade[index].multiplier}
+              x{diamondUpgradeData[index]?.multiplier}
             </>
           ) : undefined}
         </div>
         <div className="ship-element-description">
           {description}{" "}
-          {index !== 4 && index !== 3 ? gameData?.ship[index]?.damage : ""}
+          {index !== 4 && index !== 3 ? shipData[index]?.damage : ""}
           {index == 4 ? gameData?.planetGold : ""}
         </div>
         <div>
-          Cost: {gameData?.ship[index]?.cost}{" "}
+          Cost: {shipData[index]?.cost}{" "}
           <Image src={Gold} alt="gold" width={15} height={15}></Image>
         </div>
       </div>

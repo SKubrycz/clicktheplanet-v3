@@ -25,7 +25,7 @@ export default function StoreElement({
   description,
   image,
 }: StoreElementProps) {
-  const gameData = useAppSelector((state) => state.game);
+  const storeData = useAppSelector((state) => state.store);
   const upgradeData = useAppSelector((state) => state.upgrade);
   const errorData = useAppSelector((state) => state.error);
   const dispatch = useAppDispatch();
@@ -83,11 +83,7 @@ export default function StoreElement({
 
   return (
     <div className="store-element">
-      {gameData?.store[index]?.locked ? (
-        <div className="element-locked"></div>
-      ) : (
-        ""
-      )}
+      {storeData[index]?.locked ? <div className="element-locked"></div> : ""}
       <div className="store-element-left-wrapper">
         {image ? (
           <Image
@@ -100,13 +96,13 @@ export default function StoreElement({
         )}
         <div className="store-element-info-wrapper">
           <div className="store-element-title">
-            {title} - Level {gameData?.store[index]?.level}
+            {title} - Level {storeData[index]?.level}
           </div>
           <div className="store-element-description">
-            {description} - Damage: {gameData?.store[index]?.damage}
+            {description} - Damage: {storeData[index]?.damage}
           </div>
           <div>
-            Cost: {gameData?.store[index]?.cost}{" "}
+            Cost: {storeData[index]?.cost}{" "}
             <Image src={Gold} alt="gold" width={15} height={15}></Image>
           </div>
         </div>

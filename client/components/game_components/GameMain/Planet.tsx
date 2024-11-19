@@ -49,6 +49,7 @@ const applyLevitate = (planetRef: HTMLCanvasElement): Animation => {
 
 export default function Planet({ planetRef, click }: PlanetProps) {
   const gameData = useAppSelector((state) => state.game);
+  const planetData = useAppSelector((state) => state.planet);
   const settingsData = useAppSelector((state) => state.settings);
   const dispatch = useAppDispatch();
 
@@ -162,7 +163,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
     return () => {
       if (workerRef.current) workerRef.current.terminate();
     };
-  }, [gameData.planetName]);
+  }, [planetData.planetName]);
 
   useEffect(() => {
     if (weights.current.length > 1 && typeof weights.current[0] == "number") {

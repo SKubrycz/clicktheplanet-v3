@@ -6,7 +6,11 @@ import { useRouter } from "next/navigation";
 import GameNavbar from "@/components/game_components/GameNavbar/GameNavbar";
 import GameSidebar from "@/components/game_components/GameSidebar/GameSidebar";
 import GameMain from "@/components/game_components/GameMain/GameMain";
-import { Init, Click, Upgrade, DealDps } from "@/lib/game/gameSlice";
+import { GameInit, Click, Upgrade, DealDps, Data } from "@/lib/game/gameSlice";
+import { UpdatePlanet } from "@/lib/game/planetSlice";
+import { UpdateStore } from "@/lib/game/storeSlice";
+import { UpdateShip } from "@/lib/game/shipSlice";
+import { UpdateDiamondUpgrade } from "@/lib/game/diamondUpgradeSlice";
 import { UpgradeElement } from "@/lib/game/upgradeSlice";
 import { SetErrorMessage } from "@/lib/game/errorSlice";
 import { SetGlobalError } from "@/lib/game/globalErrorSlice";
@@ -24,7 +28,16 @@ import { defaultTheme } from "@/assets/defaultTheme";
 
 interface ActionMessage {
   action: string;
-  data: any;
+  data: Data;
+}
+
+function settingsExist(settings: SettingsState) {
+  for (let option in settings) {
+    if (settings[option] == null) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export default function Game() {
@@ -131,19 +144,159 @@ export default function Game() {
 
     socket.current.onmessage = (e: MessageEvent) => {
       let message: ActionMessage = JSON.parse(e.data);
+
       if (message.action === "init") {
         console.log(message.data);
-        dispatch(Init(message.data));
+
+        const {
+          gold,
+          diamonds,
+          currentDamage,
+          maxDamage,
+          damageDone,
+          diamondUpgradesUnlocked,
+          planetGold,
+          isBoss,
+          currentLevel,
+          maxLevel,
+          currentStage,
+          maxStage,
+          planetsDestroyed,
+          planetName,
+          currentHealth,
+          healthPercent,
+          maxHealth,
+          store,
+          ship,
+          diamondUpgrade,
+        } = message.data;
+
+        // Initialize:
+        // gameSlice
+        // planetSlice
+        // storeSlice
+        // shipSlice
+        // diamondUpgradeSlice
+        // (?) settingsSlice
+
+        dispatch(
+          GameInit({
+            gold: gold,
+            diamonds: diamonds,
+            currentDamage: currentDamage,
+            maxDamage: maxDamage,
+            damageDone: damageDone,
+            diamondUpgradesUnlocked: diamondUpgradesUnlocked,
+            planetGold: planetGold,
+            isBoss: isBoss,
+            currentLevel: currentLevel,
+            maxLevel: maxLevel,
+            currentStage: currentStage,
+            maxStage: maxStage,
+            planetsDestroyed: planetsDestroyed,
+          })
+        );
+
+        dispatch(
+          UpdatePlanet({
+            planetName: planetName,
+            currentHealth: currentHealth,
+            healthPercent: healthPercent,
+            maxHealth: maxHealth,
+          })
+        );
+
+        dispatch(UpdateStore(store));
+        dispatch(UpdateShip(ship));
+        dispatch(UpdateDiamondUpgrade(diamondUpgrade));
       }
       if (message.action === "click") {
         console.log(message.data);
-        dispatch(Click(message.data));
+
+        const {
+          gold,
+          diamonds,
+          currentDamage,
+          maxDamage,
+          damageDone,
+          diamondUpgradesUnlocked,
+          planetGold,
+          isBoss,
+          currentLevel,
+          maxLevel,
+          currentStage,
+          maxStage,
+          planetsDestroyed,
+          planetName,
+          currentHealth,
+          healthPercent,
+          maxHealth,
+        } = message.data;
+
+        // Update:
+        // gameSlice
+        // planetSlice
+
+        dispatch(
+          Click({
+            gold: gold,
+            diamonds: diamonds,
+            currentDamage: currentDamage,
+            maxDamage: maxDamage,
+            damageDone: damageDone,
+            diamondUpgradesUnlocked: diamondUpgradesUnlocked,
+            planetGold: planetGold,
+            isBoss: isBoss,
+            currentLevel: currentLevel,
+            maxLevel: maxLevel,
+            currentStage: currentStage,
+            maxStage: maxStage,
+            planetsDestroyed: planetsDestroyed,
+          })
+        );
+
+        dispatch(
+          UpdatePlanet({
+            planetName: planetName,
+            currentHealth: currentHealth,
+            healthPercent: healthPercent,
+            maxHealth: maxHealth,
+          })
+        );
       }
       if (
         message.action === "upgrade" ||
         message.action === "diamond-upgrade"
       ) {
-        dispatch(Upgrade(message.data));
+        const {
+          gold,
+          diamonds,
+          currentDamage,
+          maxDamage,
+          store,
+          ship,
+          diamondUpgrade,
+        } = message.data;
+
+        // Update
+        // gameSlice
+        // storeSlice
+        // shipSlice
+        // "diamond-upgrade" ? diamondUpgradeSlice : undefined
+
+        dispatch(
+          Upgrade({
+            gold: gold,
+            diamonds: diamonds,
+            currentDamage: currentDamage,
+            maxDamage: maxDamage,
+          })
+        );
+
+        dispatch(UpdateStore(store));
+        dispatch(UpdateShip(ship));
+        if (message.action === "diamond-upgrade")
+          dispatch(UpdateDiamondUpgrade(diamondUpgrade));
       }
 
       if (message.action === "error") {
@@ -151,7 +304,54 @@ export default function Game() {
         console.log(message.data);
       }
       if (message.action === "dps") {
-        dispatch(DealDps(message.data));
+        const {
+          gold,
+          diamonds,
+          currentDamage,
+          maxDamage,
+          diamondUpgradesUnlocked,
+          planetGold,
+          isBoss,
+          currentLevel,
+          maxLevel,
+          currentStage,
+          maxStage,
+          planetsDestroyed,
+          planetName,
+          currentHealth,
+          healthPercent,
+          maxHealth,
+        } = message.data;
+
+        // Update
+        // gameSlice
+        // planetSlice
+
+        dispatch(
+          DealDps({
+            gold: gold,
+            diamonds: diamonds,
+            currentDamage: currentDamage,
+            maxDamage: maxDamage,
+            planetGold: planetGold,
+            isBoss: isBoss,
+            currentLevel: currentLevel,
+            maxLevel: maxLevel,
+            diamondUpgradesUnlocked: diamondUpgradesUnlocked,
+            currentStage: currentStage,
+            maxStage: maxStage,
+            planetsDestroyed: planetsDestroyed,
+          })
+        );
+
+        dispatch(
+          UpdatePlanet({
+            planetName: planetName,
+            currentHealth: currentHealth,
+            healthPercent: healthPercent,
+            maxHealth: maxHealth,
+          })
+        );
       }
     };
 
@@ -167,15 +367,6 @@ export default function Game() {
         setOpen(true);
       }
     };
-
-    function settingsExist(settings: SettingsState) {
-      for (let option in settings) {
-        if (settings[option] == null) {
-          return false;
-        }
-      }
-      return true;
-    }
 
     let settings = localStorage.getItem("settings");
     if (settings) {

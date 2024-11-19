@@ -1,6 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import gameReducer from "@/lib/game/gameSlice";
+import planetReducer from "@/lib/game/planetSlice";
+import storeReducer from "@/lib/game/storeSlice";
+import shipReducer from "@/lib/game/shipSlice";
+import diamondUpgradeReducer from "@/lib/game/diamondUpgradeSlice";
 import upgradeReducer from "@/lib/game/upgradeSlice";
 import levelReducer from "@/lib/game/levelSlice";
 import errorReducer from "@/lib/game/errorSlice";
@@ -12,6 +16,10 @@ export const makeStore = () => {
   return configureStore({
     reducer: {
       game: gameReducer,
+      planet: planetReducer,
+      store: storeReducer,
+      ship: shipReducer,
+      diamondUpgrade: diamondUpgradeReducer,
       upgrade: upgradeReducer,
       level: levelReducer,
       error: errorReducer,
