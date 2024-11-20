@@ -420,10 +420,12 @@ func (g *Game) CalculateDiamondUpgrade(index int) {
 			pow := math.Pow(g.DiamondUpgrade[index].Constant, float64(g.DiamondUpgrade[index].Level))
 			entry.Cost = int64(pow * float64(g.DiamondUpgrade[index].BaseCost))
 
-			bigPowMulInt := new(big.Int).Exp(big.NewInt(10), big.NewInt(entry.Level), nil)
-			bigPowMul := new(big.Float).SetInt(bigPowMulInt)
-			bigPowMul.Mul(big.NewFloat(1.5), bigPowMul)
-			entry.Multiplier = bigPowMul
+			if g.DiamondUpgrade[index].Level > 0 {
+				bigPowMulInt := new(big.Int).Exp(big.NewInt(10), big.NewInt(entry.Level), nil)
+				bigPowMul := new(big.Float).SetInt(bigPowMulInt)
+				bigPowMul.Mul(big.NewFloat(1.5), bigPowMul)
+				entry.Multiplier = bigPowMul
+			}
 			g.DiamondUpgrade[index] = entry
 		}
 	} else if index == -1 {
@@ -432,10 +434,12 @@ func (g *Game) CalculateDiamondUpgrade(index int) {
 				pow := math.Pow(g.DiamondUpgrade[k].Constant, float64(g.DiamondUpgrade[k].Level))
 				entry.Cost = int64(pow * float64(g.DiamondUpgrade[k].BaseCost))
 
-				bigPowMulInt := new(big.Int).Exp(big.NewInt(10), big.NewInt(entry.Level), nil)
-				bigPowMul := new(big.Float).SetInt(bigPowMulInt)
-				bigPowMul.Mul(big.NewFloat(1.5), bigPowMul)
-				entry.Multiplier = bigPowMul
+				if g.DiamondUpgrade[k].Level > 0 {
+					bigPowMulInt := new(big.Int).Exp(big.NewInt(10), big.NewInt(entry.Level), nil)
+					bigPowMul := new(big.Float).SetInt(bigPowMulInt)
+					bigPowMul.Mul(big.NewFloat(1.5), bigPowMul)
+					entry.Multiplier = bigPowMul
+				}
 				g.DiamondUpgrade[k] = entry
 			}
 		}

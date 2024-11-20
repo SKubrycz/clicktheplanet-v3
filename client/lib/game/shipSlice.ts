@@ -36,6 +36,7 @@ export const shipSlice = createSlice({
   reducers: {
     UpdateShip: (state: ShipWrapper, action: PayloadAction<ShipWrapper>) => {
       return {
+        ...state,
         ...action.payload,
       };
     },

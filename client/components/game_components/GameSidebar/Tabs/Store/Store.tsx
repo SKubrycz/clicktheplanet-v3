@@ -35,14 +35,14 @@ export default function Store() {
 
   return (
     <div className="store-content-scroll">
-      {storeElementsArr.map((el, i) => {
+      {Object.keys(storeData).map((el, i) => {
         return (
           <StoreElement
             key={i}
             index={i + 1}
-            title={el.title}
-            description={el.desc}
-            locked={storeData[i + 1]?.locked}
+            title={storeElementsArr[i].title}
+            description={storeElementsArr[i].desc}
+            locked={storeData[Number(el)]?.locked}
           ></StoreElement>
         );
       })}

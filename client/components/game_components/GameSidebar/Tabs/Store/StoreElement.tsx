@@ -84,7 +84,9 @@ export default function StoreElement({
 
   return (
     <div className="store-element">
-      {locked ? <div className="element-locked"></div> : undefined}
+      {storeData[index]?.locked ? (
+        <div className="element-locked"></div>
+      ) : undefined}
       <div className="store-element-left-wrapper">
         {image ? (
           <Image

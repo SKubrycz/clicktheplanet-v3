@@ -12,6 +12,11 @@ interface StoreWrapper {
   [key: number]: Store;
 }
 
+interface StoreLock {
+  index: number;
+  locked: boolean;
+}
+
 interface StoreMessage {
   gold: string;
   diamonds: number;
@@ -33,9 +38,8 @@ export const storeSlice = createSlice({
   initialState: storeObject,
   reducers: {
     UpdateStore: (state: StoreWrapper, action: PayloadAction<StoreWrapper>) => {
-      console.log(action.payload);
-
       return {
+        ...state,
         ...action.payload,
       };
     },

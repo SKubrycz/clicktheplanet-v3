@@ -143,7 +143,7 @@ function draw() {
       } else {
         if (val <= 255 && val > 190) {
           color(imageData, i, 255 * w[2], 255 * w[1], 255 * w[0], norm);
-        } else if (val <= 190 && val > 120) {
+        } else if (val <= 190 && val > 130) {
           color(imageData, i, 240 * w[2], 240 * w[1], 240 * w[0], norm);
         } else if (val <= 130 && val > 100) {
           color(imageData, i, 230 * w[2], 230 * w[1], 230 * w[0], norm);

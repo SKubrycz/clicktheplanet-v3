@@ -281,7 +281,7 @@ export default function Game() {
         // gameSlice
         // storeSlice
         // shipSlice
-        // "diamond-upgrade" ? diamondUpgradeSlice : undefined
+        // diamondUpgradeSlice
 
         dispatch(
           Upgrade({
@@ -294,8 +294,7 @@ export default function Game() {
 
         dispatch(UpdateStore(store));
         dispatch(UpdateShip(ship));
-        if (message.action === "diamond-upgrade")
-          dispatch(UpdateDiamondUpgrade(diamondUpgrade));
+        dispatch(UpdateDiamondUpgrade(diamondUpgrade));
       }
 
       if (message.action === "error") {
@@ -320,11 +319,15 @@ export default function Game() {
           currentHealth,
           healthPercent,
           maxHealth,
+          store,
+          ship,
         } = message.data;
 
         // Update
         // gameSlice
         // planetSlice
+        // storeSlice
+        // shipSlice
 
         dispatch(
           DealDps({
@@ -351,6 +354,9 @@ export default function Game() {
             maxHealth: maxHealth,
           })
         );
+
+        dispatch(UpdateStore(store));
+        dispatch(UpdateShip(ship));
       }
     };
 

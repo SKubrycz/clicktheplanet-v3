@@ -31,7 +31,6 @@ export default function ShipElement({
   const dispatch = useAppDispatch();
 
   const [levels, setLevels] = useState<number | undefined>(undefined);
-  const [locked, setLocked] = useState<boolean>(true);
 
   const timeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -59,11 +58,6 @@ export default function ShipElement({
   };
 
   useEffect(() => {
-    if (shipData[index]?.locked) setLocked(true);
-    else if (!shipData[index]?.locked) setLocked(false);
-  }, [shipData[index]?.locked]);
-
-  useEffect(() => {
     if (timeout.current) {
       clearTimeout(timeout.current);
     }
@@ -89,7 +83,9 @@ export default function ShipElement({
 
   return (
     <div className="ship-element">
-      {locked ? <div className="element-locked"></div> : undefined}
+      {shipData[index]?.locked ? (
+        <div className="element-locked"></div>
+      ) : undefined}
       <div className="ship-element-info-wrapper">
         <div className="ship-element-title">
           {title} - Level: {shipData[index]?.level} | Multiplier: x
