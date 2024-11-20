@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useState } from "react";
 
 import StoreElement from "./StoreElement";
 
 import "./Store.scss";
+import { useAppSelector } from "@/lib/hooks";
 
 interface IStoreElement {
   title: string;
@@ -12,7 +13,9 @@ interface IStoreElement {
 }
 
 export default function Store() {
-  const storeElementsArr = useRef<IStoreElement[]>([
+  const storeData = useAppSelector((state) => state.store);
+
+  const [storeElementsArr] = useState<IStoreElement[]>([
     { title: `Element 1`, desc: `Element 1 description` },
     { title: `Element 2`, desc: `Element 2 description` },
     { title: `Element 3`, desc: `Element 3 description` },
@@ -32,13 +35,14 @@ export default function Store() {
 
   return (
     <div className="store-content-scroll">
-      {storeElementsArr.current.map((el, i) => {
+      {storeElementsArr.map((el, i) => {
         return (
           <StoreElement
             key={i}
             index={i + 1}
             title={el.title}
             description={el.desc}
+            locked={storeData[i + 1]?.locked}
           ></StoreElement>
         );
       })}

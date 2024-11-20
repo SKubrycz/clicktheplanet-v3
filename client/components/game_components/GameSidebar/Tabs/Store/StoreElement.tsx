@@ -15,6 +15,7 @@ interface StoreElementProps {
   index: number;
   title: string;
   description: string;
+  locked: boolean;
   image?: string;
 }
 
@@ -22,6 +23,7 @@ export default function StoreElement({
   index,
   title,
   description,
+  locked,
   image,
 }: StoreElementProps) {
   const storeData = useAppSelector((state) => state.store);
@@ -30,7 +32,6 @@ export default function StoreElement({
   const dispatch = useAppDispatch();
 
   const [levels, setLevels] = useState<number | undefined>(undefined);
-  const [locked, setLocked] = useState<boolean>(true);
 
   const timeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -58,11 +59,6 @@ export default function StoreElement({
   };
 
   useEffect(() => {
-    if (storeData[index]?.locked) setLocked(true);
-    else if (!storeData[index]?.locked) setLocked(false);
-  }, [storeData[index]?.locked]);
-
-  useEffect(() => {
     if (timeout.current) {
       clearTimeout(timeout.current);
     }
@@ -88,7 +84,7 @@ export default function StoreElement({
 
   return (
     <div className="store-element">
-      {storeData[index]?.locked ? <div className="element-locked"></div> : ""}
+      {locked ? <div className="element-locked"></div> : undefined}
       <div className="store-element-left-wrapper">
         {image ? (
           <Image

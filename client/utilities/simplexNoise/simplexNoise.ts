@@ -28,7 +28,7 @@ export function generateGradients(
   height: number
 ): number[][] {
   let gradients: number[][] = [];
-  let size = width * height;
+  let size = (width * height) / 128;
   let randX = (5578 * seed + 6785464) % 1739013789;
   let randY = (786715 * seed + 48354646) % 1739013781;
   randX = (5578 * randX + 6785464) % 1739013789;
@@ -57,13 +57,13 @@ export function simplexNoise(
   let n0, n1, n2;
 
   // Skew coords
-  const F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
+  const F2 = 0.5 * (1.732050807568877293527446341505 - 1.0);
   const s = (xin + yin) * F2;
   let i = Math.floor(xin + s);
   let j = Math.floor(yin + s);
 
   // Unskew coords
-  const G2 = (3.0 - Math.sqrt(3.0)) / 6.0;
+  const G2 = (3.0 - 1.732050807568877293527446341505) / 6.0;
   const t = (i + j) * G2;
   let X0 = i - t;
   let Y0 = j - t;

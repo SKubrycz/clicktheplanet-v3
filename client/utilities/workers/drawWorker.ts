@@ -57,7 +57,8 @@ function draw() {
   const gradients = generateGradients(seed, width, height);
 
   let planetPattern = (89213 * seed + 32894789) % 5346785487;
-  planetPattern = (89213 * planetPattern + 32894789) % 5346785487;
+  planetPattern = (91235 * planetPattern + 56426456) % 78269681123;
+  console.log(planetPattern % 3);
 
   for (let i = 0; i < height * 1; i++) {
     for (let j = 0; j < width * 1; j++) {
@@ -111,18 +112,48 @@ function draw() {
     // }
 
     if (!isBoss) {
-      if (val <= 255 && val > 220) {
-        color(imageData, i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
-      } else if (val <= 220 && val > 150) {
-        color(imageData, i, 245 * w[0], 245 * w[1], 245 * w[2], norm);
-      } else if (val <= 150 && val > 100) {
-        color(imageData, i, 195 * w[0], 195 * w[1], 195 * w[2], norm);
-      } else if (val <= 100 && val > 80) {
-        color(imageData, i, 190 * w[1], 190 * w[2], 190 * w[0], norm);
-      } else if (val <= 80 && val > 60) {
-        color(imageData, i, 170 * w[1], 170 * w[2], 170 * w[0], norm);
+      if (planetPattern % 3 === 0) {
+        if (val <= 255 && val > 220) {
+          color(imageData, i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
+        } else if (val <= 220 && val > 150) {
+          color(imageData, i, 245 * w[0], 245 * w[1], 245 * w[2], norm);
+        } else if (val <= 150 && val > 100) {
+          color(imageData, i, 195 * w[0], 195 * w[1], 195 * w[2], norm);
+        } else if (val <= 100 && val > 80) {
+          color(imageData, i, 190 * w[1], 190 * w[2], 190 * w[0], norm);
+        } else if (val <= 80 && val > 60) {
+          color(imageData, i, 170 * w[1], 170 * w[2], 170 * w[0], norm);
+        } else {
+          color(imageData, i, 150 * w[1], 150 * w[2], 150 * w[0], norm);
+        }
+      } else if (planetPattern % 3 === 1) {
+        if (val <= 255 && val > 210) {
+          color(imageData, i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
+        } else if (val <= 210 && val > 135) {
+          color(imageData, i, 240 * w[0], 240 * w[1], 240 * w[2], norm);
+        } else if (val <= 135 && val > 100) {
+          color(imageData, i, 210 * w[2], 210 * w[0], 210 * w[1], norm);
+        } else if (val <= 100 && val > 80) {
+          color(imageData, i, 200 * w[2], 200 * w[0], 200 * w[1], norm);
+        } else if (val <= 80 && val > 50) {
+          color(imageData, i, 190 * w[2], 190 * w[0], 190 * w[1], norm);
+        } else {
+          color(imageData, i, 160 * w[2], 160 * w[0], 160 * w[1], norm);
+        }
       } else {
-        color(imageData, i, 150 * w[1], 150 * w[2], 150 * w[0], norm);
+        if (val <= 255 && val > 190) {
+          color(imageData, i, 255 * w[2], 255 * w[1], 255 * w[0], norm);
+        } else if (val <= 190 && val > 120) {
+          color(imageData, i, 240 * w[2], 240 * w[1], 240 * w[0], norm);
+        } else if (val <= 130 && val > 100) {
+          color(imageData, i, 230 * w[2], 230 * w[1], 230 * w[0], norm);
+        } else if (val <= 100 && val > 80) {
+          color(imageData, i, 205 * w[0], 205 * w[1], 205 * w[2], norm);
+        } else if (val <= 80 && val > 50) {
+          color(imageData, i, 200 * w[0], 200 * w[1], 200 * w[2], norm);
+        } else {
+          color(imageData, i, 180 * w[0], 180 * w[1], 180 * w[2], norm);
+        }
       }
     } else {
       color(imageData, i, 255 * w[0], 255 * w[1], 255 * w[2], norm);

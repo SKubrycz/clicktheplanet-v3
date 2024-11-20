@@ -89,7 +89,7 @@ export default function ShipElement({
 
   return (
     <div className="ship-element">
-      {shipData[index]?.locked ? <div className="element-locked"></div> : ""}
+      {locked ? <div className="element-locked"></div> : undefined}
       <div className="ship-element-info-wrapper">
         <div className="ship-element-title">
           {title} - Level: {shipData[index]?.level} | Multiplier: x

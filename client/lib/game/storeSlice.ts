@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 
 interface Store {
   index: number;
@@ -33,6 +33,8 @@ export const storeSlice = createSlice({
   initialState: storeObject,
   reducers: {
     UpdateStore: (state: StoreWrapper, action: PayloadAction<StoreWrapper>) => {
+      console.log(action.payload);
+
       return {
         ...action.payload,
       };
