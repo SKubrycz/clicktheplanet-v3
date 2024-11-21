@@ -516,6 +516,9 @@ func (g *Game) CalculateGoldEarned() {
 	result := new(big.Float).SetFloat64(pow)
 	if g.Planet.IsBoss {
 		result.Mul(result, big.NewFloat(10))
+		if g.DiamondUpgrade[5].Level > 0 {
+			result.Mul(result, g.DiamondUpgrade[5].Multiplier)
+		}
 	}
 
 	bigMultiplier := big.NewFloat(g.Ship[4].Multiplier)

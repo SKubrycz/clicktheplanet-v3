@@ -30,6 +30,7 @@ export default function ShipDiamondUpgrade({
           <DiamondUpgrade title={"Click damage"} index={2}></DiamondUpgrade>
           <DiamondUpgrade title={"Critical damage"} index={3}></DiamondUpgrade>
           <DiamondUpgrade title={"Planet gold"} index={4}></DiamondUpgrade>
+          <DiamondUpgrade title={"Boss gold"} index={5}></DiamondUpgrade>
         </Box>
       </div>
     </Dialog>
