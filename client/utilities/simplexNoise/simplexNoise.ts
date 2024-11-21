@@ -30,15 +30,15 @@ export function generateGradients(
   let gradients: number[][] = [];
   let size = (width * height) / 128;
   let randX = (5578 * seed + 6785464) % 1739013789;
-  let randY = (786715 * seed + 48354646) % 1739013781;
+  let randY = (786715 * seed + 48354645) % 3784652874;
   randX = (5578 * randX + 6785464) % 1739013789;
-  randY = (786715 * randY + 48354646) % 1739013781;
+  randY = (786715 * randY + 48354645) % 3784652874;
 
   for (let i = 0; i < size; i++) {
-    gradients[i] = [(randX / 1739013789) * 2 - 1, (randY / 1739013781) * 2 - 1];
+    gradients[i] = [(randX / 1739013789) * 2 - 1, (randY / 3784652874) * 2 - 1];
 
     randX = (5578 * randX + 6785464) % 1739013789;
-    randY = (786715 * randY + 48354646) % 1739013781;
+    randY = (786715 * randY + 48354645) % 3784652874;
   }
 
   return gradients;

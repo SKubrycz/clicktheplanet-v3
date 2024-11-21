@@ -94,11 +94,11 @@ func (g *Game) ClickThePlanet(dmg *big.Float, isClick bool) {
 		if g.Planet.IsBoss && g.MaxLevel > 99 && g.MaxLevel == g.CurrentLevel {
 			g.Diamonds++
 		}
+		g.CalculateGoldEarned()
+		g.AddCurrentGold()
 		g.Advance()
 		g.CalculatePlanetHealth()
 		g.AddPlanetDestroyed()
-		g.CalculateGoldEarned()
-		g.AddCurrentGold()
 		g.CheckDiamondUpgradeUnlock()
 		g.CheckStoreLock(-1)
 		g.CheckShipLock(-1)
@@ -472,6 +472,9 @@ func (g *Game) Advance() {
 		}
 		g.CheckBoss()
 		g.GeneratePlanetName()
+		fmt.Println("current stage: ", g.CurrentStage)
+		fmt.Println("current level: ", g.CurrentLevel)
+		fmt.Println("isboss?:", g.Planet.IsBoss)
 	}
 }
 
@@ -514,7 +517,7 @@ func (g *Game) CalculateGoldEarned() {
 	pow := math.Pow(f, exp)
 
 	result := new(big.Float).SetFloat64(pow)
-	if g.Planet.IsBoss {
+	if g.Planet.IsBoss && g.CurrentStage == 10 {
 		result.Mul(result, big.NewFloat(10))
 		if g.DiamondUpgrade[5].Level > 0 {
 			result.Mul(result, g.DiamondUpgrade[5].Multiplier)

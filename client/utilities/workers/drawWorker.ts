@@ -83,7 +83,7 @@ function draw() {
     ((1117 * seed * 99999 + 4649587) % 998391231) / 998391231,
     ((71238 * seed * 99999 + 8956870) % 691270398) / 691270398,
   ];
-  if (weights[0] < 0.4 && weights[1] < 0.4 && weights[2] < 0.4) {
+  if (weights[0] < 0.6 && weights[1] < 0.6 && weights[2] < 0.6) {
     weights[0] += 0.2;
     weights[1] += 0.2;
     weights[2] += 0.2;
