@@ -73,7 +73,11 @@ export default function GameMain({ planetClick }: GameMainProps) {
       <div className="main-current-level">Level {gameData?.currentLevel}</div>
       <div className="main-current-stage">{gameData?.currentStage}/10</div>
       <div className="main-planet-name-title">Planet name:</div>
-      <div className="main-planet-name">{planetData?.planetName}</div>
+      <div className="main-planet-name">
+        {planetData?.diamondPlanet?.isDiamondPlanet
+          ? "Diamond Planet"
+          : planetData?.planetName}
+      </div>
       <div className="main-planet-image-wrapper">
         <Planet
           planetRef={planetRef}

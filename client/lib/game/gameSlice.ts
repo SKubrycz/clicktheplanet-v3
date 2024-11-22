@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, current } from "@reduxjs/toolkit";
+import { DiamondPlanet } from "./planetSlice";
 
 export interface Store {
   index: number;
@@ -94,6 +95,7 @@ export interface Data {
   diamondUpgradesUnlocked: boolean;
   planetGold: string;
   isBoss: boolean;
+  diamondPlanet: DiamondPlanet;
   currentLevel: number;
   maxLevel: number;
   currentStage: number;

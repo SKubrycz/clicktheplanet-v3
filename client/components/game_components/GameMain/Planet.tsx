@@ -128,6 +128,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
         size,
         seed,
         gameData?.isBoss,
+        planetData?.diamondPlanet?.isDiamondPlanet,
         imageData,
       ]);
 

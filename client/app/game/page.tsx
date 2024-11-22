@@ -156,6 +156,7 @@ export default function Game() {
           diamondUpgradesUnlocked,
           planetGold,
           isBoss,
+          diamondPlanet,
           currentLevel,
           maxLevel,
           currentStage,
@@ -202,6 +203,7 @@ export default function Game() {
             currentHealth: currentHealth,
             healthPercent: healthPercent,
             maxHealth: maxHealth,
+            diamondPlanet: diamondPlanet,
           })
         );
 
@@ -221,6 +223,7 @@ export default function Game() {
           diamondUpgradesUnlocked,
           planetGold,
           isBoss,
+          diamondPlanet,
           currentLevel,
           maxLevel,
           currentStage,
@@ -260,6 +263,7 @@ export default function Game() {
             currentHealth: currentHealth,
             healthPercent: healthPercent,
             maxHealth: maxHealth,
+            diamondPlanet: diamondPlanet,
           })
         );
       }
@@ -310,6 +314,7 @@ export default function Game() {
           diamondUpgradesUnlocked,
           planetGold,
           isBoss,
+          diamondPlanet,
           currentLevel,
           maxLevel,
           currentStage,
@@ -352,6 +357,7 @@ export default function Game() {
             currentHealth: currentHealth,
             healthPercent: healthPercent,
             maxHealth: maxHealth,
+            diamondPlanet: diamondPlanet,
           })
         );
 

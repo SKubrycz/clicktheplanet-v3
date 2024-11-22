@@ -26,6 +26,7 @@ type UserClick struct {
 	MaxHealth               string                            `json:"maxHealth"`
 	PlanetGold              string                            `json:"planetGold"`
 	IsBoss                  bool                              `json:"isBoss"`
+	DiamondPlanet           DiamondPlanetDataMessage          `json:"diamondPlanet"`
 	CurrentLevel            int64                             `json:"currentLevel"`
 	MaxLevel                int64                             `json:"maxLevel"`
 	CurrentStage            uint8                             `json:"currentStage"`
@@ -111,6 +112,12 @@ type LevelDataMessage struct {
 	IsBoss        bool   `json:"isBoss"`
 }
 
+type DiamondPlanetDataMessage struct {
+	Diamonds        int     `json:"diamonds"`
+	Chance          float64 `json:"chance"`
+	IsDiamondPlanet bool    `json:"isDiamondPlanet"`
+}
+
 type ErrorDataMessage struct {
 	Error string `json:"error"`
 }
@@ -127,6 +134,13 @@ func ActionHandler(g *Game, action string) []byte {
 			Critical: g.DamageDone.Critical,
 		}
 		percent := g.GetHealthPercent()
+
+		diamondPlanet := DiamondPlanetDataMessage{
+			Diamonds:        int(g.Planet.DiamondPlanet.Diamonds),
+			Chance:          g.Planet.DiamondPlanet.Chance,
+			IsDiamondPlanet: g.Planet.DiamondPlanet.IsDiamondPlanet,
+		}
+
 		store := map[int]StoreDataMessage{}
 		for k := range g.Store {
 			s := new(StoreDataMessage)
@@ -174,6 +188,7 @@ func ActionHandler(g *Game, action string) []byte {
 				MaxHealth:               g.DisplayNumber(g.Planet.MaxHealth),
 				PlanetGold:              g.DisplayNumber(g.Planet.Gold),
 				IsBoss:                  g.Planet.IsBoss,
+				DiamondPlanet:           diamondPlanet,
 				CurrentLevel:            g.CurrentLevel,
 				MaxLevel:                g.MaxLevel,
 				CurrentStage:            g.CurrentStage,
@@ -203,6 +218,12 @@ func ActionHandler(g *Game, action string) []byte {
 		damageDone := DamageDoneData{
 			Damage:   g.DisplayNumber(g.DamageDone.Damage),
 			Critical: g.DamageDone.Critical,
+		}
+
+		diamondPlanet := DiamondPlanetDataMessage{
+			Diamonds:        int(g.Planet.DiamondPlanet.Diamonds),
+			Chance:          g.Planet.DiamondPlanet.Chance,
+			IsDiamondPlanet: g.Planet.DiamondPlanet.IsDiamondPlanet,
 		}
 
 		store := map[int]StoreDataMessage{}
@@ -255,6 +276,7 @@ func ActionHandler(g *Game, action string) []byte {
 				MaxHealth:               g.DisplayNumber(g.Planet.MaxHealth),
 				PlanetGold:              g.DisplayNumber(g.Planet.Gold),
 				IsBoss:                  g.Planet.IsBoss,
+				DiamondPlanet:           diamondPlanet,
 				CurrentLevel:            g.CurrentLevel,
 				MaxLevel:                g.MaxLevel,
 				CurrentStage:            g.CurrentStage,
@@ -407,6 +429,12 @@ func DealDps(g *Game) []byte {
 	g.ClickThePlanet(g.Ship[1].Damage, false)
 	percent := g.GetHealthPercent()
 
+	diamondPlanet := DiamondPlanetDataMessage{
+		Diamonds:        int(g.Planet.DiamondPlanet.Diamonds),
+		Chance:          g.Planet.DiamondPlanet.Chance,
+		IsDiamondPlanet: g.Planet.DiamondPlanet.IsDiamondPlanet,
+	}
+
 	store := map[int]StoreDataMessage{}
 	for k := range g.Store {
 		s := new(StoreDataMessage)
@@ -455,6 +483,7 @@ func DealDps(g *Game) []byte {
 			MaxHealth:               g.DisplayNumber(g.Planet.MaxHealth),
 			PlanetGold:              g.DisplayNumber(g.Planet.Gold),
 			IsBoss:                  g.Planet.IsBoss,
+			DiamondPlanet:           diamondPlanet,
 			CurrentLevel:            g.CurrentLevel,
 			MaxLevel:                g.MaxLevel,
 			CurrentStage:            g.CurrentStage,

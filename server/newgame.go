@@ -49,6 +49,11 @@ func NewGame(gameData *GameData) *Game {
 		MaxHealth:     new(big.Float),
 		Gold:          new(big.Float),
 		IsBoss:        false,
+		DiamondPlanet: DiamondPlanet{
+			Diamonds:        1,
+			Chance:          0.01,
+			IsDiamondPlanet: false,
+		},
 	}
 
 	store := map[int]StoreUpgrade{

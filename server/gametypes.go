@@ -38,12 +38,19 @@ type StoreUpgrade struct {
 	Locked     bool
 }
 
+type DiamondPlanet struct {
+	Diamonds        int64
+	Chance          float64
+	IsDiamondPlanet bool
+}
+
 type Planet struct {
 	Name          string
 	CurrentHealth *big.Float
 	MaxHealth     *big.Float
 	Gold          *big.Float
 	IsBoss        bool
+	DiamondPlanet DiamondPlanet
 }
 
 type DamageDone struct {
@@ -471,6 +478,7 @@ func (g *Game) Advance() {
 			g.MaxStage = g.CurrentStage
 		}
 		g.CheckBoss()
+		g.RollDiamondPlanet()
 		g.GeneratePlanetName()
 		fmt.Println("current stage: ", g.CurrentStage)
 		fmt.Println("current level: ", g.CurrentLevel)
@@ -484,6 +492,8 @@ func (g *Game) PreviousLevel() {
 		g.CurrentStage = 10
 
 		g.CheckBoss()
+
+		g.RollDiamondPlanet()
 
 		g.CalculatePlanetHealth()
 		g.CalculateGoldEarned()
@@ -502,6 +512,8 @@ func (g *Game) NextLevel() {
 		}
 
 		g.CheckBoss()
+
+		g.RollDiamondPlanet()
 
 		g.CalculatePlanetHealth()
 		g.CalculateGoldEarned()
@@ -538,6 +550,10 @@ func (g *Game) AddCurrentGold() {
 	result.Add(g.Gold, g.Planet.Gold)
 
 	g.ConvertNumber(result, g.Gold)
+
+	if g.Planet.DiamondPlanet.IsDiamondPlanet && g.MaxLevel > 99 {
+		g.Diamonds += 1
+	}
 }
 
 func (g *Game) AddPlanetDestroyed() {
@@ -735,6 +751,17 @@ func (g *Game) CheckBoss() {
 		g.Planet.IsBoss = true
 	} else {
 		g.Planet.IsBoss = false
+	}
+}
+
+func (g *Game) RollDiamondPlanet() {
+	if g.CurrentLevel%10 != 0 && g.CurrentLevel == g.MaxLevel && !g.Planet.IsBoss {
+		random := rand.Float64()
+		if random <= g.Planet.DiamondPlanet.Chance {
+			g.Planet.DiamondPlanet.IsDiamondPlanet = true
+		} else {
+			g.Planet.DiamondPlanet.IsDiamondPlanet = false
+		}
 	}
 }
 
