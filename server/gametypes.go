@@ -122,6 +122,9 @@ func (g *Game) CalculateCurrentDamage() {
 	}
 	bigMultiplier := big.NewFloat(g.Ship[2].Multiplier)
 	res.Mul(res, bigMultiplier)
+	if g.DiamondUpgrade[2].Level > 0 {
+		res.Mul(res, g.DiamondUpgrade[2].Multiplier)
+	}
 	g.CurrentDamage = res
 	if g.CurrentDamage.Cmp(g.MaxDamage) > 0 {
 		g.MaxDamage = g.CurrentDamage
@@ -160,34 +163,38 @@ func (g *Game) CalculatePlanetHealth() {
 }
 
 func (g *Game) GeneratePlanetName() {
-	lns := (g.CurrentLevel * g.CurrentLevel) + int64(g.CurrentStage*g.CurrentStage)
+	if !g.Planet.DiamondPlanet.IsDiamondPlanet {
+		lns := (g.CurrentLevel * g.CurrentLevel) + int64(g.CurrentStage*g.CurrentStage)
 
-	rand := (123*lns + 123768173) % 7847681738
-	stringLength := int((rand % 5) + 4)
+		rand := (123*lns + 123768173) % 7847681738
+		stringLength := int((rand % 5) + 4)
 
-	var byteName bytes.Buffer
-	// 48 - 57 range 9
-	// 65 - 90 range 25
-	// (ASCII) ^ inclusive
+		var byteName bytes.Buffer
+		// 48 - 57 range 9
+		// 65 - 90 range 25
+		// (ASCII) ^ inclusive
 
-	randNumber := (5634*lns + 5609872012) % 5609872012923
-	randLetter := (8946*lns + 5609872012) % 5609872012923
+		randNumber := (5634*lns + 5609872012) % 5609872012923
+		randLetter := (8946*lns + 5609872012) % 5609872012923
 
-	for i := 0; i < stringLength; i++ {
-		randNumber = (2119*randNumber + 5609872012) % 5609872012923
-		randLetter = (8946*randLetter + 1238971239) % 5609872012923
+		for i := 0; i < stringLength; i++ {
+			randNumber = (2119*randNumber + 5609872012) % 5609872012923
+			randLetter = (8946*randLetter + 1238971239) % 5609872012923
 
-		number := (randNumber % 9) + 48
-		letter := (randLetter % 25) + 65
+			number := (randNumber % 9) + 48
+			letter := (randLetter % 25) + 65
 
-		if randNumber > randLetter {
-			byteName.WriteByte(byte(number))
-		} else if randNumber <= randLetter {
-			byteName.WriteByte(byte(letter))
+			if randNumber > randLetter {
+				byteName.WriteByte(byte(number))
+			} else if randNumber <= randLetter {
+				byteName.WriteByte(byte(letter))
+			}
 		}
-	}
 
-	g.Planet.Name = byteName.String()
+		g.Planet.Name = byteName.String()
+	} else {
+		g.Planet.Name = "Diamond Planet"
+	}
 }
 
 func (g *Game) UpgradeStore(index int, levels int) string {
@@ -477,13 +484,13 @@ func (g *Game) Advance() {
 		if g.CurrentLevel == g.MaxLevel {
 			g.MaxStage = g.CurrentStage
 		}
-		g.CheckBoss()
-		g.RollDiamondPlanet()
-		g.GeneratePlanetName()
-		fmt.Println("current stage: ", g.CurrentStage)
-		fmt.Println("current level: ", g.CurrentLevel)
-		fmt.Println("isboss?:", g.Planet.IsBoss)
 	}
+	g.CheckBoss()
+	g.RollDiamondPlanet()
+	g.GeneratePlanetName()
+	fmt.Println("current stage: ", g.CurrentStage)
+	fmt.Println("current level: ", g.CurrentLevel)
+	fmt.Println("isboss?:", g.Planet.IsBoss)
 }
 
 func (g *Game) PreviousLevel() {
@@ -755,14 +762,18 @@ func (g *Game) CheckBoss() {
 }
 
 func (g *Game) RollDiamondPlanet() {
-	if g.CurrentLevel%10 != 0 && g.CurrentLevel == g.MaxLevel && !g.Planet.IsBoss {
+	if g.CurrentLevel%10 != 0 && !g.Planet.IsBoss {
 		random := rand.Float64()
 		if random <= g.Planet.DiamondPlanet.Chance {
 			g.Planet.DiamondPlanet.IsDiamondPlanet = true
+			g.Planet.Name = "Diamond Planet"
 		} else {
 			g.Planet.DiamondPlanet.IsDiamondPlanet = false
 		}
 	}
+
+	fmt.Println(g.Planet.Name)
+	fmt.Println("IsDiamondPlanet", g.Planet.DiamondPlanet.IsDiamondPlanet)
 }
 
 func toFixed(num float64, prec int) float64 {

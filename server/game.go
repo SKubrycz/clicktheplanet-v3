@@ -205,6 +205,7 @@ func ActionHandler(g *Game, action string) []byte {
 	} else if action == "init" {
 		g.CheckBoss()
 		g.CalculatePlanetHealth()
+		g.RollDiamondPlanet()
 		g.GeneratePlanetName()
 		g.CheckDiamondUpgradeUnlock()
 		g.CalculateDiamondUpgrade(-1)
