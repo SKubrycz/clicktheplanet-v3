@@ -99,7 +99,11 @@ func (g *Game) ClickThePlanet(dmg *big.Float, isClick bool) {
 	x := big.NewFloat(0)
 	if g.Planet.CurrentHealth.Cmp(x) <= 0 {
 		if g.Planet.IsBoss && g.MaxLevel > 99 && g.MaxLevel == g.CurrentLevel {
-			g.Diamonds++
+			if g.MaxLevel == 100 {
+				g.Diamonds++
+			} else {
+				g.Diamonds += int64((g.MaxLevel - 100) / 10)
+			}
 		}
 		g.CalculateGoldEarned()
 		g.AddCurrentGold()
@@ -762,6 +766,9 @@ func (g *Game) CheckBoss() {
 }
 
 func (g *Game) RollDiamondPlanet() {
+	if !g.DiamondUpgradesUnlocked {
+		return
+	}
 	if g.CurrentLevel%10 != 0 && !g.Planet.IsBoss {
 		random := rand.Float64()
 		if random <= g.Planet.DiamondPlanet.Chance {
