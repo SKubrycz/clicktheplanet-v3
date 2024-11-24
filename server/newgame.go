@@ -8,7 +8,6 @@ import (
 func NewGame(gameData *GameData) *Game {
 	fmt.Println("ASSIGNING gameData")
 
-	// big numbers initialization and db data assignment to variables
 	id := gameData.Id
 
 	gold := new(big.Float)
@@ -17,7 +16,7 @@ func NewGame(gameData *GameData) *Game {
 	diamonds := gameData.Diamonds
 
 	currentDamage := new(big.Float)
-	currentDamage.SetString("1") // This needs to be calculated after upgrade info retrieval
+	currentDamage.SetString("1")
 
 	maxDamage := new(big.Float)
 	maxDamage.SetString(gameData.MaxDamage)
@@ -235,35 +234,14 @@ func NewGame(gameData *GameData) *Game {
 	store[14].BaseCost.SetString("1.0e+35")
 	store[15].BaseCost.SetString("1.0e+39")
 	store[16].BaseCost.SetString("1.0e+43")
-	store[17].BaseCost.SetString("1.0e+48")
-	store[18].BaseCost.SetString("1.0e+54")
-	store[19].BaseCost.SetString("1.0e+61")
-	store[20].BaseCost.SetString("1.0e+69")
+	store[17].BaseCost.SetString("1.0e+50")
+	store[18].BaseCost.SetString("1.0e+59")
+	store[19].BaseCost.SetString("1.0e+69")
+	store[20].BaseCost.SetString("1.0e+80")
 
 	for k := range len(store) {
 		store[k+1].Cost.SetString(store[k+1].BaseCost.String())
 	}
-
-	// store[1].Cost.SetString(store[1].BaseCost.String())
-	// store[2].Cost.SetString(store[2].BaseCost.String())
-	// store[3].Cost.SetString(store[3].BaseCost.String())
-	// store[4].Cost.SetString(store[4].BaseCost.String())
-	// store[5].Cost.SetString(store[5].BaseCost.String())
-	// store[6].Cost.SetString(store[6].BaseCost.String())
-	// store[7].Cost.SetString(store[7].BaseCost.String())
-	// store[8].Cost.SetString(store[8].BaseCost.String())
-	// store[9].Cost.SetString(store[9].BaseCost.String())
-	// store[10].Cost.SetString(store[10].BaseCost.String())
-	// store[11].Cost.SetString(store[11].BaseCost.String())
-	// store[12].Cost.SetString(store[12].BaseCost.String())
-	// store[13].Cost.SetString(store[13].BaseCost.String())
-	// store[14].Cost.SetString(store[14].BaseCost.String())
-	// store[15].Cost.SetString(store[15].BaseCost.String())
-	// store[16].Cost.SetString(store[16].BaseCost.String())
-	// store[17].Cost.SetString(store[17].BaseCost.String())
-	// store[18].Cost.SetString(store[18].BaseCost.String())
-	// store[19].Cost.SetString(store[19].BaseCost.String())
-	// store[20].Cost.SetString(store[20].BaseCost.String())
 
 	store[1].BaseDamage.SetString("1")
 	store[2].BaseDamage.SetString("25")
@@ -281,32 +259,15 @@ func NewGame(gameData *GameData) *Game {
 	store[14].BaseDamage.SetString("1.0e+24")
 	store[15].BaseDamage.SetString("2.0e+26")
 	store[16].BaseDamage.SetString("5.0e+28")
-	store[17].BaseDamage.SetString("7.5e+30")
-	store[18].BaseDamage.SetString("1.0e+33")
-	store[19].BaseDamage.SetString("1.0e+36")
-	store[20].BaseDamage.SetString("1.0e+39")
+	store[17].BaseDamage.SetString("1.0e+31")
+	store[18].BaseDamage.SetString("5.0e+33")
+	store[19].BaseDamage.SetString("1.0e+37")
+	store[20].BaseDamage.SetString("2.0e+40")
 
 	for k := range len(store) {
 		store[k+1].Damage.SetString(store[k+1].BaseDamage.String())
 	}
 
-	// store[1].Damage.SetString(store[1].BaseDamage.String())
-	// store[2].Damage.SetString(store[2].BaseDamage.String())
-	// store[3].Damage.SetString(store[3].BaseDamage.String())
-	// store[4].Damage.SetString(store[4].BaseDamage.String())
-	// store[5].Damage.SetString(store[5].BaseDamage.String())
-	// store[6].Damage.SetString(store[6].BaseDamage.String())
-	// store[7].Damage.SetString(store[7].BaseDamage.String())
-	// store[8].Damage.SetString(store[8].BaseDamage.String())
-	// store[9].Damage.SetString(store[9].BaseDamage.String())
-	// store[10].Damage.SetString(store[10].BaseDamage.String())
-	// store[11].Damage.SetString(store[11].BaseDamage.String())
-	// store[12].Damage.SetString(store[12].BaseDamage.String())
-	// store[13].Damage.SetString(store[13].BaseDamage.String())
-	// store[14].Damage.SetString(store[14].BaseDamage.String())
-	// store[15].Damage.SetString(store[15].BaseDamage.String())
-
-	// Constant field is needed to calculate cost
 	ship := map[int]ShipUpgrade{
 		1: {
 			Level:      gameData.Ship[1].Level,
@@ -350,8 +311,6 @@ func NewGame(gameData *GameData) *Game {
 		},
 	}
 
-	// These bases costs are later to be changed
-	// Depending on what function will the upgrade provide
 	ship[1].BaseCost.SetString("100")
 	ship[2].BaseCost.SetString("500")
 	ship[3].BaseCost.SetString("10000")
