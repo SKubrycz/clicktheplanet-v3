@@ -563,7 +563,11 @@ func (g *Game) AddCurrentGold() {
 	g.ConvertNumber(result, g.Gold)
 
 	if g.Planet.DiamondPlanet.IsDiamondPlanet && g.MaxLevel > 99 {
-		g.Diamonds += 1
+		if g.MaxLevel == 100 {
+			g.Diamonds++
+		} else {
+			g.Diamonds += int64((g.MaxLevel - 100) / (10 * 2)) // Half the Boss's Diamonds
+		}
 	}
 }
 
