@@ -170,7 +170,7 @@ func (g *Game) GeneratePlanetName() {
 	if !g.Planet.DiamondPlanet.IsDiamondPlanet {
 		lns := (g.CurrentLevel * g.CurrentLevel) + int64(g.CurrentStage*g.CurrentStage)
 
-		rand := (123*lns + 123768173) % 7847681738
+		rand := (792*lns + 78916450) % 7847681738
 		stringLength := int((rand % 5) + 4)
 
 		var byteName bytes.Buffer
@@ -178,12 +178,14 @@ func (g *Game) GeneratePlanetName() {
 		// 65 - 90 range 25
 		// (ASCII) ^ inclusive
 
-		randNumber := (5634*lns + 5609872012) % 5609872012923
-		randLetter := (8946*lns + 5609872012) % 5609872012923
+		randNumber := uint64((211986194*rand + 5609872012) % 5609872012923)
+		randLetter := uint64((894676913*rand + 3427432997) % 7899123564644)
+
+		fmt.Println(randNumber)
 
 		for i := 0; i < stringLength; i++ {
-			randNumber = (2119*randNumber + 5609872012) % 5609872012923
-			randLetter = (8946*randLetter + 1238971239) % 5609872012923
+			randNumber = uint64((211986194*randNumber + 5609872012) % 5609872012923)
+			randLetter = uint64((894676913*randLetter + 3427432997) % 7899123564644)
 
 			number := (randNumber % 9) + 48
 			letter := (randLetter % 25) + 65
