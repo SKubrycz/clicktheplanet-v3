@@ -162,6 +162,11 @@ func insertStoreTable(p *Postgres) error {
 	INSERT INTO store (id, title, description) VALUES (18, 'Store 18', 'Store 18 desc') ON CONFLICT (title) DO NOTHING;
 	INSERT INTO store (id, title, description) VALUES (19, 'Store 19', 'Store 19 desc') ON CONFLICT (title) DO NOTHING;
 	INSERT INTO store (id, title, description) VALUES (20, 'Store 20', 'Store 20 desc') ON CONFLICT (title) DO NOTHING;
+	INSERT INTO store (id, title, description) VALUES (21, 'Store 21', 'Store 21 desc') ON CONFLICT (title) DO NOTHING;
+	INSERT INTO store (id, title, description) VALUES (22, 'Store 22', 'Store 22 desc') ON CONFLICT (title) DO NOTHING;
+	INSERT INTO store (id, title, description) VALUES (23, 'Store 23', 'Store 23 desc') ON CONFLICT (title) DO NOTHING;
+	INSERT INTO store (id, title, description) VALUES (24, 'Store 24', 'Store 24 desc') ON CONFLICT (title) DO NOTHING;
+	INSERT INTO store (id, title, description) VALUES (25, 'Store 25', 'Store 25 desc') ON CONFLICT (title) DO NOTHING;
 	`
 
 	_, err := p.db.Exec(insertStore)

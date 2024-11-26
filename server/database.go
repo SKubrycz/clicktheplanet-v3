@@ -227,6 +227,18 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 	FROM games WHERE user_id = $1
 	`
 
+	storeCountQuery := `
+	SELECT COUNT(id) FROM store;
+	`
+
+	gameStoreCountQuery := `
+	SELECT count(store_id) FROM game_store WHERE game_id = $1 GROUP BY game_id;
+	`
+
+	gameStoreInsertQuery := `
+	INSERT INTO game_store (level, game_id, store_id) VALUES ($1, $2, $3);
+	`
+
 	gameShipQuery := `
 	SELECT level FROM game_ship WHERE game_id = $1 ORDER BY id ASC
 	`
@@ -257,6 +269,36 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 	)
 	if err != nil {
 		return nil, err
+	}
+
+	var storeCount int
+	err = p.db.QueryRow(storeCountQuery).Scan(&storeCount)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	var gameStoreCount int
+	err = p.db.QueryRow(gameStoreCountQuery, game.Id).Scan(&gameStoreCount)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	storeDiff := storeCount - gameStoreCount
+
+	fmt.Println("STORE DIFF:", storeDiff)
+
+	if storeDiff != 0 {
+		for i := gameStoreCount; i <= storeCount; i++ {
+			fmt.Println(i)
+			fmt.Println(gameStoreCount)
+			_, err = p.db.Exec(gameStoreInsertQuery, 0, game.Id, i)
+			if err != nil {
+				fmt.Println(err)
+				return nil, err
+			}
+		}
 	}
 
 	i := 1

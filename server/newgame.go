@@ -55,167 +55,18 @@ func NewGame(gameData *GameData) *Game {
 		},
 	}
 
-	store := map[int]StoreUpgrade{
-		1: {
-			Level:      gameData.Store[1].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		2: {
-			Level:      gameData.Store[2].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		3: {
-			Level:      gameData.Store[3].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		4: {
-			Level:      gameData.Store[4].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		5: {
-			Level:      gameData.Store[5].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		6: {
-			Level:      gameData.Store[6].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		7: {
-			Level:      gameData.Store[7].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		8: {
-			Level:      gameData.Store[8].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		9: {
-			Level:      gameData.Store[9].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		10: {
-			Level:      gameData.Store[10].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		11: {
-			Level:      gameData.Store[11].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		12: {
-			Level:      gameData.Store[12].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		13: {
-			Level:      gameData.Store[13].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		14: {
-			Level:      gameData.Store[14].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		15: {
-			Level:      gameData.Store[15].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		16: {
-			Level:      gameData.Store[16].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		17: {
-			Level:      gameData.Store[17].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		18: {
-			Level:      gameData.Store[18].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		19: {
-			Level:      gameData.Store[19].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
-		20: {
-			Level:      gameData.Store[20].Level,
-			Cost:       new(big.Float),
-			BaseCost:   new(big.Float),
-			Damage:     new(big.Float),
-			BaseDamage: new(big.Float),
-			Locked:     true,
-		},
+	store := map[int]StoreUpgrade{}
+
+	for k := range len(gameData.Store) {
+		s := new(StoreUpgrade)
+		s.Level = gameData.Store[k+1].Level
+		s.Cost = new(big.Float)
+		s.BaseCost = new(big.Float)
+		s.Damage = new(big.Float)
+		s.BaseDamage = new(big.Float)
+		s.Locked = true
+
+		store[k+1] = *s
 	}
 
 	store[1].BaseCost.SetString("10")
@@ -238,6 +89,11 @@ func NewGame(gameData *GameData) *Game {
 	store[18].BaseCost.SetString("1.0e+59")
 	store[19].BaseCost.SetString("1.0e+69")
 	store[20].BaseCost.SetString("1.0e+80")
+	store[21].BaseCost.SetString("1.0e+92")
+	store[22].BaseCost.SetString("1.0e+104")
+	store[23].BaseCost.SetString("1.0e+117")
+	store[24].BaseCost.SetString("1.0e+131")
+	store[25].BaseCost.SetString("1.0e+146")
 
 	for k := range len(store) {
 		store[k+1].Cost.SetString(store[k+1].BaseCost.String())
@@ -263,6 +119,11 @@ func NewGame(gameData *GameData) *Game {
 	store[18].BaseDamage.SetString("5.0e+33")
 	store[19].BaseDamage.SetString("1.0e+37")
 	store[20].BaseDamage.SetString("2.0e+40")
+	store[21].BaseDamage.SetString("1.0e+44")
+	store[22].BaseDamage.SetString("1.0e+48")
+	store[23].BaseDamage.SetString("2.5e+52")
+	store[24].BaseDamage.SetString("1.0e+57")
+	store[25].BaseDamage.SetString("1.0e+63")
 
 	for k := range len(store) {
 		store[k+1].Damage.SetString(store[k+1].BaseDamage.String())
