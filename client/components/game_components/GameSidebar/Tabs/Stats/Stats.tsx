@@ -45,7 +45,7 @@ export default function Stats() {
       {gameData?.diamondUpgradesUnlocked && (
         <StatsElement
           title="Diamond Planet chance:"
-          data={`${planetData?.diamondPlanet?.chance * 100}%`}
+          data={`${(planetData?.diamondPlanet?.chance * 100).toFixed(4)}%`}
         ></StatsElement>
       )}
     </div>

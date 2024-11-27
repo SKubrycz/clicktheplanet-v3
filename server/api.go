@@ -158,10 +158,18 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	defer close(game.Ch)
+	timeStart := time.Now() // For save anti-spam
 	go func() {
 		for message := range game.Ch {
 			switch message {
 			case "click":
+				timeSave := time.Now()
+				elapsed := timeSave.Sub(timeStart).Seconds()
+				if elapsed < 5 {
+					continue
+				} else {
+					timeStart = time.Now()
+				}
 				fmt.Printf("%v: Planet destroyed - Saving game...\n", time.Now())
 				err := s.db.SaveGameProgress(id, game)
 				if err != nil {
