@@ -8,6 +8,7 @@ import "./Stats.scss";
 
 export default function Stats() {
   const gameData = useAppSelector((state) => state.game);
+  const planetData = useAppSelector((state) => state.planet);
 
   return (
     <div className="stats-content">
@@ -41,6 +42,12 @@ export default function Stats() {
         title="Planets destroyed:"
         data={gameData?.planetsDestroyed}
       ></StatsElement>
+      {gameData?.diamondUpgradesUnlocked && (
+        <StatsElement
+          title="Diamond Planet chance:"
+          data={`${planetData?.diamondPlanet?.chance * 100}%`}
+        ></StatsElement>
+      )}
     </div>
   );
 }

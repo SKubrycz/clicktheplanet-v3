@@ -40,6 +40,7 @@ type StoreUpgrade struct {
 
 type DiamondPlanet struct {
 	Diamonds        int64
+	BaseChance      float64
 	Chance          float64
 	IsDiamondPlanet bool
 }
@@ -492,6 +493,7 @@ func (g *Game) Advance() {
 		}
 	}
 	g.CheckBoss()
+	g.CalculateDiamondPlanetChance()
 	g.RollDiamondPlanet()
 	g.GeneratePlanetName()
 	fmt.Println("current stage: ", g.CurrentStage)
@@ -787,6 +789,13 @@ func (g *Game) RollDiamondPlanet() {
 
 	fmt.Println(g.Planet.Name)
 	fmt.Println("IsDiamondPlanet", g.Planet.DiamondPlanet.IsDiamondPlanet)
+}
+
+func (g *Game) CalculateDiamondPlanetChance() {
+	if !g.DiamondUpgradesUnlocked {
+		return
+	}
+	g.Planet.DiamondPlanet.Chance = g.Planet.DiamondPlanet.BaseChance + (0.00001 * (float64(g.MaxLevel-100) / 10))
 }
 
 func toFixed(num float64, prec int) float64 {

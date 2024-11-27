@@ -50,6 +50,7 @@ func NewGame(gameData *GameData) *Game {
 		IsBoss:        false,
 		DiamondPlanet: DiamondPlanet{
 			Diamonds:        1,
+			BaseChance:      0.001,
 			Chance:          0.001,
 			IsDiamondPlanet: false,
 		},
