@@ -13,7 +13,8 @@ func NewGame(gameData *GameData) *Game {
 	gold := new(big.Float)
 	gold.SetString(gameData.Gold)
 
-	diamonds := big.NewFloat(float64(gameData.Diamonds))
+	diamonds := new(big.Float)
+	diamonds.SetString(gameData.Diamonds)
 
 	currentDamage := new(big.Float)
 	currentDamage.SetString("1")
@@ -47,6 +48,7 @@ func NewGame(gameData *GameData) *Game {
 		CurrentHealth: new(big.Float),
 		MaxHealth:     new(big.Float),
 		Gold:          new(big.Float),
+		Diamonds:      new(big.Float),
 		IsBoss:        false,
 		DiamondPlanet: DiamondPlanet{
 			Diamonds:        1,

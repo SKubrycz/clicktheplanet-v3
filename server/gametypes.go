@@ -101,6 +101,7 @@ func (g *Game) ClickThePlanet(dmg *big.Float, isClick bool) {
 	x := big.NewFloat(0)
 	if g.Planet.CurrentHealth.Cmp(x) <= 0 {
 		g.CalculateDiamondsEarned()
+		g.AddCurrentDiamonds()
 		g.CalculateGoldEarned()
 		g.AddCurrentGold()
 		g.Advance()
@@ -405,7 +406,7 @@ func (g *Game) UpgradeDiamondUpgrade(index int, levels int) string {
 		return "insufficient resources"
 	}
 
-	var bulkCost *big.Float
+	bulkCost := new(big.Float)
 	for i := 1; i <= levels; i++ {
 		pow := math.Pow(g.DiamondUpgrade[index].Constant, float64(g.DiamondUpgrade[index].Level+int64(i-1)))
 
@@ -590,14 +591,20 @@ func (g *Game) CalculateDiamondsEarned() {
 			pow := math.Pow(diamondConst, exp)
 
 			result := new(big.Float).SetFloat64(pow)
-			result.Quo(result, big.NewFloat(2))
+			divisor := big.NewFloat(2)
+			result.Quo(result, divisor)
 			g.ConvertNumber(result, g.Planet.Diamonds)
 		}
 	}
 }
 
 func (g *Game) AddCurrentDiamonds() {
-	if g.Planet.IsBoss && g.MaxLevel > 99 && g.MaxLevel == g.CurrentLevel {
+	if g.Planet.IsBoss && !g.Planet.DiamondPlanet.IsDiamondPlanet && g.MaxLevel > 99 && g.MaxLevel == g.CurrentLevel {
+		result := new(big.Float)
+		result.Add(g.Diamonds, g.Planet.Diamonds)
+
+		g.ConvertNumber(result, g.Diamonds)
+	} else if !g.Planet.IsBoss && g.Planet.DiamondPlanet.IsDiamondPlanet && g.MaxLevel > 99 {
 		result := new(big.Float)
 		result.Add(g.Diamonds, g.Planet.Diamonds)
 

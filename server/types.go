@@ -38,7 +38,7 @@ type DiamondUpgradeUpgradeData struct {
 type GameData struct {
 	Id               int64
 	Gold             string
-	Diamonds         int64
+	Diamonds         string
 	MaxDamage        string
 	CurrentLevel     int64
 	MaxLevel         int64
