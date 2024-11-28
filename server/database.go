@@ -386,7 +386,7 @@ func (p *Postgres) SaveGameProgress(userId int, g *Game) error {
 
 	_, err := p.db.Exec(queryGame,
 		g.Gold.String(),
-		g.Diamonds,
+		g.Diamonds.String(),
 		g.MaxDamage.String(),
 		g.CurrentLevel,
 		g.MaxLevel,

@@ -16,7 +16,7 @@ import (
 
 type UserClick struct {
 	Gold                    string                            `json:"gold"`
-	Diamonds                int64                             `json:"diamonds"`
+	Diamonds                string                            `json:"diamonds"`
 	CurrentDamage           string                            `json:"currentDamage"`
 	MaxDamage               string                            `json:"maxDamage"`
 	DamageDone              DamageDoneData                    `json:"damageDone"`
@@ -64,7 +64,7 @@ type StoreDataMessage struct {
 
 type StoreDataMessageWrapper struct {
 	Gold     string                   `json:"gold"`
-	Diamonds int64                    `json:"diamonds"`
+	Diamonds string                   `json:"diamonds"`
 	Store    map[int]StoreDataMessage `json:"store"`
 }
 
@@ -72,7 +72,7 @@ type DiamondUpgradeDataMessage struct {
 	Index      int    `json:"index"`
 	Level      int64  `json:"level"`
 	Multiplier string `json:"multiplier"`
-	Cost       int64  `json:"cost"`
+	Cost       string `json:"cost"`
 }
 
 type ShipDataMessage struct {
@@ -86,13 +86,13 @@ type ShipDataMessage struct {
 
 type ShipDataMessageWrapper struct {
 	Gold     string          `json:"gold"`
-	Diamonds int64           `json:"diamonds"`
+	Diamonds string          `json:"diamonds"`
 	Ship     ShipDataMessage `json:"ship"`
 }
 
 type UpgradeDataMessageWrapper struct {
 	Gold           string                            `json:"gold"`
-	Diamonds       int64                             `json:"diamonds"`
+	Diamonds       string                            `json:"diamonds"`
 	CurrentDamage  string                            `json:"currentDamage"`
 	MaxDamage      string                            `json:"maxDamage"`
 	PlanetGold     string                            `json:"planetGold"`
@@ -169,7 +169,7 @@ func ActionHandler(g *Game, action string) []byte {
 			d := new(DiamondUpgradeDataMessage)
 			d.Index = k
 			d.Level = g.DiamondUpgrade[k].Level
-			d.Cost = g.DiamondUpgrade[k].Cost
+			d.Cost = g.DisplayNumber(g.DiamondUpgrade[k].Cost)
 			d.Multiplier = g.DisplayNumber(g.DiamondUpgrade[k].Multiplier)
 			diamondUpgrade[k] = *d
 		}
@@ -178,7 +178,7 @@ func ActionHandler(g *Game, action string) []byte {
 			Action: action,
 			Data: UserClick{
 				Gold:                    g.DisplayNumber(g.Gold),
-				Diamonds:                g.Diamonds,
+				Diamonds:                g.DisplayNumber(g.Diamonds),
 				CurrentDamage:           g.DisplayNumber(g.CurrentDamage),
 				MaxDamage:               g.DisplayNumber(g.MaxDamage),
 				DamageDone:              damageDone,
@@ -204,11 +204,11 @@ func ActionHandler(g *Game, action string) []byte {
 		return []byte(encoded)
 	} else if action == "init" {
 		g.CheckBoss()
+		g.CheckDiamondUpgradeUnlock()
 		g.CalculatePlanetHealth()
 		g.CalculateDiamondPlanetChance()
 		g.RollDiamondPlanet()
 		g.GeneratePlanetName()
-		g.CheckDiamondUpgradeUnlock()
 		g.CalculateDiamondUpgrade(-1)
 		g.CalculateCurrentDamage()
 		g.CalculateStore(-1)
@@ -258,7 +258,7 @@ func ActionHandler(g *Game, action string) []byte {
 			d := new(DiamondUpgradeDataMessage)
 			d.Index = k
 			d.Level = g.DiamondUpgrade[k].Level
-			d.Cost = g.DiamondUpgrade[k].Cost
+			d.Cost = g.DisplayNumber(g.DiamondUpgrade[k].Cost)
 			d.Multiplier = g.DisplayNumber(g.DiamondUpgrade[k].Multiplier)
 			diamondUpgrade[k] = *d
 		}
@@ -268,7 +268,7 @@ func ActionHandler(g *Game, action string) []byte {
 			Action: action,
 			Data: UserClick{
 				Gold:                    g.DisplayNumber(g.Gold),
-				Diamonds:                g.Diamonds,
+				Diamonds:                g.DisplayNumber(g.Diamonds),
 				CurrentDamage:           g.DisplayNumber(g.CurrentDamage),
 				MaxDamage:               g.DisplayNumber(g.MaxDamage),
 				DamageDone:              damageDone,
@@ -396,7 +396,7 @@ func ActionHandler(g *Game, action string) []byte {
 				d := new(DiamondUpgradeDataMessage)
 				d.Index = k
 				d.Level = g.DiamondUpgrade[k].Level
-				d.Cost = g.DiamondUpgrade[k].Cost
+				d.Cost = g.DisplayNumber(g.DiamondUpgrade[k].Cost)
 				d.Multiplier = g.DisplayNumber(g.DiamondUpgrade[k].Multiplier)
 				diamondUpgrade[k] = *d
 			}
@@ -404,7 +404,7 @@ func ActionHandler(g *Game, action string) []byte {
 				Action: "upgrade",
 				Data: UpgradeDataMessageWrapper{
 					Gold:           g.DisplayNumber(g.Gold),
-					Diamonds:       g.Diamonds,
+					Diamonds:       g.DisplayNumber(g.Diamonds),
 					CurrentDamage:  g.DisplayNumber(g.CurrentDamage),
 					MaxDamage:      g.DisplayNumber(g.MaxDamage),
 					PlanetGold:     g.DisplayNumber(g.Planet.Gold),
@@ -467,7 +467,7 @@ func DealDps(g *Game) []byte {
 		d := new(DiamondUpgradeDataMessage)
 		d.Index = k
 		d.Level = g.DiamondUpgrade[k].Level
-		d.Cost = g.DiamondUpgrade[k].Cost
+		d.Cost = g.DisplayNumber(g.DiamondUpgrade[k].Cost)
 		d.Multiplier = g.DisplayNumber(g.DiamondUpgrade[k].Multiplier)
 		diamondUpgrade[k] = *d
 	}
@@ -476,7 +476,7 @@ func DealDps(g *Game) []byte {
 		Action: "dps",
 		Data: UserClick{
 			Gold:                    g.DisplayNumber(g.Gold),
-			Diamonds:                g.Diamonds,
+			Diamonds:                g.DisplayNumber(g.Diamonds),
 			CurrentDamage:           g.DisplayNumber(g.CurrentDamage),
 			MaxDamage:               g.DisplayNumber(g.MaxDamage),
 			PlanetName:              g.Planet.Name,

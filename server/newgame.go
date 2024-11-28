@@ -13,7 +13,7 @@ func NewGame(gameData *GameData) *Game {
 	gold := new(big.Float)
 	gold.SetString(gameData.Gold)
 
-	diamonds := gameData.Diamonds
+	diamonds := big.NewFloat(float64(gameData.Diamonds))
 
 	currentDamage := new(big.Float)
 	currentDamage.SetString("1")
@@ -196,35 +196,35 @@ func NewGame(gameData *GameData) *Game {
 			Level:      gameData.DiamondUpgrade[1].Level,
 			Multiplier: big.NewFloat(1.0),
 			BaseCost:   1,
-			Cost:       1,
+			Cost:       big.NewFloat(1),
 			Constant:   1.5,
 		},
 		2: {
 			Level:      gameData.DiamondUpgrade[2].Level,
 			Multiplier: big.NewFloat(1.0),
 			BaseCost:   1,
-			Cost:       1,
+			Cost:       big.NewFloat(1),
 			Constant:   1.5,
 		},
 		3: {
 			Level:      gameData.DiamondUpgrade[3].Level,
 			Multiplier: big.NewFloat(1.0),
 			BaseCost:   1,
-			Cost:       1,
+			Cost:       big.NewFloat(1),
 			Constant:   1.5,
 		},
 		4: {
 			Level:      gameData.DiamondUpgrade[4].Level,
 			Multiplier: big.NewFloat(1.0),
 			BaseCost:   1,
-			Cost:       1,
+			Cost:       big.NewFloat(1),
 			Constant:   1.5,
 		},
 		5: {
 			Level:      gameData.DiamondUpgrade[5].Level,
 			Multiplier: big.NewFloat(1.0),
 			BaseCost:   1,
-			Cost:       1,
+			Cost:       big.NewFloat(1),
 			Constant:   1.5,
 		},
 	}

@@ -13,7 +13,7 @@ type DiamondUpgrade struct {
 	Level      int64
 	Multiplier *big.Float // float64
 	BaseCost   int64
-	Cost       int64
+	Cost       *big.Float
 	Constant   float64
 }
 
@@ -50,6 +50,7 @@ type Planet struct {
 	CurrentHealth *big.Float
 	MaxHealth     *big.Float
 	Gold          *big.Float
+	Diamonds      *big.Float
 	IsBoss        bool
 	DiamondPlanet DiamondPlanet
 }
@@ -62,7 +63,7 @@ type DamageDone struct {
 type Game struct {
 	Id                      int64
 	Gold                    *big.Float
-	Diamonds                int64
+	Diamonds                *big.Float
 	CurrentDamage           *big.Float
 	MaxDamage               *big.Float
 	DamageDone              DamageDone
@@ -99,13 +100,7 @@ func (g *Game) ClickThePlanet(dmg *big.Float, isClick bool) {
 	}
 	x := big.NewFloat(0)
 	if g.Planet.CurrentHealth.Cmp(x) <= 0 {
-		if g.Planet.IsBoss && g.MaxLevel > 99 && g.MaxLevel == g.CurrentLevel {
-			if g.MaxLevel == 100 {
-				g.Diamonds++
-			} else {
-				g.Diamonds += int64((g.MaxLevel - 100) / 10)
-			}
-		}
+		g.CalculateDiamondsEarned()
 		g.CalculateGoldEarned()
 		g.AddCurrentGold()
 		g.Advance()
@@ -406,27 +401,27 @@ func (g *Game) UpgradeDiamondUpgrade(index int, levels int) string {
 		return ""
 	}
 
-	if g.Diamonds < g.DiamondUpgrade[index].Cost {
+	if g.DiamondUpgrade[index].Cost.Cmp(g.Diamonds) > 0 {
 		return "insufficient resources"
 	}
 
-	var bulkCost int64
+	var bulkCost *big.Float
 	for i := 1; i <= levels; i++ {
 		pow := math.Pow(g.DiamondUpgrade[index].Constant, float64(g.DiamondUpgrade[index].Level+int64(i-1)))
 
-		cost := float64(g.DiamondUpgrade[index].BaseCost) * pow
+		cost := big.NewFloat(float64(g.DiamondUpgrade[index].BaseCost) * pow)
 
-		bulkCost += int64(cost)
+		bulkCost.Add(bulkCost, cost)
 	}
 
-	if bulkCost > g.Diamonds {
+	if bulkCost.Cmp(g.Diamonds) > 0 {
 		return "insufficient resources"
 	}
 
 	if entry, ok := g.DiamondUpgrade[index]; ok {
 		entry.Level += int64(levels)
 		g.DiamondUpgrade[index] = entry
-		g.Diamonds = g.Diamonds - bulkCost
+		g.Diamonds.Sub(g.Diamonds, bulkCost)
 	}
 	g.Ch <- "upgrade"
 
@@ -439,7 +434,10 @@ func (g *Game) CalculateDiamondUpgrade(index int) {
 	if index != -1 {
 		if entry, ok := g.DiamondUpgrade[index]; ok {
 			pow := math.Pow(g.DiamondUpgrade[index].Constant, float64(g.DiamondUpgrade[index].Level))
-			entry.Cost = int64(pow * float64(g.DiamondUpgrade[index].BaseCost))
+			pow *= float64(g.DiamondUpgrade[index].BaseCost)
+
+			result := new(big.Float).SetFloat64(pow)
+			g.ConvertNumber(result, entry.Cost)
 
 			if g.DiamondUpgrade[index].Level > 0 {
 				bigPowMulInt := new(big.Int).Exp(big.NewInt(10), big.NewInt(entry.Level), nil)
@@ -453,7 +451,10 @@ func (g *Game) CalculateDiamondUpgrade(index int) {
 		for k := range g.DiamondUpgrade {
 			if entry, ok := g.DiamondUpgrade[k]; ok {
 				pow := math.Pow(g.DiamondUpgrade[k].Constant, float64(g.DiamondUpgrade[k].Level))
-				entry.Cost = int64(pow * float64(g.DiamondUpgrade[k].BaseCost))
+				pow *= float64(g.DiamondUpgrade[k].BaseCost)
+
+				result := new(big.Float).SetFloat64(pow)
+				g.ConvertNumber(result, entry.Cost)
 
 				if g.DiamondUpgrade[k].Level > 0 {
 					bigPowMulInt := new(big.Int).Exp(big.NewInt(10), big.NewInt(entry.Level), nil)
@@ -565,13 +566,42 @@ func (g *Game) AddCurrentGold() {
 	result.Add(g.Gold, g.Planet.Gold)
 
 	g.ConvertNumber(result, g.Gold)
+}
 
-	if g.Planet.DiamondPlanet.IsDiamondPlanet && g.MaxLevel > 99 {
+func (g *Game) CalculateDiamondsEarned() {
+	if g.Planet.IsBoss && g.MaxLevel > 99 && g.MaxLevel == g.CurrentLevel && !g.Planet.DiamondPlanet.IsDiamondPlanet {
 		if g.MaxLevel == 100 {
-			g.Diamonds++
+			g.Planet.Diamonds = big.NewFloat(1) // .Add(g.Diamonds, big.NewFloat(1));
 		} else {
-			g.Diamonds += int64((g.MaxLevel - 100) / (10 * 2)) // Half the Boss's Diamonds
+			diamondConst := 1.1
+			exp := float64(g.MaxLevel)
+			pow := math.Pow(diamondConst, exp)
+
+			result := new(big.Float).SetFloat64(pow)
+			g.ConvertNumber(result, g.Planet.Diamonds)
+			// g.Diamonds.Add(g.Diamonds, result) // int64((g.MaxLevel - 100) / 10)
 		}
+	} else if !g.Planet.IsBoss && g.MaxLevel > 99 && g.Planet.DiamondPlanet.IsDiamondPlanet {
+		if g.MaxLevel == 100 {
+			g.Planet.Diamonds = big.NewFloat(1)
+		} else {
+			diamondConst := 1.1
+			exp := float64(g.MaxLevel)
+			pow := math.Pow(diamondConst, exp)
+
+			result := new(big.Float).SetFloat64(pow)
+			result.Quo(result, big.NewFloat(2))
+			g.ConvertNumber(result, g.Planet.Diamonds)
+		}
+	}
+}
+
+func (g *Game) AddCurrentDiamonds() {
+	if g.Planet.IsBoss && g.MaxLevel > 99 && g.MaxLevel == g.CurrentLevel {
+		result := new(big.Float)
+		result.Add(g.Diamonds, g.Planet.Diamonds)
+
+		g.ConvertNumber(result, g.Diamonds)
 	}
 }
 
