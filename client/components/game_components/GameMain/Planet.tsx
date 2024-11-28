@@ -56,12 +56,16 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   const [loaded, setLoaded] = useState<Loaded>({ isLoaded: false, count: 0 });
 
   const workerRef = useRef<Worker>();
+  const startTime = useRef<DOMHighResTimeStamp>(performance.now()); // time for drawWorker limiter
+
   // Timeout for level change arrows
   const timeout = useRef<NodeJS.Timeout | null>(null);
   // Blocks the level choice when the timeout hasn't ran yet
   const block = useRef<boolean>(false);
   const breatheAnim = useRef<Animation | null>(null);
   const levitateAnim = useRef<Animation | null>(null);
+
+  let initialLoad = false;
 
   let seed =
     gameData?.currentLevel * gameData?.currentLevel +
@@ -113,7 +117,12 @@ export default function Planet({ planetRef, click }: PlanetProps) {
   }
 
   useEffect(() => {
-    if (planetRef?.current) {
+    const redrawTime = performance.now();
+    const timeDiff = redrawTime - startTime.current;
+
+    const drawTimeout = initialLoad ? 250 : 10;
+
+    if (planetRef?.current && timeDiff > drawTimeout) {
       seed =
         gameData?.currentLevel * gameData?.currentLevel +
         gameData?.currentStage * gameData?.currentStage;
@@ -160,6 +169,9 @@ export default function Planet({ planetRef, click }: PlanetProps) {
         ];
       };
     }
+
+    startTime.current = performance.now();
+    initialLoad = true;
 
     return () => {
       if (workerRef.current) workerRef.current.terminate();
