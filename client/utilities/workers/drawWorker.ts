@@ -42,8 +42,6 @@ self.onmessage = (msg) => {
   isDiamondPlanet = msg.data[5];
   imageData = msg.data[6];
 
-  console.log(`isDiamondPlanet: ${isDiamondPlanet}`);
-
   draw();
 
   postMessage([imageData, weights]);

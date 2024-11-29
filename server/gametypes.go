@@ -574,7 +574,7 @@ func (g *Game) CalculateDiamondsEarned() {
 		if g.MaxLevel == 100 {
 			g.Planet.Diamonds = big.NewFloat(1) // .Add(g.Diamonds, big.NewFloat(1));
 		} else {
-			diamondConst := 1.1
+			diamondConst := 1.01
 			exp := float64(g.MaxLevel)
 			pow := math.Pow(diamondConst, exp)
 
@@ -586,7 +586,7 @@ func (g *Game) CalculateDiamondsEarned() {
 		if g.MaxLevel == 100 {
 			g.Planet.Diamonds = big.NewFloat(1)
 		} else {
-			diamondConst := 1.1
+			diamondConst := 1.01
 			exp := float64(g.MaxLevel)
 			pow := math.Pow(diamondConst, exp)
 
