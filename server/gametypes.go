@@ -147,17 +147,36 @@ func (g *Game) GetHealthPercent() int {
 }
 
 func (g *Game) CalculatePlanetHealth() {
-	f := 1.4
+	//f := 1.4
+	fTen := big.NewInt(14)
 
-	exp := float64(g.CurrentLevel - 1)
-	pow := math.Pow(f, exp)
+	// should be: ((14^x) * 10) / 10^x
 
-	result := new(big.Float).SetFloat64(pow)
+	//divisor := big.NewFloat(float64(g.CurrentLevel))
+	intDivisor := big.NewInt(10) // big.NewFloat(float64(g.CurrentLevel)) // to go back to a number as if the base was 1.4
+	bigCurrentLevel := big.NewInt(g.CurrentLevel)
+	intDivisor.Exp(intDivisor, bigCurrentLevel, nil)
+
+	floatDivisor := new(big.Float).SetInt(intDivisor)
+
+	// exp := float64(g.CurrentLevel - 1)
+	// pow := math.Pow(f, exp)
+
+	exp := big.NewInt(g.CurrentLevel - 1)
+	pow := new(big.Int).Exp(fTen, exp, nil) // 14^x
+	pow.Mul(pow, big.NewInt(10))            // 14^x * 10
+	floatPow := new(big.Float)
+	floatPow.SetInt(pow)
+	floatPow.Quo(floatPow, floatDivisor)
+
+	result := new(big.Float).Set(floatPow) // new(big.Float).SetFloat64(pow)
 	if g.Planet.IsBoss {
 		result.Mul(result, big.NewFloat(50))
 	} else {
 		result.Mul(result, big.NewFloat(10))
 	}
+
+	fmt.Println("result: ", result)
 
 	g.ConvertNumber(result, g.Planet.MaxHealth)
 	g.ConvertNumber(result, g.Planet.CurrentHealth)
@@ -206,10 +225,13 @@ func (g *Game) UpgradeStore(index int, levels int) string {
 		bulkCost := new(big.Float)
 
 		for i := 1; i <= levels; i++ {
-			pow := math.Pow(f, float64(g.Store[index].Level+int64(i-1)))
-			bigPow := big.NewFloat(pow)
-			cost := new(big.Float)
+			//pow := math.Pow(f, float64(g.Store[index].Level+int64(i-1)))
+			bigPow, err := g.BigFloatPow(f, g.Store[index].Level+int64(i-1))
+			if err != nil {
+				fmt.Println(err)
+			}
 
+			cost := new(big.Float)
 			cost.Mul(g.Store[index].BaseCost, bigPow)
 
 			bulkCost.Add(bulkCost, cost)
@@ -248,10 +270,13 @@ func (g *Game) CalculateStore(index int) {
 	if index != -1 {
 		if g.Store[index].Level > 0 {
 			// cost = baseCost * 1.03 ** (level - 1)
-			pow := math.Pow(f, float64(g.Store[index].Level))
-			bigPow := big.NewFloat(pow)
-			cost := new(big.Float)
+			//pow := math.Pow(f, float64(g.Store[index].Level))
+			bigPow, err := g.BigFloatPow(f, g.Store[index].Level)
+			if err != nil {
+				fmt.Println(err)
+			}
 
+			cost := new(big.Float)
 			cost.Mul(g.Store[index].BaseCost, bigPow)
 
 			g.ConvertNumber(cost, g.Store[index].Cost)
@@ -265,11 +290,16 @@ func (g *Game) CalculateStore(index int) {
 	} else if index == -1 {
 		for k := range g.Store {
 			if g.Store[k].Level > 0 {
-				pow := math.Pow(f, float64(g.Store[k].Level))
-				bigPow := big.NewFloat(pow)
+				//pow := math.Pow(f, float64(g.Store[k].Level))
+				bigPow, err := g.BigFloatPow(f, g.Store[k].Level)
+				fmt.Println("bigPow from Store -1: ", bigPow)
+				if err != nil {
+					fmt.Println(err)
+				}
 
 				cost := new(big.Float)
 				cost.Mul(g.Store[k].BaseCost, bigPow)
+				fmt.Println("COST ", cost)
 
 				g.ConvertNumber(cost, g.Store[k].Cost)
 
@@ -340,8 +370,11 @@ func (g *Game) UpgradeShip(index int, levels int) string {
 		bulkCost := new(big.Float)
 
 		for i := 1; i <= levels; i++ {
-			pow := math.Pow(g.Ship[index].Constant, float64(g.Ship[index].Level+int64(i-1)))
-			bigPow := big.NewFloat(pow)
+			// pow := math.Pow(g.Ship[index].Constant, float64(g.Ship[index].Level+int64(i-1)))
+			bigPow, err := g.BigFloatPow(g.Ship[index].Constant, g.Ship[index].Level+int64(i-1))
+			if err != nil {
+				fmt.Println(err)
+			}
 			cost := new(big.Float)
 
 			cost.Mul(g.Ship[index].BaseCost, bigPow)
@@ -408,9 +441,14 @@ func (g *Game) UpgradeDiamondUpgrade(index int, levels int) string {
 
 	bulkCost := new(big.Float)
 	for i := 1; i <= levels; i++ {
-		pow := math.Pow(g.DiamondUpgrade[index].Constant, float64(g.DiamondUpgrade[index].Level+int64(i-1)))
+		// pow := math.Pow(g.DiamondUpgrade[index].Constant, float64(g.DiamondUpgrade[index].Level+int64(i-1)))
+		pow, err := g.BigFloatPow(g.DiamondUpgrade[index].Constant, g.DiamondUpgrade[index].Level+int64(i-1))
+		if err != nil {
+			fmt.Println(err)
+		}
 
-		cost := big.NewFloat(float64(g.DiamondUpgrade[index].BaseCost) * pow)
+		cost := pow
+		cost.Mul(cost, big.NewFloat(float64(g.DiamondUpgrade[index].BaseCost)))
 
 		bulkCost.Add(bulkCost, cost)
 	}
@@ -434,10 +472,14 @@ func (g *Game) UpgradeDiamondUpgrade(index int, levels int) string {
 func (g *Game) CalculateDiamondUpgrade(index int) {
 	if index != -1 {
 		if entry, ok := g.DiamondUpgrade[index]; ok {
-			pow := math.Pow(g.DiamondUpgrade[index].Constant, float64(g.DiamondUpgrade[index].Level))
-			pow *= float64(g.DiamondUpgrade[index].BaseCost)
+			// pow := math.Pow(g.DiamondUpgrade[index].Constant, float64(g.DiamondUpgrade[index].Level))
+			pow, err := g.BigFloatPow(g.DiamondUpgrade[index].Constant, g.DiamondUpgrade[index].Level)
+			if err != nil {
+				fmt.Println(err)
+			}
+			pow.Mul(pow, big.NewFloat(float64(g.DiamondUpgrade[index].BaseCost)))
 
-			result := new(big.Float).SetFloat64(pow)
+			result := new(big.Float).Set(pow)
 			g.ConvertNumber(result, entry.Cost)
 
 			if g.DiamondUpgrade[index].Level > 0 {
@@ -451,10 +493,14 @@ func (g *Game) CalculateDiamondUpgrade(index int) {
 	} else if index == -1 {
 		for k := range g.DiamondUpgrade {
 			if entry, ok := g.DiamondUpgrade[k]; ok {
-				pow := math.Pow(g.DiamondUpgrade[k].Constant, float64(g.DiamondUpgrade[k].Level))
-				pow *= float64(g.DiamondUpgrade[k].BaseCost)
+				// pow := math.Pow(g.DiamondUpgrade[k].Constant, float64(g.DiamondUpgrade[k].Level))
+				pow, err := g.BigFloatPow(g.DiamondUpgrade[k].Constant, g.DiamondUpgrade[k].Level)
+				if err != nil {
+					fmt.Println(err)
+				}
+				pow.Mul(pow, big.NewFloat(float64(g.DiamondUpgrade[k].BaseCost)))
 
-				result := new(big.Float).SetFloat64(pow)
+				result := new(big.Float).Set(pow)
 				g.ConvertNumber(result, entry.Cost)
 
 				if g.DiamondUpgrade[k].Level > 0 {
@@ -542,10 +588,14 @@ func (g *Game) NextLevel() {
 func (g *Game) CalculateGoldEarned() {
 	f := 1.35
 
-	exp := float64(g.CurrentLevel)
-	pow := math.Pow(f, exp)
+	// exp := float64(g.CurrentLevel)
+	// pow := math.Pow(f, exp)
+	pow, err := g.BigFloatPow(f, g.CurrentLevel)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	result := new(big.Float).SetFloat64(pow)
+	result := new(big.Float).Set(pow)
 	if g.Planet.IsBoss && g.CurrentStage == 10 {
 		result.Mul(result, big.NewFloat(10))
 		if g.DiamondUpgrade[5].Level > 0 {
@@ -575,10 +625,14 @@ func (g *Game) CalculateDiamondsEarned() {
 			g.Planet.Diamonds = big.NewFloat(1) // .Add(g.Diamonds, big.NewFloat(1));
 		} else {
 			diamondConst := 1.01
-			exp := float64(g.MaxLevel)
-			pow := math.Pow(diamondConst, exp)
+			// exp := float64(g.MaxLevel)
+			// pow := math.Pow(diamondConst, exp)
+			pow, err := g.BigFloatPow(diamondConst, g.MaxLevel)
+			if err != nil {
+				fmt.Println(pow)
+			}
 
-			result := new(big.Float).SetFloat64(pow)
+			result := new(big.Float).Set(pow)
 			g.ConvertNumber(result, g.Planet.Diamonds)
 			// g.Diamonds.Add(g.Diamonds, result) // int64((g.MaxLevel - 100) / 10)
 		}
@@ -587,10 +641,14 @@ func (g *Game) CalculateDiamondsEarned() {
 			g.Planet.Diamonds = big.NewFloat(1)
 		} else {
 			diamondConst := 1.01
-			exp := float64(g.MaxLevel)
-			pow := math.Pow(diamondConst, exp)
+			// exp := float64(g.MaxLevel)
+			// pow := math.Pow(diamondConst, exp)
+			pow, err := g.BigFloatPow(diamondConst, g.MaxLevel)
+			if err != nil {
+				fmt.Println(pow)
+			}
 
-			result := new(big.Float).SetFloat64(pow)
+			result := new(big.Float).Set(pow)
 			divisor := big.NewFloat(2)
 			result.Quo(result, divisor)
 			g.ConvertNumber(result, g.Planet.Diamonds)
@@ -646,8 +704,12 @@ func (g *Game) CalculateShipOne() {
 	// f := 1.5
 
 	// cost = baseCost * 1.5 ** (level - 1)
-	pow := math.Pow(g.Ship[1].Constant, float64(g.Ship[1].Level))
-	bigPow := big.NewFloat(pow)
+	// pow := math.Pow(g.Ship[1].Constant, float64(g.Ship[1].Level))
+	// bigPow := big.NewFloat(pow)
+	bigPow, err := g.BigFloatPow(g.Ship[1].Constant, g.Ship[1].Level)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	cost := new(big.Float)
 	cost.Mul(g.Ship[1].BaseCost, bigPow)
@@ -674,8 +736,12 @@ func (g *Game) CalculateShipTwo() {
 	// f := 1.5
 
 	// cost = baseCost * 1.5 ** (level - 1)
-	pow := math.Pow(g.Ship[2].Constant, float64(g.Ship[2].Level))
-	bigPow := big.NewFloat(pow)
+	// pow := math.Pow(g.Ship[2].Constant, float64(g.Ship[2].Level))
+	// bigPow := big.NewFloat(pow)
+	bigPow, err := g.BigFloatPow(g.Ship[2].Constant, g.Ship[2].Level)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	cost := new(big.Float)
 	cost.Mul(g.Ship[2].BaseCost, bigPow)
@@ -707,8 +773,12 @@ func (g *Game) CalculateShipThree() {
 	// f := 1.5
 
 	// cost = baseCost * 1.5 ** (level - 1)
-	pow := math.Pow(g.Ship[3].Constant, float64(g.Ship[3].Level))
-	bigPow := big.NewFloat(pow)
+	// pow := math.Pow(g.Ship[3].Constant, float64(g.Ship[3].Level))
+	// bigPow := big.NewFloat(pow)
+	bigPow, err := g.BigFloatPow(g.Ship[3].Constant, g.Ship[3].Level)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	cost := new(big.Float)
 	cost.Mul(g.Ship[3].BaseCost, bigPow)
@@ -741,8 +811,12 @@ func (g *Game) CalculateShipFour() {
 	// f := 1.5
 
 	// cost = baseCost * 1.5 ** (level - 1)
-	pow := math.Pow(g.Ship[4].Constant, float64(g.Ship[4].Level))
-	bigPow := big.NewFloat(pow)
+	// pow := math.Pow(g.Ship[4].Constant, float64(g.Ship[4].Level))
+	// bigPow := big.NewFloat(pow)
+	bigPow, err := g.BigFloatPow(g.Ship[4].Constant, g.Ship[4].Level)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	cost := new(big.Float)
 	cost.Mul(g.Ship[4].BaseCost, bigPow)
@@ -833,6 +907,53 @@ func (g *Game) CalculateDiamondPlanetChance() {
 		return
 	}
 	g.Planet.DiamondPlanet.Chance = g.Planet.DiamondPlanet.BaseChance + (0.00001 * (float64(g.MaxLevel-100) / 10))
+}
+
+func (g *Game) BigFloatPow(base float64, exp int64) (*big.Float, error) {
+	// Multiply by 10 until whole significand becomes int
+	var intBase int64
+	var timesMultiplied int64
+
+	for {
+		if base == float64(int64(base)) {
+			intBase = int64(base)
+			break
+		} else {
+			base *= 10
+			timesMultiplied++
+		}
+
+		if math.Abs(base) < 0.0000000001 {
+			return new(big.Float), fmt.Errorf("func g.BigFloatPow: the float is too small")
+		}
+	}
+
+	bigBase := big.NewInt(intBase)
+	fmt.Println("bigBase: ", bigBase)
+	bigExp := big.NewInt(exp * timesMultiplied)
+
+	intDivisor := big.NewInt(10)
+	//bigTimesMultipled := big.NewInt(timesMultiplied)
+	intDivisor.Exp(intDivisor, bigExp, nil)
+
+	fmt.Println(intDivisor)
+
+	floatDivisor := new(big.Float).SetInt(intDivisor)
+	fmt.Println("floatDivisor", floatDivisor)
+
+	fmt.Println("bigExp:", bigExp)
+	pow := new(big.Int).Exp(bigBase, bigExp, nil)
+	pow.Mul(pow, big.NewInt(10))
+
+	fmt.Println(pow)
+
+	floatPow := new(big.Float)
+	floatPow.SetInt(pow)
+	floatPow.Quo(floatPow, floatDivisor) // divided so that the float exponent goes back to the number it's supposed to be
+
+	fmt.Println("floatPow: ", floatPow)
+
+	return floatPow, nil
 }
 
 func toFixed(num float64, prec int) float64 {
