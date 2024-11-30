@@ -50,8 +50,8 @@ export default function Store() {
           <StoreElement
             key={i}
             index={i + 1}
-            title={storeElementsArr[i].title}
-            description={storeElementsArr[i].desc}
+            title={storeElementsArr[i]?.title}
+            description={storeElementsArr[i]?.desc}
             locked={storeData[Number(el)]?.locked}
           ></StoreElement>
         );
