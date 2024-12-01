@@ -176,8 +176,6 @@ func (g *Game) CalculatePlanetHealth() {
 		result.Mul(result, big.NewFloat(10))
 	}
 
-	fmt.Println("result: ", result)
-
 	g.ConvertNumber(result, g.Planet.MaxHealth)
 	g.ConvertNumber(result, g.Planet.CurrentHealth)
 }
@@ -292,14 +290,12 @@ func (g *Game) CalculateStore(index int) {
 			if g.Store[k].Level > 0 {
 				//pow := math.Pow(f, float64(g.Store[k].Level))
 				bigPow, err := g.BigFloatPow(f, g.Store[k].Level)
-				fmt.Println("bigPow from Store -1: ", bigPow)
 				if err != nil {
 					fmt.Println(err)
 				}
 
 				cost := new(big.Float)
 				cost.Mul(g.Store[k].BaseCost, bigPow)
-				fmt.Println("COST ", cost)
 
 				g.ConvertNumber(cost, g.Store[k].Cost)
 
@@ -629,7 +625,7 @@ func (g *Game) CalculateDiamondsEarned() {
 			// pow := math.Pow(diamondConst, exp)
 			pow, err := g.BigFloatPow(diamondConst, g.MaxLevel)
 			if err != nil {
-				fmt.Println(pow)
+				fmt.Println(err)
 			}
 
 			result := new(big.Float).Set(pow)
@@ -645,7 +641,7 @@ func (g *Game) CalculateDiamondsEarned() {
 			// pow := math.Pow(diamondConst, exp)
 			pow, err := g.BigFloatPow(diamondConst, g.MaxLevel)
 			if err != nil {
-				fmt.Println(pow)
+				fmt.Println(err)
 			}
 
 			result := new(big.Float).Set(pow)
@@ -929,29 +925,21 @@ func (g *Game) BigFloatPow(base float64, exp int64) (*big.Float, error) {
 	}
 
 	bigBase := big.NewInt(intBase)
-	fmt.Println("bigBase: ", bigBase)
-	bigExp := big.NewInt(exp * timesMultiplied)
+	bigExp := big.NewInt(exp)
+	bigDivisorExp := big.NewInt(exp * timesMultiplied)
 
 	intDivisor := big.NewInt(10)
-	//bigTimesMultipled := big.NewInt(timesMultiplied)
-	intDivisor.Exp(intDivisor, bigExp, nil)
-
-	fmt.Println(intDivisor)
+	intDivisor.Exp(intDivisor, bigDivisorExp, nil)
 
 	floatDivisor := new(big.Float).SetInt(intDivisor)
-	fmt.Println("floatDivisor", floatDivisor)
 
-	fmt.Println("bigExp:", bigExp)
 	pow := new(big.Int).Exp(bigBase, bigExp, nil)
 	pow.Mul(pow, big.NewInt(10))
-
-	fmt.Println(pow)
 
 	floatPow := new(big.Float)
 	floatPow.SetInt(pow)
 	floatPow.Quo(floatPow, floatDivisor) // divided so that the float exponent goes back to the number it's supposed to be
-
-	fmt.Println("floatPow: ", floatPow)
+	floatPow.Quo(floatPow, big.NewFloat(10))
 
 	return floatPow, nil
 }
