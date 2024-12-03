@@ -606,9 +606,9 @@ func (g *Game) AddCurrentGold() {
 func (g *Game) CalculateDiamondsEarned() {
 	if g.Planet.IsBoss && g.MaxLevel > 99 && g.MaxLevel == g.CurrentLevel && !g.Planet.DiamondPlanet.IsDiamondPlanet {
 		if g.MaxLevel == 100 {
-			g.Planet.Diamonds = big.NewFloat(1) // .Add(g.Diamonds, big.NewFloat(1));
+			g.Planet.Diamonds = big.NewFloat(1)
 		} else {
-			diamondConst := 1.01
+			diamondConst := 1.02
 			pow, err := g.BigFloatPow(diamondConst, g.MaxLevel)
 			if err != nil {
 				fmt.Println(err)
@@ -616,13 +616,12 @@ func (g *Game) CalculateDiamondsEarned() {
 
 			result := new(big.Float).Set(pow)
 			g.ConvertNumber(result, g.Planet.Diamonds)
-			// g.Diamonds.Add(g.Diamonds, result) // int64((g.MaxLevel - 100) / 10)
 		}
 	} else if !g.Planet.IsBoss && g.MaxLevel > 99 && g.Planet.DiamondPlanet.IsDiamondPlanet {
 		if g.MaxLevel == 100 {
 			g.Planet.Diamonds = big.NewFloat(1)
 		} else {
-			diamondConst := 1.01
+			diamondConst := 1.02
 			pow, err := g.BigFloatPow(diamondConst, g.MaxLevel)
 			if err != nil {
 				fmt.Println(err)
