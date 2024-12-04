@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"math/rand"
 	"strconv"
+	"time"
 )
 
 type DiamondUpgrade struct {
@@ -230,13 +231,13 @@ func (g *Game) UpgradeStore(index int, levels int) string {
 
 			bulkCost.Add(bulkCost, cost)
 		}
-		fmt.Println("   ---> bulkCost: ", bulkCost)
+		//fmt.Println("   ---> bulkCost: ", bulkCost)
 
 		if bulkCost.Cmp(g.Gold) > 0 {
 			return "insufficient resources"
 		}
 
-		fmt.Printf("\n %v \n", bulkCost)
+		//fmt.Printf("\n %v \n", bulkCost)
 
 		if entry, ok := g.Store[index]; ok {
 			entry.Level += int64(levels)
@@ -370,13 +371,13 @@ func (g *Game) UpgradeShip(index int, levels int) string {
 
 			bulkCost.Add(bulkCost, cost)
 		}
-		fmt.Println("   ---> bulkCost: ", bulkCost)
+		//fmt.Println("   ---> bulkCost: ", bulkCost)
 
 		if bulkCost.Cmp(g.Gold) > 0 {
 			return "insufficient resources"
 		}
 
-		fmt.Printf("\n %v \n", bulkCost)
+		//fmt.Printf("\n %v \n", bulkCost)
 
 		if entry, ok := g.Ship[index]; ok {
 			entry.Level += int64(levels)
@@ -881,42 +882,34 @@ func (g *Game) CalculateDiamondPlanetChance() {
 }
 
 func (g *Game) BigFloatPow(base float64, exp int64) (*big.Float, error) {
-	// Multiply by 10 until whole significand becomes int
-	var intBase int64
-	var timesMultiplied int64
+	start := time.Now()
 
-	for {
-		if base == float64(int64(base)) {
-			intBase = int64(base)
-			break
-		} else {
-			base *= 10
-			timesMultiplied++
-		}
-
-		if math.Abs(base) < 0.0000000001 {
-			return new(big.Float), fmt.Errorf("func g.BigFloatPow: the float is too small")
-		}
+	if math.Abs(base) < 0.0000000001 {
+		return new(big.Float), fmt.Errorf("func g.BigFloatPow: the float is too small")
 	}
 
-	bigBase := big.NewInt(intBase)
-	bigExp := big.NewInt(exp)
-	bigDivisorExp := big.NewInt(exp * timesMultiplied)
+	pow := big.NewFloat(base)
+	initialPow := big.NewFloat(base)
 
-	intDivisor := big.NewInt(10)
-	intDivisor.Exp(intDivisor, bigDivisorExp, nil)
+	div := 1
+	if exp >= 1000 {
+		div = 100
+		for i := 1; i < div; i++ {
+			pow.Mul(pow, initialPow)
+		}
 
-	floatDivisor := new(big.Float).SetInt(intDivisor)
+		initialPow, _ = new(big.Float).SetString(pow.String())
+	}
 
-	pow := new(big.Int).Exp(bigBase, bigExp, nil)
-	pow.Mul(pow, big.NewInt(10))
+	for i := 0; i < int(exp)/div; i++ {
+		pow.Mul(pow, initialPow)
+	}
 
-	floatPow := new(big.Float)
-	floatPow.SetInt(pow)
-	floatPow.Quo(floatPow, floatDivisor) // divided so that the float exponent goes back to the number it's supposed to be
-	floatPow.Quo(floatPow, big.NewFloat(10))
+	if base < 1.05 && base > 1.0 {
+		fmt.Println(time.Since(start))
+	}
 
-	return floatPow, nil
+	return pow, nil
 }
 
 func toFixed(num float64, prec int) float64 {
