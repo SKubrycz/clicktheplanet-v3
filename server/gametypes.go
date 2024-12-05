@@ -882,6 +882,14 @@ func (g *Game) CalculateDiamondPlanetChance() {
 }
 
 func (g *Game) BigFloatPow(base float64, exp int64) (*big.Float, error) {
+	if exp < 0 {
+		return new(big.Float), fmt.Errorf("func g.BigFloatPow: negative numbers not supported")
+	}
+
+	if exp == 0 {
+		return big.NewFloat(1.0), nil
+	}
+
 	start := time.Now()
 
 	if math.Abs(base) < 0.0000000001 {
