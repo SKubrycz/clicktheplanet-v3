@@ -878,7 +878,9 @@ func (g *Game) CalculateDiamondPlanetChance() {
 	if !g.DiamondUpgradesUnlocked {
 		return
 	}
-	g.Planet.DiamondPlanet.Chance = g.Planet.DiamondPlanet.BaseChance + (0.00001 * (float64(g.MaxLevel-100) / 10))
+	if g.Planet.DiamondPlanet.Chance < 0.5 {
+		g.Planet.DiamondPlanet.Chance = g.Planet.DiamondPlanet.BaseChance + (0.00001 * (float64(g.MaxLevel-100) / 10))
+	}
 }
 
 func (g *Game) BigFloatPow(base float64, exp int64) (*big.Float, error) {
