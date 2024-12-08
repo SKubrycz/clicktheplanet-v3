@@ -218,19 +218,8 @@ func (g *Game) GeneratePlanetName() {
 func (g *Game) UpgradeStore(index int, levels int) string {
 	if g.Gold.Cmp(g.Store[index].Cost) >= 0 {
 		f := 1.03
-		bulkCost := new(big.Float)
+		bulkCost := g.GetBigFloatBulkCost(levels, g.Store[index].BaseCost, f, g.Store[index].Level)
 
-		for i := 1; i <= levels; i++ {
-			bigPow, err := g.BigFloatPow(f, g.Store[index].Level+int64(i-1))
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			cost := new(big.Float)
-			cost.Mul(g.Store[index].BaseCost, bigPow)
-
-			bulkCost.Add(bulkCost, cost)
-		}
 		//fmt.Println("   ---> bulkCost: ", bulkCost)
 
 		if bulkCost.Cmp(g.Gold) > 0 {
@@ -358,19 +347,8 @@ func (g *Game) UpgradeShip(index int, levels int) string {
 		}
 
 		//f := 1.5
-		bulkCost := new(big.Float)
+		bulkCost := g.GetBigFloatBulkCost(levels, g.Ship[index].BaseCost, g.Ship[index].Constant, g.Ship[index].Level)
 
-		for i := 1; i <= levels; i++ {
-			bigPow, err := g.BigFloatPow(g.Ship[index].Constant, g.Ship[index].Level+int64(i-1))
-			if err != nil {
-				fmt.Println(err)
-			}
-			cost := new(big.Float)
-
-			cost.Mul(g.Ship[index].BaseCost, bigPow)
-
-			bulkCost.Add(bulkCost, cost)
-		}
 		//fmt.Println("   ---> bulkCost: ", bulkCost)
 
 		if bulkCost.Cmp(g.Gold) > 0 {
@@ -429,18 +407,7 @@ func (g *Game) UpgradeDiamondUpgrade(index int, levels int) string {
 		return "insufficient resources"
 	}
 
-	bulkCost := new(big.Float)
-	for i := 1; i <= levels; i++ {
-		pow, err := g.BigFloatPow(g.DiamondUpgrade[index].Constant, g.DiamondUpgrade[index].Level+int64(i-1))
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		cost := pow
-		cost.Mul(cost, big.NewFloat(float64(g.DiamondUpgrade[index].BaseCost)))
-
-		bulkCost.Add(bulkCost, cost)
-	}
+	bulkCost := g.GetBulkCost(levels, g.DiamondUpgrade[index].BaseCost, g.DiamondUpgrade[index].Constant, g.DiamondUpgrade[index].Level)
 
 	if bulkCost.Cmp(g.Diamonds) > 0 {
 		return "insufficient resources"
@@ -881,6 +848,42 @@ func (g *Game) CalculateDiamondPlanetChance() {
 	if g.Planet.DiamondPlanet.Chance < 0.5 {
 		g.Planet.DiamondPlanet.Chance = g.Planet.DiamondPlanet.BaseChance + (0.00001 * (float64(g.MaxLevel-100) / 10))
 	}
+}
+
+func (g *Game) GetBulkCost(levels int, basecost int64, constant float64, level int64) *big.Float {
+	bulkCost := new(big.Float)
+
+	for i := 1; i <= levels; i++ {
+		pow, err := g.BigFloatPow(constant, level)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		cost := pow
+		cost.Mul(cost, big.NewFloat(float64(basecost)))
+
+		bulkCost.Add(bulkCost, cost)
+	}
+
+	return bulkCost
+}
+
+func (g *Game) GetBigFloatBulkCost(levels int, basecost *big.Float, constant float64, level int64) *big.Float {
+	bulkCost := new(big.Float)
+
+	for i := 1; i <= levels; i++ {
+		bigPow, err := g.BigFloatPow(constant, level+int64(i-1))
+		if err != nil {
+			fmt.Println(err)
+		}
+		cost := new(big.Float)
+
+		cost.Mul(basecost, bigPow)
+
+		bulkCost.Add(bulkCost, cost)
+	}
+
+	return bulkCost
 }
 
 func (g *Game) BigFloatPow(base float64, exp int64) (*big.Float, error) {
