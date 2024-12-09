@@ -290,7 +290,7 @@ func (p *Postgres) GetGameByUserId(id int) (*GameData, error) {
 	fmt.Println("STORE DIFF:", storeDiff)
 
 	if storeDiff != 0 {
-		for i := gameStoreCount; i <= storeCount; i++ {
+		for i := gameStoreCount + 1; i <= storeCount; i++ {
 			fmt.Println(i)
 			fmt.Println(gameStoreCount)
 			_, err = p.db.Exec(gameStoreInsertQuery, 0, game.Id, i)

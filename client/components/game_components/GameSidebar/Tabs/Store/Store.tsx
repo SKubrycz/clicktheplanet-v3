@@ -41,6 +41,11 @@ export default function Store() {
     { title: `Element 23`, desc: `Element 23 description` },
     { title: `Element 24`, desc: `Element 24 description` },
     { title: `Element 25`, desc: `Element 25 description` },
+    { title: `Element 26`, desc: `Element 26 description` },
+    { title: `Element 27`, desc: `Element 27 description` },
+    { title: `Element 28`, desc: `Element 28 description` },
+    { title: `Element 29`, desc: `Element 29 description` },
+    { title: `Element 30`, desc: `Element 30 description` },
   ]);
 
   return (

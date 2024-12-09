@@ -148,13 +148,13 @@ func (g *Game) GetHealthPercent() int {
 }
 
 func (g *Game) CalculatePlanetHealth() {
-	//f := 1.4
-	fTen := big.NewInt(14)
+	//f := 1.45
+	fTen := big.NewInt(145)
 
 	// should be: ((14^x) * 10) / 10^x
 
 	//divisor := big.NewFloat(float64(g.CurrentLevel))
-	intDivisor := big.NewInt(10) // big.NewFloat(float64(g.CurrentLevel)) // to go back to a number as if the base was 1.4
+	intDivisor := big.NewInt(100) // big.NewFloat(float64(g.CurrentLevel)) // to go back to a number as if the base was 1.4
 	bigCurrentLevel := big.NewInt(g.CurrentLevel)
 	intDivisor.Exp(intDivisor, bigCurrentLevel, nil)
 

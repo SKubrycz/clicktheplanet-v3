@@ -97,6 +97,11 @@ func NewGame(gameData *GameData) *Game {
 	store[23].BaseCost.SetString("1.0e+240")
 	store[24].BaseCost.SetString("1.0e+290")
 	store[25].BaseCost.SetString("1.0e+360")
+	store[26].BaseCost.SetString("1.0e+450")
+	store[27].BaseCost.SetString("1.0e+560")
+	store[28].BaseCost.SetString("1.0e+690")
+	store[29].BaseCost.SetString("1.0e+840")
+	store[30].BaseCost.SetString("1.0e+1010")
 
 	for k := range len(store) {
 		store[k+1].Cost.SetString(store[k+1].BaseCost.String())
@@ -127,6 +132,11 @@ func NewGame(gameData *GameData) *Game {
 	store[23].BaseDamage.SetString("2.5e+110")
 	store[24].BaseDamage.SetString("1.0e+125")
 	store[25].BaseDamage.SetString("1.0e+145")
+	store[26].BaseDamage.SetString("1.0e+170")
+	store[27].BaseDamage.SetString("1.0e+200")
+	store[28].BaseDamage.SetString("1.0e+235")
+	store[29].BaseDamage.SetString("1.0e+275")
+	store[30].BaseDamage.SetString("1.0e+320")
 
 	for k := range len(store) {
 		store[k+1].Damage.SetString(store[k+1].BaseDamage.String())
