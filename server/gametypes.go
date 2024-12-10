@@ -149,25 +149,31 @@ func (g *Game) GetHealthPercent() int {
 
 func (g *Game) CalculatePlanetHealth() {
 	//f := 1.45
-	fTen := big.NewInt(145)
+	// fTen := big.NewInt(145)
 
-	// should be: ((14^x) * 10) / 10^x
+	f := 1.45
 
-	//divisor := big.NewFloat(float64(g.CurrentLevel))
-	intDivisor := big.NewInt(100) // big.NewFloat(float64(g.CurrentLevel)) // to go back to a number as if the base was 1.4
-	bigCurrentLevel := big.NewInt(g.CurrentLevel)
-	intDivisor.Exp(intDivisor, bigCurrentLevel, nil)
+	// // should be: ((14^x) * 10) / 10^x
 
-	floatDivisor := new(big.Float).SetInt(intDivisor)
+	// //divisor := big.NewFloat(float64(g.CurrentLevel))
+	// intDivisor := big.NewInt(100) // big.NewFloat(float64(g.CurrentLevel)) // to go back to a number as if the base was 1.4
+	// bigCurrentLevel := big.NewInt(g.CurrentLevel)
+	// intDivisor.Exp(intDivisor, bigCurrentLevel, nil)
 
-	exp := big.NewInt(g.CurrentLevel - 1)
-	pow := new(big.Int).Exp(fTen, exp, nil) // 14^x
-	pow.Mul(pow, big.NewInt(10))            // 14^x * 10
-	floatPow := new(big.Float)
-	floatPow.SetInt(pow)
-	floatPow.Quo(floatPow, floatDivisor)
+	// floatDivisor := new(big.Float).SetInt(intDivisor)
 
-	result := new(big.Float).Set(floatPow) // new(big.Float).SetFloat64(pow)
+	// exp := big.NewInt(g.CurrentLevel - 1)
+	// pow := new(big.Int).Exp(fTen, exp, nil) // 14^x
+	// pow.Mul(pow, big.NewInt(10))            // 14^x * 10
+	// floatPow := new(big.Float)
+	// floatPow.SetInt(pow)
+	// floatPow.Quo(floatPow, floatDivisor)
+
+	result, err := g.BigFloatPow(f, g.CurrentLevel-1) // new(big.Float).Set(floatPow) // new(big.Float).SetFloat64(pow)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	if g.Planet.IsBoss {
 		result.Mul(result, big.NewFloat(50))
 	} else {
