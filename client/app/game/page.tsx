@@ -122,7 +122,11 @@ export default function Game() {
   }, [upgradeData]);
 
   useEffect(() => {
-    if (levelData.action === "previous" || levelData.action === "next") {
+    if (
+      levelData.action === "previous" ||
+      levelData.action === "next" ||
+      levelData.action === "maxlevel"
+    ) {
       if (socket.current) socket.current.send(levelData.action);
     }
   }, [levelData]);

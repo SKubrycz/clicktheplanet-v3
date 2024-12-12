@@ -520,13 +520,18 @@ func (g *Game) PreviousLevel() {
 	}
 }
 
-func (g *Game) NextLevel() {
+func (g *Game) NextLevel(toMaxLevel bool) {
 	if g.CurrentLevel < g.MaxLevel {
-		g.CurrentLevel++
-		if g.CurrentLevel == g.MaxLevel {
+		if toMaxLevel {
+			g.CurrentLevel = g.MaxLevel
 			g.CurrentStage = g.MaxStage
 		} else {
-			g.CurrentStage = 10
+			g.CurrentLevel++
+			if g.CurrentLevel == g.MaxLevel {
+				g.CurrentStage = g.MaxStage
+			} else {
+				g.CurrentStage = 10
+			}
 		}
 
 		g.CheckBoss()

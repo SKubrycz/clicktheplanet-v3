@@ -4,9 +4,13 @@ import React, { useState, useRef, useEffect } from "react";
 
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 
-import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
+import {
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  KeyboardDoubleArrowRight,
+} from "@mui/icons-material";
 import { setLevel } from "@/lib/game/levelSlice";
-import { IconButton } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 
 interface Loaded {
   isLoaded: boolean;
@@ -254,13 +258,17 @@ export default function Planet({ planetRef, click }: PlanetProps) {
     }
   };
 
-  const goToNext = () => {
+  const goToNext = (toMaxLevel: boolean) => {
     if (
       planetRef.current &&
       gameData.currentLevel !== gameData.maxLevel &&
       !block.current
     ) {
-      dispatch(setLevel({ action: "next" }));
+      if (toMaxLevel) {
+        dispatch(setLevel({ action: "maxlevel" }));
+      } else {
+        dispatch(setLevel({ action: "next" }));
+      }
       block.current = true;
       levitateAnim.current?.cancel();
       planetRef.current.style.animation = "none";
@@ -302,25 +310,55 @@ export default function Planet({ planetRef, click }: PlanetProps) {
         ref={planetRef}
         onClick={click}
       ></canvas>
-      <IconButton
-        disabled={gameData?.currentLevel === gameData?.maxLevel ? true : false}
-        onClick={() => goToNext()}
+      <Box
         sx={{
-          marginLeft: "3em",
-          cursor: "pointer",
-          "&:hover": {
-            background: "unset",
-            filter: "drop-shadow(0px 0px 12px white)",
-          },
+          position: "relative",
         }}
       >
-        <KeyboardArrowRight
-          aria-label="next-level-button"
+        <IconButton
+          disabled={
+            gameData?.currentLevel === gameData?.maxLevel ? true : false
+          }
+          onClick={() => goToNext(false)}
           sx={{
-            fontSize: "30px",
+            marginLeft: "3em",
+            cursor: "pointer",
+            "&:hover": {
+              background: "unset",
+              filter: "drop-shadow(0px 0px 12px white)",
+            },
           }}
-        ></KeyboardArrowRight>
-      </IconButton>
+        >
+          <KeyboardArrowRight
+            aria-label="next-level-button"
+            sx={{
+              fontSize: "30px",
+            }}
+          ></KeyboardArrowRight>
+        </IconButton>
+        <IconButton
+          disabled={
+            gameData?.currentLevel === gameData?.maxLevel ? true : false
+          }
+          onClick={() => goToNext(true)}
+          sx={{
+            position: "absolute",
+            left: "5em",
+            cursor: "pointer",
+            "&:hover": {
+              background: "unset",
+              filter: "drop-shadow(0px 0px 12px white)",
+            },
+          }}
+        >
+          <KeyboardDoubleArrowRight
+            aria-label="max-level-button"
+            sx={{
+              fontSize: "30px",
+            }}
+          ></KeyboardDoubleArrowRight>
+        </IconButton>
+      </Box>
     </>
   );
 }

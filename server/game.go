@@ -292,13 +292,16 @@ func ActionHandler(g *Game, action string) []byte {
 		}
 		encoded, _ := json.Marshal(message)
 		return []byte(encoded)
-	} else if action == "previous" || action == "next" {
+	} else if action == "previous" || action == "next" || action == "maxlevel" {
 		// Previous level or next
 		if action == "previous" {
 			g.PreviousLevel()
 		}
 		if action == "next" {
-			g.NextLevel()
+			g.NextLevel(false)
+		}
+		if action == "maxlevel" {
+			g.NextLevel(true)
 		}
 		percent := g.GetHealthPercent()
 
