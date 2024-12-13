@@ -292,10 +292,13 @@ func ActionHandler(g *Game, action string) []byte {
 		}
 		encoded, _ := json.Marshal(message)
 		return []byte(encoded)
-	} else if action == "previous" || action == "next" || action == "maxlevel" {
+	} else if action == "previous" || action == "next" || action == "maxlevel" || action == "previousmany" {
 		// Previous level or next
 		if action == "previous" {
-			g.PreviousLevel()
+			g.PreviousLevel(false)
+		}
+		if action == "previousmany" {
+			g.PreviousLevel(true)
 		}
 		if action == "next" {
 			g.NextLevel(false)

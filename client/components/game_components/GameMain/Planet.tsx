@@ -7,6 +7,7 @@ import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import {
   KeyboardArrowLeft,
   KeyboardArrowRight,
+  KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
 } from "@mui/icons-material";
 import { setLevel } from "@/lib/game/levelSlice";
@@ -242,9 +243,13 @@ export default function Planet({ planetRef, click }: PlanetProps) {
     }
   }, [gameData.planetsDestroyed]);
 
-  const goToPrevious = () => {
+  const goToPrevious = (manyLevels: boolean) => {
     if (planetRef.current && gameData.currentLevel > 1 && !block.current) {
-      dispatch(setLevel({ action: "previous" }));
+      if (manyLevels) {
+        dispatch(setLevel({ action: "previousmany" }));
+      } else {
+        dispatch(setLevel({ action: "previous" }));
+      }
       block.current = true;
       levitateAnim.current?.cancel();
       planetRef.current.style.animation = "none";
@@ -284,25 +289,54 @@ export default function Planet({ planetRef, click }: PlanetProps) {
 
   return (
     <>
-      <IconButton
-        disabled={gameData?.currentLevel > 0 ? false : true}
-        onClick={() => goToPrevious()}
+      <Box
         sx={{
-          marginRight: "3em",
-          cursor: "pointer",
-          "&:hover": {
-            background: "unset",
-            filter: "drop-shadow(0px 0px 12px white)",
-          },
+          position: "relative",
         }}
       >
-        <KeyboardArrowLeft
-          aria-label="previous-level-button"
+        <IconButton
+          title="Jump 10 Levels back"
+          disabled={gameData?.currentLevel > 0 ? false : true}
+          onClick={() => goToPrevious(true)}
           sx={{
-            fontSize: "30px",
+            position: "absolute",
+            right: "5em",
+            cursor: "pointer",
+            "&:hover": {
+              background: "unset",
+              filter: "drop-shadow(0px 0px 12px white)",
+            },
           }}
-        ></KeyboardArrowLeft>
-      </IconButton>
+        >
+          <KeyboardDoubleArrowLeft
+            aria-label="max-level-button"
+            sx={{
+              fontSize: "30px",
+            }}
+          ></KeyboardDoubleArrowLeft>
+        </IconButton>
+        <IconButton
+          title="Go to Previous Level"
+          disabled={gameData?.currentLevel > 0 ? false : true}
+          onClick={() => goToPrevious(false)}
+          sx={{
+            marginRight: "3em",
+            cursor: "pointer",
+            "&:hover": {
+              background: "unset",
+              filter: "drop-shadow(0px 0px 12px white)",
+            },
+          }}
+        >
+          <KeyboardArrowLeft
+            aria-label="previous-level-button"
+            sx={{
+              fontSize: "30px",
+            }}
+          ></KeyboardArrowLeft>
+        </IconButton>
+      </Box>
+
       <canvas
         className="main-planet-image"
         width="200"
@@ -316,6 +350,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
         }}
       >
         <IconButton
+          title="Go to Next Level"
           disabled={
             gameData?.currentLevel === gameData?.maxLevel ? true : false
           }
@@ -337,6 +372,7 @@ export default function Planet({ planetRef, click }: PlanetProps) {
           ></KeyboardArrowRight>
         </IconButton>
         <IconButton
+          title="Jump to Max Level"
           disabled={
             gameData?.currentLevel === gameData?.maxLevel ? true : false
           }

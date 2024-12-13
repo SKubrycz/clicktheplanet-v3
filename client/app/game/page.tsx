@@ -125,7 +125,8 @@ export default function Game() {
     if (
       levelData.action === "previous" ||
       levelData.action === "next" ||
-      levelData.action === "maxlevel"
+      levelData.action === "maxlevel" ||
+      levelData.action === "previousmany"
     ) {
       if (socket.current) socket.current.send(levelData.action);
     }

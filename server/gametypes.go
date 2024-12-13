@@ -504,10 +504,15 @@ func (g *Game) Advance() {
 	fmt.Println("isboss?:", g.Planet.IsBoss)
 }
 
-func (g *Game) PreviousLevel() {
+func (g *Game) PreviousLevel(manyLevels bool) {
 	if g.CurrentLevel > 1 {
-		g.CurrentLevel -= 1
-		g.CurrentStage = 10
+		if manyLevels {
+			g.CurrentLevel -= 10
+			g.CurrentStage = 10
+		} else {
+			g.CurrentLevel -= 1
+			g.CurrentStage = 10
+		}
 
 		g.CheckBoss()
 
