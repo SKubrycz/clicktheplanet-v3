@@ -160,9 +160,13 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	defer close(game.Ch)
 	timeStart := time.Now() // For save anti-spam
 	go func() {
-		for message := range game.Ch {
-			switch message {
-			case "click":
+		for {
+			message, ok := <-game.Ch
+			if !ok {
+				fmt.Println("Channel closed")
+				return
+			}
+			if message == "click" {
 				timeSave := time.Now()
 				elapsed := timeSave.Sub(timeStart).Seconds()
 				if elapsed < 5 {
@@ -175,12 +179,14 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					fmt.Println("!Error: SaveGameProgress: ", err)
 				}
-			case "upgrade":
+			} else if message == "upgrade" {
 				fmt.Printf("%v: Element upgraded - Saving game...\n", time.Now())
 				err := s.db.SaveGameProgress(id, game)
 				if err != nil {
 					fmt.Println("!Error: SaveGameProgress: ", err)
 				}
+			} else {
+				fmt.Println("Received channel message: ", message)
 			}
 		}
 	}()
