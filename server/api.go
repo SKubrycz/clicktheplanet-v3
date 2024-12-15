@@ -131,6 +131,15 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 	}
 	game := NewGame(gameData)
 
+	var mu sync.Mutex
+	channelClosed := false
+	defer func() {
+		mu.Lock()
+		channelClosed = true
+		close(game.Ch)
+		mu.Unlock()
+	}()
+
 	var upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -157,12 +166,13 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	defer close(game.Ch)
+	// defer close(game.Ch)
 	timeStart := time.Now() // For save anti-spam
 	go func() {
 		for {
 			message, ok := <-game.Ch
 			if !ok {
+				channelClosed = true
 				fmt.Println("Channel closed")
 				return
 			}
@@ -193,7 +203,7 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 
 	dpsSent := false
 	var dps *time.Ticker
-	var mu sync.Mutex
+	done := make(chan bool, 1)
 	for {
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
@@ -217,17 +227,42 @@ func (s *Server) handleGetWsGame(w http.ResponseWriter, r *http.Request) {
 			}
 			dpsSent = true
 			dps = time.NewTicker(100 * time.Millisecond)
-			defer dps.Stop()
+			defer func() {
+				done <- true
+				dps.Stop()
+				close(done)
+			}()
 			go func() {
-				for range dps.C {
-					mu.Lock()
-					response = DealDps(game)
-					if err := conn.WriteMessage(messageType, response); err != nil {
-						log.Println(err)
+				for {
+					select {
+					case d, ok := <-dps.C:
+						if !ok {
+							fmt.Println(d)
+							dps.Stop()
+							return
+						}
+						mu.Lock()
+						if !channelClosed {
+							response = DealDps(game)
+							if err := conn.WriteMessage(messageType, response); err != nil {
+								log.Println(err)
+								return
+							}
+						}
+						mu.Unlock()
+					case <-done:
 						return
 					}
-					mu.Unlock()
 				}
+				// for range dps.C {
+				// 	mu.Lock()
+				// 	response = DealDps(game)
+				// 	if err := conn.WriteMessage(messageType, response); err != nil {
+				// 		log.Println(err)
+				// 		return
+				// 	}
+				// 	mu.Unlock()
+				// }
 			}()
 		}
 	}
