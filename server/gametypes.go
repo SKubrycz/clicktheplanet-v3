@@ -175,6 +175,8 @@ func (g *Game) CalculatePlanetHealth() {
 		result.Mul(result, big.NewFloat(10))
 	}
 
+	result.Add(result, big.NewFloat(10))
+
 	g.ConvertNumber(result, g.Planet.MaxHealth)
 	g.ConvertNumber(result, g.Planet.CurrentHealth)
 }
