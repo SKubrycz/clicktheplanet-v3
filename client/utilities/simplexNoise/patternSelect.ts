@@ -41,7 +41,7 @@ export default function generatePattern(
   let values: number[] = [];
   let interpolated: number = 0;
 
-  switch (random % 3) {
+  switch (random % 5) {
     case 0:
       values = createValues(
         [
@@ -84,6 +84,36 @@ export default function generatePattern(
           [0.05 * j, 0.05 * i],
           [0.1 * j, 0.1 * i],
           [0.25 * j, 0.25 * i],
+        ],
+        gradients,
+        size
+      );
+
+      interpolated = interpolateValues(values);
+      return interpolated;
+    case 3:
+      values = createValues(
+        [
+          [0.003 * j, 0.003 * i],
+          [0.012 * j, 0.012 * i],
+          [0.02 * j, 0.02 * i],
+          [0.06 * j, 0.06 * i],
+          [0.2 * j, 0.2 * i],
+        ],
+        gradients,
+        size
+      );
+
+      interpolated = interpolateValues(values);
+      return interpolated;
+    case 4:
+      values = createValues(
+        [
+          [0.001 * j, 0.001 * i],
+          [0.005 * j, 0.005 * i],
+          [0.02 * j, 0.02 * i],
+          [0.07 * j, 0.07 * i],
+          [0.2 * j, 0.2 * i],
         ],
         gradients,
         size
