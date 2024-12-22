@@ -60,7 +60,7 @@ function draw() {
 
   let planetPattern = (89213 * seed + 32894789) % 5346785487;
   planetPattern = (91235 * planetPattern + 56426456) % 78269681123;
-  console.log(planetPattern % 3);
+  console.log(planetPattern % 5);
 
   for (let i = 0; i < height * 1; i++) {
     for (let j = 0; j < width * 1; j++) {
@@ -119,7 +119,7 @@ function draw() {
 
     if (!isBoss) {
       if (!isDiamondPlanet) {
-        if (planetPattern % 3 === 0) {
+        if (planetPattern % 5 === 0) {
           if (val <= 255 && val > 220) {
             color(imageData, i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
           } else if (val <= 220 && val > 150) {
@@ -133,7 +133,7 @@ function draw() {
           } else {
             color(imageData, i, 150 * w[1], 150 * w[2], 150 * w[0], norm);
           }
-        } else if (planetPattern % 3 === 1) {
+        } else if (planetPattern % 5 === 1) {
           if (val <= 255 && val > 210) {
             color(imageData, i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
           } else if (val <= 210 && val > 135) {
@@ -147,7 +147,7 @@ function draw() {
           } else {
             color(imageData, i, 160 * w[2], 160 * w[0], 160 * w[1], norm);
           }
-        } else {
+        } else if (planetPattern % 5 === 2) {
           if (val <= 255 && val > 190) {
             color(imageData, i, 255 * w[2], 255 * w[1], 255 * w[0], norm);
           } else if (val <= 190 && val > 130) {
@@ -160,6 +160,34 @@ function draw() {
             color(imageData, i, 200 * w[0], 200 * w[1], 200 * w[2], norm);
           } else {
             color(imageData, i, 180 * w[0], 180 * w[1], 180 * w[2], norm);
+          }
+        } else if (planetPattern % 5 === 3) {
+          if (val <= 255 && val > 230) {
+            color(imageData, i, 255 * w[0], 255 * w[2], 255 * w[1], norm);
+          } else if (val <= 230 && val > 190) {
+            color(imageData, i, 240 * w[0], 240 * w[2], 240 * w[1], norm);
+          } else if (val <= 190 && val > 150) {
+            color(imageData, i, 230 * w[0], 230 * w[2], 230 * w[1], norm);
+          } else if (val <= 150 && val > 120) {
+            color(imageData, i, 205 * w[0], 205 * w[2], 205 * w[1], norm);
+          } else if (val <= 120 && val > 70) {
+            color(imageData, i, 200 * w[0], 200 * w[1], 200 * w[2], norm);
+          } else {
+            color(imageData, i, 180 * w[0], 180 * w[1], 180 * w[2], norm);
+          }
+        } else {
+          if (val <= 255 && val > 220) {
+            color(imageData, i, 255 * w[0], 255 * w[1], 255 * w[2], norm);
+          } else if (val <= 220 && val > 150) {
+            color(imageData, i, 230 * w[0], 230 * w[1], 230 * w[2], norm);
+          } else if (val <= 150 && val > 110) {
+            color(imageData, i, 210 * w[2], 210 * w[1], 210 * w[0], norm);
+          } else if (val <= 110 && val > 70) {
+            color(imageData, i, 200 * w[2], 200 * w[1], 200 * w[0], norm);
+          } else if (val <= 70 && val > 30) {
+            color(imageData, i, 190 * w[2], 190 * w[1], 190 * w[0], norm);
+          } else {
+            color(imageData, i, 150 * w[2], 150 * w[1], 150 * w[0], norm);
           }
         }
       } else if (isDiamondPlanet) {
