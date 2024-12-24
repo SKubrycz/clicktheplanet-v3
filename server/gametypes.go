@@ -7,7 +7,6 @@ import (
 	"math/big"
 	"math/rand"
 	"strconv"
-	"time"
 )
 
 type DiamondUpgrade struct {
@@ -889,26 +888,32 @@ func (g *Game) GetBigFloatBulkCost(levels int, basecost *big.Float, constant flo
 		if err != nil {
 			fmt.Println(err)
 		}
-		cost := new(big.Float)
 
+		cost := new(big.Float)
 		cost.Mul(basecost, bigPow)
 
 		bulkCost.Add(bulkCost, cost)
 	}
 
-	return bulkCost
+	fmt.Printf("bulkCost: %v \n", bulkCost)
+
+	bulkCostConv := new(big.Float)
+	g.ConvertNumber(bulkCost, bulkCostConv)
+
+	fmt.Printf("bulkCostConv: %v \n", bulkCostConv)
+
+	return bulkCostConv
 }
 
 func (g *Game) BigFloatPow(base float64, exp int64) (*big.Float, error) {
 	if exp < 0 {
 		return new(big.Float), fmt.Errorf("func g.BigFloatPow: negative numbers not supported")
 	}
-
 	if exp == 0 {
 		return big.NewFloat(1.0), nil
 	}
 
-	start := time.Now()
+	//start := time.Now()
 
 	if math.Abs(base) < 0.0000000001 {
 		return new(big.Float), fmt.Errorf("func g.BigFloatPow: the float is too small")
@@ -929,10 +934,6 @@ func (g *Game) BigFloatPow(base float64, exp int64) (*big.Float, error) {
 
 	for i := 0; i < int(exp)/div; i++ {
 		pow.Mul(pow, initialPow)
-	}
-
-	if base < 1.05 && base > 1.0 {
-		fmt.Println(time.Since(start))
 	}
 
 	return pow, nil
