@@ -12,6 +12,23 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Box, IconButton, Typography } from "@mui/material";
 import { ElectricBoltOutlined } from "@mui/icons-material";
 
+interface LevelsWrapperProps {
+  levels: number | undefined;
+}
+
+function LevelsWrapper({levels}: LevelsWrapperProps) {
+  if (levels && levels > 1) {
+    return (
+      <Box sx={{padding: "0.4em", display: "flex", flexDirection: "column", justifyContent: "flex-start"}}><Typography variant="h6" sx={{visibility: "hidden"}}>-</Typography><Box>x{levels}</Box></Box>
+    )
+  } else {
+    return (
+      <Box sx={{padding: "0.4em", display: "flex", flexDirection: "column", justifyContent: "flex-start", visibility: "hidden"}}><Typography variant="h6" sx={{visibility: "hidden"}}>-</Typography><Box>x{levels}</Box></Box>
+    )
+  }
+
+}
+
 interface DiamondUpgradeProps {
   title: string;
   index: number;
@@ -86,6 +103,7 @@ export default function DiamondUpgrade({ title, index }: DiamondUpgradeProps) {
           <Image src={Diamond} alt="diamond" width={13} height={13}></Image>
         </div>
       </Box>
+      <LevelsWrapper levels={levels}></LevelsWrapper>
       <IconButton
         title="Upgrade"
         aria-label={`diamond-upgrade-button-${index}`}
