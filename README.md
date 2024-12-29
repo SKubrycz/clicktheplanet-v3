@@ -4,7 +4,7 @@
 ### How to launch?
   - Frontend:
     ```console
-    	npm i
+      npm i
     ```
     After that either:
     ```console
