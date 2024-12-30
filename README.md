@@ -4,6 +4,7 @@
 ### How to launch?
   - Frontend:
     ```console
+      cd client
       npm i
     ```
     After that either:
@@ -17,6 +18,7 @@
     ```
   - Backend
     ```console
+      cd server
       go install github.com/air-verse/air@latest
       air init
       air
